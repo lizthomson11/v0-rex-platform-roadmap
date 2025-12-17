@@ -15,6 +15,27 @@ export const metadata: Metadata = {
     icon: "/images/hqo-profile-pic-x2.png",
     apple: "/images/hqo-profile-pic-x2.png",
   },
+  openGraph: {
+    title: "HqO REX Platform Roadmap",
+    description: "2025-2026 Product Development Timeline",
+    siteName: "HqO",
+    images: [
+      {
+        url: "/images/hqo-profile-pic-x2.png",
+        width: 512,
+        height: 512,
+        alt: "HqO Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "HqO REX Platform Roadmap",
+    description: "2025-2026 Product Development Timeline",
+    images: ["/images/hqo-profile-pic-x2.png"],
+  },
 }
 
 export default function RootLayout({
