@@ -48,15 +48,13 @@
   --roadmap-border: oklch(0.3 0.012 256 / 0.5);
   --roadmap-border-hover: oklch(0.35 0.012 256);
 
-  /* Suite color tokens for badges */
-  --suite-crm-start: oklch(0.55 0.19 255);
-  --suite-crm-end: oklch(0.48 0.21 255);
-  --suite-experience-start: oklch(0.55 0.25 305);
-  --suite-experience-end: oklch(0.48 0.26 305);
-  --suite-operations-start: oklch(0.6 0.15 195);
-  --suite-operations-end: oklch(0.52 0.17 195);
-  --suite-intelligence-start: oklch(0.7 0.15 75);
-  --suite-intelligence-end: oklch(0.62 0.17 70);
+  /* Removed gradient tokens, replaced with solid suite colors */
+  --suite-crm: oklch(0.5 0.15 255);
+  --suite-experience: oklch(0.5 0.15 305);
+  --suite-operations: oklch(0.55 0.12 195);
+  --suite-intelligence: oklch(0.65 0.12 75);
+  /* Added Access Control suite color */
+  --suite-access: oklch(0.55 0.14 280);
 }
 
 .dark {
@@ -153,14 +151,13 @@
   --color-roadmap-border: var(--roadmap-border);
   --color-roadmap-border-hover: var(--roadmap-border-hover);
 
-  --color-suite-crm-start: var(--suite-crm-start);
-  --color-suite-crm-end: var(--suite-crm-end);
-  --color-suite-experience-start: var(--suite-experience-start);
-  --color-experience-end: var(--suite-experience-end);
-  --color-suite-operations-start: var(--suite-operations-start);
-  --color-suite-operations-end: var(--suite-operations-end);
-  --color-suite-intelligence-start: var(--suite-intelligence-start);
-  --color-suite-intelligence-end: var(--suite-intelligence-end);
+  /* Updated to use solid colors instead of gradients */
+  --color-suite-crm: var(--suite-crm);
+  --color-suite-experience: var(--suite-experience);
+  --color-suite-operations: var(--suite-operations);
+  --color-suite-intelligence: var(--suite-intelligence);
+  /* Added Access Control color token */
+  --color-suite-access: var(--suite-access);
 }
 
 @layer base {

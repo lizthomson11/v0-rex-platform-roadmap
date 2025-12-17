@@ -7,21 +7,38 @@ interface RoadmapCardProps {
 }
 
 export function RoadmapCard({ suite, features, color }: RoadmapCardProps) {
-  const getGradientClass = (suite: string) => {
-    const gradients: Record<string, string> = {
-      "suite-crm": "bg-gradient-to-r from-suite-crm-start to-suite-crm-end",
-      "suite-experience": "bg-gradient-to-r from-suite-experience-start to-suite-experience-end",
-      "suite-operations": "bg-gradient-to-r from-suite-operations-start to-suite-operations-end",
-      "suite-intelligence": "bg-gradient-to-r from-suite-intelligence-start to-suite-intelligence-end",
+  const getColorClass = (suite: string) => {
+    const colors: Record<string, string> = {
+      "suite-crm": "bg-suite-crm",
+      "suite-experience": "bg-suite-experience",
+      "suite-operations": "bg-suite-operations",
+      "suite-intelligence": "bg-suite-intelligence",
+      "suite-access": "bg-suite-access",
     }
-    return gradients[suite] || "bg-primary"
+    return colors[suite] || "bg-primary"
+  }
+
+  const getBorderColor = (colorProp: string) => {
+    // Extract the suite name (e.g., "crm" from "suite-crm" or just "crm")
+    const suiteName = colorProp.replace("suite-", "")
+    const colors: Record<string, string> = {
+      crm: "var(--color-suite-crm)",
+      experience: "var(--color-suite-experience)",
+      operations: "var(--color-suite-operations)",
+      intelligence: "var(--color-suite-intelligence)",
+      access: "var(--color-suite-access)",
+    }
+    return colors[suiteName] || "var(--color-primary)"
   }
 
   return (
-    <Card className="group border-roadmap-border bg-roadmap-surface backdrop-blur-sm transition-all hover:border-roadmap-border-hover hover:shadow-lg hover:shadow-roadmap-background/20">
+    <Card
+      className="group border-l-4 border-roadmap-border bg-roadmap-surface backdrop-blur-sm transition-all hover:border-roadmap-border-hover hover:shadow-lg hover:shadow-roadmap-background/20"
+      style={{ borderLeftColor: getBorderColor(color) }}
+    >
       <CardHeader className="pb-0">
         <div
-          className={`mb-2 inline-flex items-center rounded-full ${getGradientClass(color)} px-3 py-1 text-xs font-semibold text-roadmap-text-primary shadow-lg`}
+          className={`mb-2 inline-flex items-center rounded-full ${getColorClass(color)} px-3 py-1 text-xs font-semibold text-roadmap-text-primary shadow-lg`}
         >
           {suite}
         </div>
