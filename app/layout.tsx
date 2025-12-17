@@ -9,21 +9,23 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "HqO Roadmap",
-  description: "HqO REX Platform Roadmap - 2025-2026 Product Development Timeline",
-  generator: "v0.app",
+  description: "HqO REX Platform Roadmap showcasing 2025-2026 product development timeline across all suites.",
+  authors: [{ name: "HqO Product Team" }],
   icons: {
     icon: "/images/hqo-profile-pic-x2.png",
     apple: "/images/hqo-profile-pic-x2.png",
   },
   openGraph: {
     title: "HqO REX Platform Roadmap",
-    description: "2025-2026 Product Development Timeline",
+    description: "HqO REX Platform Roadmap showcasing 2025-2026 product development timeline across all suites.",
     siteName: "HqO",
+    url: "https://roadmap.hqo.com",
+    publishedTime: "2025-12-17T00:00:00.000Z",
     images: [
       {
-        url: "/images/hqo-profile-pic-x2.png",
-        width: 512,
-        height: 512,
+        url: "https://roadmap.hqo.com/images/hqo-profile-pic-x2.png",
+        width: 1200,
+        height: 630,
         alt: "HqO Logo",
       },
     ],
@@ -31,11 +33,12 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "HqO REX Platform Roadmap",
-    description: "2025-2026 Product Development Timeline",
-    images: ["/images/hqo-profile-pic-x2.png"],
+    description: "HqO REX Platform Roadmap showcasing 2025-2026 product development timeline across all suites.",
+    images: ["https://roadmap.hqo.com/images/hqo-profile-pic-x2.png"],
   },
+    generator: 'v0.app'
 }
 
 export default function RootLayout({
