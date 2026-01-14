@@ -3,7 +3,7 @@ import Image from "next/image"
 
 export default function Page() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-roadmap-background via-roadmap-surface to-roadmap-background">
+    <div className="min-h-screen bg-roadmap-background">
       <div className="container mx-auto px-4 py-12 lg:py-16">
         <div className="mb-12 text-center">
           <div className="mb-6 flex justify-center">
