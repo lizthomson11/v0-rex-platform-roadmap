@@ -1,8 +1,9 @@
 "use client"
 
 import React from "react"
-import { Check, Clock, Calendar, Users, Star, Shield, Settings, BarChart3 } from "lucide-react"
+import { Check, Clock, Calendar, Users, Star, Shield, Settings, BarChart3, Search, X } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 
 const suites = [
   {
@@ -177,6 +178,7 @@ export function RoadmapGrid() {
   const syncingRef = React.useRef<"header" | "body" | null>(null)
 
   const [isMobile, setIsMobile] = React.useState(false)
+  const [searchQuery, setSearchQuery] = React.useState("")
 
   React.useEffect(() => {
     const checkMobile = () => {
@@ -214,14 +216,54 @@ export function RoadmapGrid() {
     }, 0)
   }
 
+  const getFilteredFeatures = (features: string[]) => {
+    if (!searchQuery.trim()) return features
+    return features.filter((feature) => feature.toLowerCase().includes(searchQuery.toLowerCase()))
+  }
+
+  const suiteHasMatchingFeatures = (suite: (typeof suites)[0]) => {
+    if (!searchQuery.trim()) return true
+    return Object.values(suite.quarters).some((features) =>
+      features.some((feature) => feature.toLowerCase().includes(searchQuery.toLowerCase())),
+    )
+  }
+
   const contentWidth = LEFT_COL + colCount * COL_WIDTH + colCount * GAP
 
   const gridColsStyle: React.CSSProperties = {
     gridTemplateColumns: `${LEFT_COL}px repeat(${colCount}, ${COL_WIDTH}px)`,
   }
 
+  const filteredSuites = searchQuery.trim() ? suites.filter(suiteHasMatchingFeatures) : suites
+
   return (
     <div className="w-full px-2 md:px-6">
+      <div className="mb-4 md:mb-6">
+        <div className="relative max-w-md mx-auto">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-roadmap-text-secondary" />
+          <Input
+            type="text"
+            placeholder="Search features..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 pr-10 bg-roadmap-surface/60 border-roadmap-border text-roadmap-text-primary placeholder:text-roadmap-text-secondary/50"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-roadmap-text-secondary hover:text-roadmap-text-primary"
+            >
+              <X className="size-4" />
+            </button>
+          )}
+        </div>
+        {searchQuery && (
+          <p className="text-center text-sm text-roadmap-text-secondary mt-2">
+            Showing results for "{searchQuery}" in {filteredSuites.length} suite(s)
+          </p>
+        )}
+      </div>
+
       <div className="sticky top-0 z-50 bg-roadmap-background/90 backdrop-blur-xl pb-2 md:pb-4 shadow-lg">
         <div
           ref={headerScrollRef}
@@ -246,21 +288,21 @@ export function RoadmapGrid() {
                     </h2>
 
                     {header.status === "delivered" && (
-                      <span className="inline-flex items-center gap-0.5 md:gap-1 rounded-full bg-green-500/20 px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-semibold text-green-400 border border-green-500/30">
-                        <Check className="size-2.5 md:size-3" />
+                      <span className="inline-flex items-center gap-0.5 md:gap-1 rounded-full bg-green-600 px-1.5 md:px-2.5 py-0.5 md:py-1 text-[10px] md:text-xs font-bold text-white shadow-sm">
+                        <Check className="size-2.5 md:size-3.5" strokeWidth={3} />
                         <span className="hidden sm:inline">Delivered</span>
                       </span>
                     )}
                     {header.status === "in-progress" && (
-                      <span className="inline-flex items-center gap-0.5 md:gap-1 rounded-full bg-blue-500/20 px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-semibold text-blue-400 border border-blue-500/30">
-                        <Clock className="size-2.5 md:size-3" />
+                      <span className="inline-flex items-center gap-0.5 md:gap-1 rounded-full bg-blue-600 px-1.5 md:px-2.5 py-0.5 md:py-1 text-[10px] md:text-xs font-bold text-white shadow-sm animate-pulse">
+                        <Clock className="size-2.5 md:size-3.5" strokeWidth={3} />
                         <span className="hidden sm:inline">In Progress</span>
                       </span>
                     )}
                     {header.status === "upcoming" && (
-                      <span className="inline-flex items-center gap-0.5 md:gap-1 rounded-full bg-purple-500/20 px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-semibold text-purple-400 border border-purple-500/30">
-                        <Calendar className="size-2.5 md:size-3" />
-                        <span className="hidden sm:inline">Upcoming</span>
+                      <span className="inline-flex items-center gap-0.5 md:gap-1 rounded-full bg-amber-500 px-1.5 md:px-2.5 py-0.5 md:py-1 text-[10px] md:text-xs font-bold text-white shadow-sm">
+                        <Calendar className="size-2.5 md:size-3.5" strokeWidth={3} />
+                        <span className="hidden sm:inline">Planned</span>
                       </span>
                     )}
                   </div>
@@ -281,7 +323,7 @@ export function RoadmapGrid() {
         className="overflow-x-auto overflow-y-visible [scrollbar-gutter:stable]"
       >
         <div className="space-y-3 md:space-y-4" style={{ width: contentWidth }}>
-          {suites.map((suite) => (
+          {filteredSuites.map((suite) => (
             <div
               key={suite.name}
               className="grid gap-3 md:gap-6 pb-4 md:pb-6 border-b border-roadmap-border/30 last:border-b-0"
@@ -304,7 +346,10 @@ export function RoadmapGrid() {
               </div>
 
               {quarterHeaders.map((header) => {
-                const features = suite.quarters[header.quarter as keyof typeof suite.quarters] || []
+                const allFeatures = suite.quarters[header.quarter as keyof typeof suite.quarters] || []
+                const features = getFilteredFeatures(allFeatures)
+                const hasHiddenFeatures = searchQuery && features.length < allFeatures.length
+
                 return (
                   <Card
                     key={`${suite.name}-${header.quarter}`}
@@ -313,17 +358,26 @@ export function RoadmapGrid() {
                   >
                     <CardContent className="p-2 md:p-5">
                       {features.length > 0 ? (
-                        <ul className="space-y-1.5 md:space-y-3">
-                          {features.map((feature, index) => (
-                            <li key={index} className="flex items-start gap-1.5 md:gap-3 text-xs md:text-sm">
-                              <span className="mt-1 md:mt-1.5 size-1.5 md:size-2 shrink-0 rounded-full bg-roadmap-text-secondary" />
-                              <span className="leading-relaxed text-roadmap-text-primary">{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
+                        <>
+                          <ul className="space-y-1.5 md:space-y-3">
+                            {features.map((feature, index) => (
+                              <li key={index} className="flex items-start gap-1.5 md:gap-3 text-xs md:text-sm">
+                                <span className="mt-1 md:mt-1.5 size-1.5 md:size-2 shrink-0 rounded-full bg-roadmap-text-secondary" />
+                                <span className="leading-relaxed text-roadmap-text-primary">
+                                  {searchQuery ? <HighlightText text={feature} highlight={searchQuery} /> : feature}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                          {hasHiddenFeatures && (
+                            <p className="text-xs text-roadmap-text-secondary/50 mt-2">
+                              +{allFeatures.length - features.length} more
+                            </p>
+                          )}
+                        </>
                       ) : (
                         <div className="text-center text-xs md:text-sm text-roadmap-text-secondary/50 py-2 md:py-4">
-                          No features
+                          {searchQuery ? "No matches" : "No features"}
                         </div>
                       )}
                     </CardContent>
@@ -332,8 +386,38 @@ export function RoadmapGrid() {
               })}
             </div>
           ))}
+
+          {searchQuery && filteredSuites.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-roadmap-text-secondary text-lg">No features found matching "{searchQuery}"</p>
+              <button onClick={() => setSearchQuery("")} className="mt-4 text-blue-400 hover:text-blue-300 underline">
+                Clear search
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
+  )
+}
+
+function HighlightText({ text, highlight }: { text: string; highlight: string }) {
+  if (!highlight.trim()) return <>{text}</>
+
+  const regex = new RegExp(`(${highlight.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi")
+  const parts = text.split(regex)
+
+  return (
+    <>
+      {parts.map((part, i) =>
+        regex.test(part) ? (
+          <mark key={i} className="bg-yellow-500/30 text-roadmap-text-primary rounded px-0.5">
+            {part}
+          </mark>
+        ) : (
+          part
+        ),
+      )}
+    </>
   )
 }
