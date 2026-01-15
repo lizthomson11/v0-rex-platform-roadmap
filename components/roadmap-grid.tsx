@@ -142,8 +142,10 @@ const quarterHeaders = [
   { quarter: "Q4 2026", status: "upcoming" as const },
 ]
 
-const LEFT_COL = 300
-const COL_WIDTH = 280
+const LEFT_COL_DESKTOP = 300
+const LEFT_COL_MOBILE = 200
+const COL_WIDTH_DESKTOP = 280
+const COL_WIDTH_MOBILE = 240
 const GAP = 24 // gap-6 in pixels
 
 export function RoadmapGrid() {
@@ -152,6 +154,20 @@ export function RoadmapGrid() {
   const headerScrollRef = React.useRef<HTMLDivElement | null>(null)
   const bodyScrollRef = React.useRef<HTMLDivElement | null>(null)
   const syncingRef = React.useRef<"header" | "body" | null>(null)
+
+  const [isMobile, setIsMobile] = React.useState(false)
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
+
+  const LEFT_COL = isMobile ? LEFT_COL_MOBILE : LEFT_COL_DESKTOP
+  const COL_WIDTH = isMobile ? COL_WIDTH_MOBILE : COL_WIDTH_DESKTOP
 
   const syncScroll = (source: "header" | "body") => {
     const headerEl = headerScrollRef.current
@@ -195,49 +211,51 @@ export function RoadmapGrid() {
   }
 
   return (
-    <div className="w-full px-6">
-      <div className="sticky top-0 z-50 bg-roadmap-background/90 backdrop-blur-xl pb-4 shadow-lg">
+    <div className="w-full px-2 md:px-6">
+      <div className="sticky top-0 z-50 bg-roadmap-background/90 backdrop-blur-xl pb-2 md:pb-4 shadow-lg">
         <div
           ref={headerScrollRef}
           onScroll={() => syncScroll("header")}
           className="overflow-x-auto overflow-y-hidden [scrollbar-gutter:stable]"
         >
-          <div className="grid gap-6" style={{ ...gridColsStyle, width: contentWidth }}>
-            <div className="sticky left-0 z-[60] rounded-lg border border-roadmap-border bg-roadmap-background/90 backdrop-blur-xl px-4 py-4 flex items-center justify-center shadow-lg">
-              <h2 className="text-xl font-bold text-roadmap-text-primary">Suite</h2>
+          <div className="grid gap-3 md:gap-6" style={{ ...gridColsStyle, width: contentWidth }}>
+            <div className="sticky left-0 z-[60] rounded-lg border border-roadmap-border bg-roadmap-background/90 backdrop-blur-xl px-2 md:px-4 py-2 md:py-4 flex items-center justify-center shadow-lg">
+              <h2 className="text-base md:text-xl font-bold text-roadmap-text-primary">Suite</h2>
             </div>
 
             {quarterHeaders.map((header) => (
               <div
                 key={header.quarter}
-                className="rounded-lg border border-roadmap-border bg-roadmap-surface/80 backdrop-blur-xl px-4 py-4 shadow-lg flex flex-col justify-center"
+                className="rounded-lg border border-roadmap-border bg-roadmap-surface/80 backdrop-blur-xl px-2 md:px-4 py-2 md:py-4 shadow-lg flex flex-col justify-center"
               >
-                <div className="flex flex-col items-center gap-2">
-                  <div className="flex items-center justify-center flex-wrap gap-2">
-                    <h2 className="text-center text-xl font-bold text-roadmap-text-primary">{header.quarter}</h2>
+                <div className="flex flex-col items-center gap-1 md:gap-2">
+                  <div className="flex items-center justify-center flex-wrap gap-1 md:gap-2">
+                    <h2 className="text-center text-sm md:text-xl font-bold text-roadmap-text-primary">
+                      {header.quarter}
+                    </h2>
 
                     {header.status === "delivered" && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-green-500/20 px-2 py-0.5 text-xs font-semibold text-green-400 border border-green-500/30">
-                        <Check className="size-3" />
-                        Delivered
+                      <span className="inline-flex items-center gap-0.5 md:gap-1 rounded-full bg-green-500/20 px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-semibold text-green-400 border border-green-500/30">
+                        <Check className="size-2.5 md:size-3" />
+                        <span className="hidden sm:inline">Delivered</span>
                       </span>
                     )}
                     {header.status === "in-progress" && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/20 px-2 py-0.5 text-xs font-semibold text-blue-400 border border-blue-500/30">
-                        <Clock className="size-3" />
-                        In Progress
+                      <span className="inline-flex items-center gap-0.5 md:gap-1 rounded-full bg-blue-500/20 px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-semibold text-blue-400 border border-blue-500/30">
+                        <Clock className="size-2.5 md:size-3" />
+                        <span className="hidden sm:inline">In Progress</span>
                       </span>
                     )}
                     {header.status === "upcoming" && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-purple-500/20 px-2 py-0.5 text-xs font-semibold text-purple-400 border border-purple-500/30">
-                        <Calendar className="size-3" />
-                        Upcoming
+                      <span className="inline-flex items-center gap-0.5 md:gap-1 rounded-full bg-purple-500/20 px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-semibold text-purple-400 border border-purple-500/30">
+                        <Calendar className="size-2.5 md:size-3" />
+                        <span className="hidden sm:inline">Upcoming</span>
                       </span>
                     )}
                   </div>
 
-                  <div className="text-sm font-medium text-roadmap-text-secondary">
-                    {getQuarterTotal(header.quarter)} features
+                  <div className="text-xs md:text-sm font-medium text-roadmap-text-secondary">
+                    {getQuarterTotal(header.quarter)} <span className="hidden sm:inline">features</span>
                   </div>
                 </div>
               </div>
@@ -251,21 +269,23 @@ export function RoadmapGrid() {
         onScroll={() => syncScroll("body")}
         className="overflow-x-auto overflow-y-visible [scrollbar-gutter:stable]"
       >
-        <div className="space-y-4" style={{ width: contentWidth }}>
+        <div className="space-y-3 md:space-y-4" style={{ width: contentWidth }}>
           {suites.map((suite) => (
             <div
               key={suite.name}
-              className="grid gap-6 pb-6 border-b border-roadmap-border/30 last:border-b-0"
+              className="grid gap-3 md:gap-6 pb-4 md:pb-6 border-b border-roadmap-border/30 last:border-b-0"
               style={gridColsStyle}
             >
-              <div className="sticky left-0 z-40 rounded-lg border border-roadmap-border bg-roadmap-background/90 backdrop-blur-sm p-4 flex items-start gap-4 shadow-md">
+              <div className="sticky left-0 z-40 rounded-lg border border-roadmap-border bg-roadmap-background/90 backdrop-blur-sm p-2 md:p-4 flex items-start gap-2 md:gap-4 shadow-md">
                 <div
-                  className="mt-1 size-4 shrink-0 rounded-full ring-2 ring-offset-2 ring-offset-roadmap-background ring-current/30"
+                  className="mt-0.5 md:mt-1 size-3 md:size-4 shrink-0 rounded-full ring-2 ring-offset-2 ring-offset-roadmap-background ring-current/30"
                   style={{ backgroundColor: getBorderColor(suite.color) }}
                 />
                 <div>
-                  <h3 className="text-xl font-bold text-roadmap-text-primary mb-2">{suite.name}</h3>
-                  <p className="text-sm text-roadmap-text-secondary leading-relaxed">{suite.description}</p>
+                  <h3 className="text-sm md:text-xl font-bold text-roadmap-text-primary mb-1 md:mb-2">{suite.name}</h3>
+                  <p className="text-xs md:text-sm text-roadmap-text-secondary leading-relaxed hidden md:block">
+                    {suite.description}
+                  </p>
                 </div>
               </div>
 
@@ -277,18 +297,20 @@ export function RoadmapGrid() {
                     className="border-l-4 border-t border-r border-b border-roadmap-border bg-roadmap-surface/60 backdrop-blur-sm transition-all hover:border-roadmap-border-hover hover:shadow-lg"
                     style={{ borderLeftColor: getBorderColor(suite.color) }}
                   >
-                    <CardContent className="p-5">
+                    <CardContent className="p-2 md:p-5">
                       {features.length > 0 ? (
-                        <ul className="space-y-3">
+                        <ul className="space-y-1.5 md:space-y-3">
                           {features.map((feature, index) => (
-                            <li key={index} className="flex items-start gap-3 text-sm">
-                              <span className="mt-1.5 size-2 shrink-0 rounded-full bg-roadmap-text-secondary" />
+                            <li key={index} className="flex items-start gap-1.5 md:gap-3 text-xs md:text-sm">
+                              <span className="mt-1 md:mt-1.5 size-1.5 md:size-2 shrink-0 rounded-full bg-roadmap-text-secondary" />
                               <span className="leading-relaxed text-roadmap-text-primary">{feature}</span>
                             </li>
                           ))}
                         </ul>
                       ) : (
-                        <div className="text-center text-sm text-roadmap-text-secondary/50 py-4">No features</div>
+                        <div className="text-center text-xs md:text-sm text-roadmap-text-secondary/50 py-2 md:py-4">
+                          No features
+                        </div>
                       )}
                     </CardContent>
                   </Card>
