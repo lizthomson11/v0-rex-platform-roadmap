@@ -1,8 +1,7 @@
 "use client"
 
 import React from "react"
-
-import { Check, Clock, Calendar } from "lucide-react"
+import { Check, Clock, Calendar, Users, Star, Shield, Settings, BarChart3 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 
 const suites = [
@@ -143,10 +142,32 @@ const quarterHeaders = [
 ]
 
 const LEFT_COL_DESKTOP = 300
-const LEFT_COL_MOBILE = 200
+const LEFT_COL_MOBILE = 60
 const COL_WIDTH_DESKTOP = 280
 const COL_WIDTH_MOBILE = 240
 const GAP = 24 // gap-6 in pixels
+
+const getSuiteIcon = (name: string) => {
+  const icons: Record<string, React.ReactNode> = {
+    CRM: <Users className="size-5" />,
+    Experience: <Star className="size-5" />,
+    "Access Control (PAIR)": <Shield className="size-5" />,
+    Operations: <Settings className="size-5" />,
+    Intelligence: <BarChart3 className="size-5" />,
+  }
+  return icons[name] || <Users className="size-5" />
+}
+
+const getBorderColor = (color: string) => {
+  const colors: Record<string, string> = {
+    "suite-crm": "oklch(0.65 0.2 240)",
+    "suite-experience": "oklch(0.60 0.18 310)",
+    "suite-operations": "oklch(0.70 0.15 200)",
+    "suite-intelligence": "oklch(0.75 0.18 90)",
+    "suite-access": "oklch(0.68 0.20 150)",
+  }
+  return colors[color] || "oklch(0.70 0.15 240)"
+}
 
 export function RoadmapGrid() {
   const colCount = quarterHeaders.length
@@ -193,17 +214,6 @@ export function RoadmapGrid() {
     }, 0)
   }
 
-  const getBorderColor = (color: string) => {
-    const colors: Record<string, string> = {
-      "suite-crm": "oklch(0.65 0.2 240)",
-      "suite-experience": "oklch(0.60 0.18 310)",
-      "suite-operations": "oklch(0.70 0.15 200)",
-      "suite-intelligence": "oklch(0.75 0.18 90)",
-      "suite-access": "oklch(0.68 0.20 150)",
-    }
-    return colors[color] || "oklch(0.70 0.15 240)"
-  }
-
   const contentWidth = LEFT_COL + colCount * COL_WIDTH + colCount * GAP
 
   const gridColsStyle: React.CSSProperties = {
@@ -220,7 +230,8 @@ export function RoadmapGrid() {
         >
           <div className="grid gap-3 md:gap-6" style={{ ...gridColsStyle, width: contentWidth }}>
             <div className="sticky left-0 z-[60] rounded-lg border border-roadmap-border bg-roadmap-background/90 backdrop-blur-xl px-2 md:px-4 py-2 md:py-4 flex items-center justify-center shadow-lg">
-              <h2 className="text-base md:text-xl font-bold text-roadmap-text-primary">Suite</h2>
+              <h2 className="hidden md:block text-xl font-bold text-roadmap-text-primary">Suite</h2>
+              <span className="md:hidden text-xs font-bold text-roadmap-text-secondary">Suite</span>
             </div>
 
             {quarterHeaders.map((header) => (
@@ -276,17 +287,20 @@ export function RoadmapGrid() {
               className="grid gap-3 md:gap-6 pb-4 md:pb-6 border-b border-roadmap-border/30 last:border-b-0"
               style={gridColsStyle}
             >
-              <div className="sticky left-0 z-40 rounded-lg border border-roadmap-border bg-roadmap-background/90 backdrop-blur-sm p-2 md:p-4 flex items-start gap-2 md:gap-4 shadow-md">
+              <div className="sticky left-0 z-40 rounded-lg border border-roadmap-border bg-roadmap-background/90 backdrop-blur-sm p-2 md:p-4 flex flex-col md:flex-row items-center md:items-start gap-1 md:gap-4 shadow-md">
                 <div
-                  className="mt-0.5 md:mt-1 size-3 md:size-4 shrink-0 rounded-full ring-2 ring-offset-2 ring-offset-roadmap-background ring-current/30"
+                  className="size-8 md:size-4 shrink-0 rounded-full ring-2 ring-offset-2 ring-offset-roadmap-background ring-current/30 flex items-center justify-center md:mt-1"
                   style={{ backgroundColor: getBorderColor(suite.color) }}
-                />
-                <div>
-                  <h3 className="text-sm md:text-xl font-bold text-roadmap-text-primary mb-1 md:mb-2">{suite.name}</h3>
-                  <p className="text-xs md:text-sm text-roadmap-text-secondary leading-relaxed hidden md:block">
-                    {suite.description}
-                  </p>
+                >
+                  <span className="md:hidden text-white">{getSuiteIcon(suite.name)}</span>
                 </div>
+                <div className="hidden md:block">
+                  <h3 className="text-xl font-bold text-roadmap-text-primary mb-2">{suite.name}</h3>
+                  <p className="text-sm text-roadmap-text-secondary leading-relaxed">{suite.description}</p>
+                </div>
+                <span className="md:hidden text-[10px] font-semibold text-roadmap-text-secondary text-center leading-tight">
+                  {suite.name.split(" ")[0]}
+                </span>
               </div>
 
               {quarterHeaders.map((header) => {
