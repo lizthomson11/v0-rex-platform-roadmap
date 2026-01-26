@@ -142,10 +142,6 @@ const quarterHeaders = [
   { quarter: "Q4 2026", status: "upcoming" as const },
 ]
 
-const LEFT_COL_DESKTOP = 300
-const LEFT_COL_MOBILE = 60
-const COL_WIDTH_DESKTOP = 280
-const COL_WIDTH_MOBILE = 240
 const GAP = 24 // gap-6 in pixels
 
 const getSuiteIcon = (name: string) => {
@@ -170,6 +166,25 @@ const getBorderColor = (color: string) => {
   return colors[color] || "oklch(0.70 0.15 240)"
 }
 
+const getResponsiveWidths = (windowWidth: number) => {
+  if (windowWidth < 768) {
+    // Mobile - keep columns readable and swipeable
+    return { leftCol: 260, colWidth: 260 }
+  } else if (windowWidth < 1024) {
+    // Tablet
+    return { leftCol: 280, colWidth: 260 }
+  } else if (windowWidth < 1440) {
+    // Desktop - slightly smaller columns to fit more
+    return { leftCol: 300, colWidth: 250 }
+  } else if (windowWidth < 1920) {
+    // Large desktop - even smaller to show 5+ quarters
+    return { leftCol: 320, colWidth: 240 }
+  } else {
+    // Extra large screens (2xl/3xl) - compact columns to show 6+ quarters
+    return { leftCol: 340, colWidth: 230 }
+  }
+}
+
 export function RoadmapGrid() {
   const colCount = quarterHeaders.length
 
@@ -177,20 +192,21 @@ export function RoadmapGrid() {
   const bodyScrollRef = React.useRef<HTMLDivElement | null>(null)
   const syncingRef = React.useRef<"header" | "body" | null>(null)
 
+  const [windowWidth, setWindowWidth] = React.useState(typeof window !== "undefined" ? window.innerWidth : 1024)
   const [isMobile, setIsMobile] = React.useState(false)
   const [searchQuery, setSearchQuery] = React.useState("")
 
   React.useEffect(() => {
-    const checkMobile = () => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth)
       setIsMobile(window.innerWidth < 768)
     }
-    checkMobile()
-    window.addEventListener("resize", checkMobile)
-    return () => window.removeEventListener("resize", checkMobile)
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  const LEFT_COL = isMobile ? LEFT_COL_MOBILE : LEFT_COL_DESKTOP
-  const COL_WIDTH = isMobile ? COL_WIDTH_MOBILE : COL_WIDTH_DESKTOP
+  const { leftCol: LEFT_COL, colWidth: COL_WIDTH } = getResponsiveWidths(windowWidth)
 
   const syncScroll = (source: "header" | "body") => {
     const headerEl = headerScrollRef.current
