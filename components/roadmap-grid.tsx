@@ -166,22 +166,25 @@ const getBorderColor = (color: string) => {
   return colors[color] || "oklch(0.70 0.15 240)"
 }
 
-const getResponsiveWidths = (windowWidth: number) => {
+const getResponsiveWidths = (windowWidth: number, colCount: number) => {
+  // Calculate available width after accounting for padding and suite column
+  const padding = windowWidth < 768 ? 16 : 48 // px-2 or px-6
+  const availableWidth = windowWidth - padding
+  
   if (windowWidth < 768) {
-    // Mobile - keep columns readable and swipeable
-    return { leftCol: 260, colWidth: 260 }
+    // Mobile - fixed widths, horizontal scroll
+    return { leftCol: 80, colWidth: 200 }
   } else if (windowWidth < 1024) {
-    // Tablet
-    return { leftCol: 280, colWidth: 260 }
-  } else if (windowWidth < 1440) {
-    // Desktop - slightly smaller columns to fit more
-    return { leftCol: 300, colWidth: 250 }
-  } else if (windowWidth < 1920) {
-    // Large desktop - even smaller to show 5+ quarters
-    return { leftCol: 320, colWidth: 240 }
+    // Tablet - fixed widths, horizontal scroll
+    return { leftCol: 200, colWidth: 240 }
   } else {
-    // Extra large screens (2xl/3xl) - compact columns to show 6+ quarters
-    return { leftCol: 340, colWidth: 230 }
+    // Desktop+ - try to fit as many columns as possible
+    const leftCol = windowWidth < 1440 ? 280 : windowWidth < 1920 ? 300 : 320
+    const remainingWidth = availableWidth - leftCol - (colCount * GAP)
+    const idealColWidth = Math.floor(remainingWidth / colCount)
+    // Clamp column width between 180 and 300
+    const colWidth = Math.max(180, Math.min(300, idealColWidth))
+    return { leftCol, colWidth }
   }
 }
 
@@ -206,7 +209,7 @@ export function RoadmapGrid() {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  const { leftCol: LEFT_COL, colWidth: COL_WIDTH } = getResponsiveWidths(windowWidth)
+  const { leftCol: LEFT_COL, colWidth: COL_WIDTH } = getResponsiveWidths(windowWidth, colCount)
 
   const syncScroll = (source: "header" | "body") => {
     const headerEl = headerScrollRef.current
@@ -244,7 +247,9 @@ export function RoadmapGrid() {
     )
   }
 
-  const contentWidth = LEFT_COL + colCount * COL_WIDTH + colCount * GAP
+  // Calculate content width based on responsive column widths
+  // On larger screens, we want the grid to fill available space rather than scroll
+  const contentWidth = LEFT_COL + colCount * (COL_WIDTH + GAP)
 
   const gridColsStyle: React.CSSProperties = {
     gridTemplateColumns: `${LEFT_COL}px repeat(${colCount}, ${COL_WIDTH}px)`,
