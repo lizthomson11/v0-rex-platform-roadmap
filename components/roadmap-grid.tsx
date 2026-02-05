@@ -145,6 +145,7 @@ const quarterHeaders = [
 const LEFT_COL_DESKTOP = 300
 const LEFT_COL_MOBILE = 60
 const COL_WIDTH_DESKTOP = 280
+const COL_WIDTH_DESKTOP_WIDE = 240
 const COL_WIDTH_MOBILE = 240
 const GAP = 24 // gap-6 in pixels
 
@@ -178,19 +179,26 @@ export function RoadmapGrid() {
   const syncingRef = React.useRef<"header" | "body" | null>(null)
 
   const [isMobile, setIsMobile] = React.useState(false)
+  const [viewportWidth, setViewportWidth] = React.useState(0)
   const [searchQuery, setSearchQuery] = React.useState("")
 
   React.useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
+    const handleResize = () => {
+      const width = window.innerWidth
+      setIsMobile(width < 768)
+      setViewportWidth(width)
     }
-    checkMobile()
-    window.addEventListener("resize", checkMobile)
-    return () => window.removeEventListener("resize", checkMobile)
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
   }, [])
 
   const LEFT_COL = isMobile ? LEFT_COL_MOBILE : LEFT_COL_DESKTOP
-  const COL_WIDTH = isMobile ? COL_WIDTH_MOBILE : COL_WIDTH_DESKTOP
+  const COL_WIDTH = isMobile
+    ? COL_WIDTH_MOBILE
+    : viewportWidth >= 1536
+      ? COL_WIDTH_DESKTOP_WIDE
+      : COL_WIDTH_DESKTOP
 
   const syncScroll = (source: "header" | "body") => {
     const headerEl = headerScrollRef.current
@@ -237,7 +245,7 @@ export function RoadmapGrid() {
   const filteredSuites = searchQuery.trim() ? suites.filter(suiteHasMatchingFeatures) : suites
 
   return (
-    <div className="w-full px-2 md:px-6">
+    <div className="w-full px-2 md:px-6 lg:px-0">
       <div className="mb-4 md:mb-6">
         <div className="relative max-w-md mx-auto">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-roadmap-text-secondary" />
@@ -262,13 +270,18 @@ export function RoadmapGrid() {
             Showing results for "{searchQuery}" in {filteredSuites.length} suite(s)
           </p>
         )}
+        {!searchQuery && (
+          <p className="text-center text-xs md:text-sm text-roadmap-text-secondary/80 mt-2">
+            {isMobile ? "Swipe horizontally to see more quarters →" : "Scroll horizontally to see more quarters →"}
+          </p>
+        )}
       </div>
 
       <div className="sticky top-0 z-50 bg-roadmap-background/90 backdrop-blur-xl pb-2 md:pb-4 shadow-lg">
         <div
           ref={headerScrollRef}
           onScroll={() => syncScroll("header")}
-          className="overflow-x-auto overflow-y-hidden [scrollbar-gutter:stable]"
+          className="overflow-x-auto overflow-y-hidden bg-roadmap-background pl-2 md:pl-4 [scrollbar-gutter:stable]"
         >
           <div className="grid gap-3 md:gap-6" style={{ ...gridColsStyle, width: contentWidth }}>
             <div className="sticky left-0 z-[60] rounded-lg border border-roadmap-border bg-roadmap-background/90 backdrop-blur-xl px-2 md:px-4 py-2 md:py-4 flex items-center justify-center shadow-lg">
@@ -294,7 +307,7 @@ export function RoadmapGrid() {
                       </span>
                     )}
                     {header.status === "in-progress" && (
-                      <span className="inline-flex items-center gap-0.5 md:gap-1 rounded-full bg-blue-600 px-1.5 md:px-2.5 py-0.5 md:py-1 text-[10px] md:text-xs font-bold text-white shadow-sm animate-pulse">
+                      <span className="inline-flex items-center gap-0.5 md:gap-1 rounded-full bg-blue-600 px-1.5 md:px-2.5 py-0.5 md:py-1 text-[10px] md:text-xs font-bold text-white shadow-sm">
                         <Clock className="size-2.5 md:size-3.5" strokeWidth={3} />
                         <span className="hidden sm:inline">In Progress</span>
                       </span>
@@ -320,7 +333,7 @@ export function RoadmapGrid() {
       <div
         ref={bodyScrollRef}
         onScroll={() => syncScroll("body")}
-        className="overflow-x-auto overflow-y-visible [scrollbar-gutter:stable]"
+        className="overflow-x-auto overflow-y-visible bg-roadmap-background pl-2 md:pl-4 [scrollbar-gutter:stable]"
       >
         <div className="space-y-3 md:space-y-4" style={{ width: contentWidth }}>
           {filteredSuites.map((suite) => (
@@ -329,7 +342,7 @@ export function RoadmapGrid() {
               className="grid gap-3 md:gap-6 pb-4 md:pb-6 border-b border-roadmap-border/30 last:border-b-0"
               style={gridColsStyle}
             >
-              <div className="sticky left-0 z-40 rounded-lg border border-roadmap-border bg-roadmap-background/90 backdrop-blur-sm p-2 md:p-4 flex flex-col md:flex-row items-center md:items-start gap-1 md:gap-4 shadow-md">
+              <div className="sticky left-0 z-40 rounded-lg border border-roadmap-border bg-roadmap-background/90 backdrop-blur-sm p-2 pl-3 md:p-4 md:pl-6 flex flex-col md:flex-row items-center md:items-start gap-1 md:gap-4 shadow-md">
                 <div
                   className="size-8 md:size-4 shrink-0 rounded-full ring-2 ring-offset-2 ring-offset-roadmap-background ring-current/30 flex items-center justify-center md:mt-1"
                   style={{ backgroundColor: getBorderColor(suite.color) }}
@@ -359,9 +372,9 @@ export function RoadmapGrid() {
                     <CardContent className="p-2 md:p-5">
                       {features.length > 0 ? (
                         <>
-                          <ul className="space-y-1.5 md:space-y-3">
+                          <ul className="space-y-1 md:space-y-2">
                             {features.map((feature, index) => (
-                              <li key={index} className="flex items-start gap-1.5 md:gap-3 text-xs md:text-sm">
+                              <li key={index} className="flex items-start gap-1.5 md:gap-3 text-xs md:text-sm leading-snug">
                                 <span className="mt-1 md:mt-1.5 size-1.5 md:size-2 shrink-0 rounded-full bg-roadmap-text-secondary" />
                                 <span className="leading-relaxed text-roadmap-text-primary">
                                   {searchQuery ? <HighlightText text={feature} highlight={searchQuery} /> : feature}

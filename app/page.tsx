@@ -22,8 +22,8 @@ export default function Page() {
             2025–2026 Product Development Timeline
           </p>
         </div>
-        <RoadmapGrid />
       </div>
+      <RoadmapGrid />
     </div>
   )
 }

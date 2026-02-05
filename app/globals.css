@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(1 0 0);
+  --background: #000000;
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -39,9 +39,9 @@
   --sidebar-ring: oklch(0.708 0 0);
 
   /* Added semantic tokens for roadmap-specific colors */
-  --roadmap-background: oklch(0.125 0.015 256);
-  --roadmap-surface: oklch(0.18 0.012 256 / 0.5);
-  --roadmap-surface-hover: oklch(0.22 0.012 256 / 0.6);
+  --roadmap-background: #000000;
+  --roadmap-surface: #000000;
+  --roadmap-surface-hover: #000000;
   /* Increased text brightness from 0.98 to 0.96 and 0.85 to 0.92 for better contrast */
   --roadmap-text-primary: oklch(0.96 0 0);
   --roadmap-text-secondary: oklch(0.92 0.006 256);
@@ -58,7 +58,7 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: #000000;
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.145 0 0);
   --card-foreground: oklch(0.985 0 0);
@@ -92,9 +92,9 @@
   --sidebar-ring: oklch(0.439 0 0);
 
   /* Roadmap tokens remain the same for dark mode (already optimized) */
-  --roadmap-background: oklch(0.125 0.015 256);
-  --roadmap-surface: oklch(0.18 0.012 256 / 0.5);
-  --roadmap-surface-hover: oklch(0.22 0.012 256 / 0.6);
+  --roadmap-background: #000000;
+  --roadmap-surface: #000000;
+  --roadmap-surface-hover: #000000;
   /* Increased text brightness for better contrast in dark mode */
   --roadmap-text-primary: oklch(0.96 0 0);
   --roadmap-text-secondary: oklch(0.92 0.006 256);
