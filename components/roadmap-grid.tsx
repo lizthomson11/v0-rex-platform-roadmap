@@ -13,7 +13,7 @@ const suites = [
     quarters: {
       "Q3 2025": ["Contacts – Key Contacts", "Contacts – Contact Notes"],
       "Q4 2025": ["Data Management – Building Object & Table", "Data Management – Tagging Framework"],
-      "Q1 2026": ["Contacts – Contact Tracking", "Leases - Yardi integration"],
+      "Q1 2026": ["Leases - Yardi integration"],
       "Q2 2026": ["Data Management – Pipeline & Lease Object"],
       "Q3 2026": ["Leases – Lease Terms with Credits", "Data Management – Custom Objects & Fields"],
       "Q4 2026": ["Tours – Brochure & Tour Content Tools", "Onboarding – Customizable Tenant Onboarding Workflows"],
@@ -31,8 +31,8 @@ const suites = [
         "Communication – Rich Content",
         "Communication – Newsletters",
       ],
-      "Q1 2026": ["Events – Flexible Payment Routing", "Experience – Automated Localized Posts"],
-      "Q2 2026": ["Events – Multi-day Events", "Events – Automated Feedback"],
+      "Q1 2026": ["Experience – Automated Localized Posts"],
+      "Q2 2026": ["Events – Flexible Payment Routing", "Events – Multi-day Events", "Events – Automated Feedback"],
       "Q3 2026": [
         "Web Experience – Public Property Page",
         "Web Experience – Public Registration",
@@ -86,13 +86,14 @@ const suites = [
         "Resource Booking – Combined Meeting Rooms",
       ],
       "Q1 2026": [
-        "Service Requests – Inventory & Inspections",
+        "Service Requests – Inventory",
         "Service Requests – Pricing & Payments",
         "Service Requests – Automated Feedback",
         "Resource Booking – Credits",
         "Resource Booking – Cancellation & Preset Refunds",
       ],
       "Q2 2026": [
+        "Service Requests – Inspections",
         "Resource Booking – Automated Feedback",
         "Resource Booking – Office 365 (Outlook) Integration",
         "Resource Booking – Tripleseat Integration",
@@ -119,9 +120,9 @@ const suites = [
         "Reporting – New Access Performance Reports",
         "Reporting – New Content Performance Reports",
         "Reporting – Sentiment & Feedback Analysis",
-        "Reporting – New Communications Reports",
       ],
       "Q2 2026": [
+        "Reporting – New Communications Reports",
         "Reporting – New Service Request Performance Reports",
         "Reporting – New Event Performance Reports",
         "Reporting – New Resource Booking Performance Reports",
