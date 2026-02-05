@@ -5,6 +5,12 @@ import { Check, Clock, Calendar, Users, Star, Shield, Settings, BarChart3, Searc
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
+const GAP_MOBILE = 12 // gap-3
+const GAP_DESKTOP = 24 // gap-6
+const GAP = window.innerWidth < 768 ? GAP_MOBILE : GAP_DESKTOP // Declare GAP variable
+const LEFT_COL = 200 // Declare LEFT_COL variable
+const COL_WIDTH = 200 // Declare COL_WIDTH variable
+
 const suites = [
   {
     name: "CRM",
@@ -143,7 +149,11 @@ const quarterHeaders = [
   { quarter: "Q4 2026", status: "upcoming" as const },
 ]
 
-const GAP = 24 // gap-6 in pixels
+const SUITE_MIN = 260
+const SUITE_DESKTOP = 300
+const Q_MIN_MOBILE = 240
+const Q_MIN_DESKTOP = 200
+const Q_MAX = 320
 
 const getSuiteIcon = (name: string) => {
   const icons: Record<string, React.ReactNode> = {
@@ -167,25 +177,32 @@ const getBorderColor = (color: string) => {
   return colors[color] || "oklch(0.70 0.15 240)"
 }
 
-const getResponsiveWidths = (windowWidth: number, colCount: number) => {
-  // Calculate available width after accounting for padding and suite column
-  const padding = windowWidth < 768 ? 16 : 48 // px-2 or px-6
-  const availableWidth = windowWidth - padding
+const getResponsiveWidths = (viewportWidth: number, colCount: number) => {
+  const padding = viewportWidth < 768 ? 16 : 48 // px-2 or px-6
+  const gap = viewportWidth < 768 ? GAP_MOBILE : GAP_DESKTOP
   
-  if (windowWidth < 768) {
+  if (viewportWidth < 768) {
     // Mobile - fixed widths, horizontal scroll
-    return { leftCol: 80, colWidth: 200 }
-  } else if (windowWidth < 1024) {
-    // Tablet - fixed widths, horizontal scroll
-    return { leftCol: 200, colWidth: 240 }
+    return { 
+      suiteWidth: SUITE_MIN, 
+      quarterWidth: Q_MIN_MOBILE, 
+      gap 
+    }
+  } else if (viewportWidth < 1024) {
+    // Tablet - fixed widths, horizontal scroll  
+    return { 
+      suiteWidth: SUITE_MIN, 
+      quarterWidth: Q_MIN_MOBILE, 
+      gap 
+    }
   } else {
-    // Desktop+ - try to fit as many columns as possible
-    const leftCol = windowWidth < 1440 ? 280 : windowWidth < 1920 ? 300 : 320
-    const remainingWidth = availableWidth - leftCol - (colCount * GAP)
-    const idealColWidth = Math.floor(remainingWidth / colCount)
-    // Clamp column width between 180 and 300
-    const colWidth = Math.max(180, Math.min(300, idealColWidth))
-    return { leftCol, colWidth }
+    // Desktop+ - compute quarter width to fill available space
+    const suiteWidth = SUITE_DESKTOP
+    const availableWidth = viewportWidth - padding - suiteWidth - (gap * colCount)
+    const idealQuarterWidth = Math.floor(availableWidth / colCount)
+    // Clamp between min and max
+    const quarterWidth = Math.max(Q_MIN_DESKTOP, Math.min(Q_MAX, idealQuarterWidth))
+    return { suiteWidth, quarterWidth, gap }
   }
 }
 
@@ -199,18 +216,20 @@ export function RoadmapGrid() {
   const [windowWidth, setWindowWidth] = React.useState(typeof window !== "undefined" ? window.innerWidth : 1024)
   const [isMobile, setIsMobile] = React.useState(false)
   const [searchQuery, setSearchQuery] = React.useState("")
+  const [contentWidth, setContentWidth] = React.useState(0)
 
   React.useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth)
       setIsMobile(window.innerWidth < 768)
+      setContentWidth(window.innerWidth)
     }
     handleResize()
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  const { leftCol: LEFT_COL, colWidth: COL_WIDTH } = getResponsiveWidths(windowWidth, colCount)
+  const { suiteWidth, quarterWidth, gap } = getResponsiveWidths(windowWidth, colCount)
 
   const syncScroll = (source: "header" | "body") => {
     const headerEl = headerScrollRef.current
@@ -248,12 +267,10 @@ export function RoadmapGrid() {
     )
   }
 
-  // Calculate content width based on responsive column widths
-  // On larger screens, we want the grid to fill available space rather than scroll
-  const contentWidth = LEFT_COL + colCount * (COL_WIDTH + GAP)
-
   const gridColsStyle: React.CSSProperties = {
-    gridTemplateColumns: `${LEFT_COL}px repeat(${colCount}, ${COL_WIDTH}px)`,
+    gridTemplateColumns: `${suiteWidth}px repeat(${colCount}, ${quarterWidth}px)`,
+    minWidth: "100%",
+    width: "max-content",
   }
 
   const filteredSuites = searchQuery.trim() ? suites.filter(suiteHasMatchingFeatures) : suites
@@ -292,7 +309,7 @@ export function RoadmapGrid() {
           onScroll={() => syncScroll("header")}
           className="overflow-x-auto overflow-y-hidden [scrollbar-gutter:stable]"
         >
-          <div className="grid gap-3 md:gap-6" style={{ ...gridColsStyle, width: contentWidth }}>
+          <div className={`grid gap-${gap === GAP_MOBILE ? '3' : '6'}`} style={gridColsStyle}>
             <div className="sticky left-0 z-[60] rounded-lg border border-roadmap-border bg-roadmap-background/90 backdrop-blur-xl px-2 md:px-4 py-2 md:py-4 flex items-center justify-center shadow-lg">
               <h2 className="hidden md:block text-xl font-bold text-roadmap-text-primary">Suite</h2>
               <span className="md:hidden text-xs font-bold text-roadmap-text-secondary">Suite</span>
@@ -344,11 +361,11 @@ export function RoadmapGrid() {
         onScroll={() => syncScroll("body")}
         className="overflow-x-auto overflow-y-visible [scrollbar-gutter:stable]"
       >
-        <div className="space-y-3 md:space-y-4" style={{ width: contentWidth }}>
+        <div className="space-y-3 md:space-y-4">
           {filteredSuites.map((suite) => (
             <div
               key={suite.name}
-              className="grid gap-3 md:gap-6 pb-4 md:pb-6 border-b border-roadmap-border/30 last:border-b-0"
+              className={`grid gap-${gap === GAP_MOBILE ? '3' : '6'} pb-4 md:pb-6 border-b border-roadmap-border/30 last:border-b-0`}
               style={gridColsStyle}
             >
               <div className="sticky left-0 z-40 rounded-lg border border-roadmap-border bg-roadmap-background/90 backdrop-blur-sm p-2 md:p-4 flex flex-col md:flex-row items-center md:items-start gap-1 md:gap-4 shadow-md">
