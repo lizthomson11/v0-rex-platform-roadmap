@@ -48,7 +48,6 @@ const suites = [
     color: "suite-access",
     quarters: {
       "Q3 2025": [
-        "Access Control – AMAG Integration",
         "Visitor Management – Loading Dock Support",
         "Visitor Management – Wallet Visitor Pass (Wavelynx)",
         "Visitor Management – Reporting Enhancements",
@@ -59,11 +58,17 @@ const suites = [
         "Visitor Management – Automated Visitor Passes via Bookings",
       ],
       "Q1 2026": [
+        "Access Control – AMAG Integration",
         "Access Control – Integriti Integration",
         "Visitor Management – Tenant-Initiated Vendor Visit Requests",
         "Visitor Management – Kiosk & Self-Service Check-in",
       ],
-      "Q2 2026": ["Access Control – Brivo Integration", "Access Control – Kastle Integration"],
+      "Q2 2026": [
+        "Access Control – Brivo Integration",
+        "Access Control – Kastle Integration",
+        "Access Control – Genetec Integration",
+        "Visitor Management – Genetec Integration",
+      ],
       "Q3 2026": ["Access Control – Command Center Activity & Audit Logs"],
       "Q4 2026": ["Access Control – Command Center Unified Credential Visibility"],
     },
@@ -245,7 +250,7 @@ export function RoadmapGrid() {
   const filteredSuites = searchQuery.trim() ? suites.filter(suiteHasMatchingFeatures) : suites
 
   return (
-    <div className="w-full px-2 md:px-6 lg:px-0">
+    <div className="w-full px-2 md:px-6 lg:px-0 2xl:px-6">
       <div className="mb-4 md:mb-6">
         <div className="relative max-w-md mx-auto">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-roadmap-text-secondary" />
