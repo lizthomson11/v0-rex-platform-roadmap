@@ -63,7 +63,7 @@ const suites = [
         "Visitor Management – Tenant-Initiated Vendor Visit Requests",
         "Visitor Management – Kiosk & Self-Service Check-in",
       ],
-      "Q2 2026": ["Access Control – AMAG Integration", "Access Control – Brivo Integration", "Access Control – Kastle Integration"],
+      "Q2 2026": ["Access Control – AMAG Integration", "Visitor Management – AMAG Integration", "Access Control – Brivo Integration", "Access Control – Kastle Integration"],
       "Q3 2026": ["Access Control – Command Center Activity & Audit Logs"],
       "Q4 2026": ["Access Control – Command Center Unified Credential Visibility"],
     },
