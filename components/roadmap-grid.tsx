@@ -96,8 +96,8 @@ const suites = [
       "2025": [
         "Visitor Management – Loading Dock Support", "Visitor Management – Wallet Visitor Pass (Wavelynx)", "Visitor Management – Reporting Enhancements",
         "Visitor Management – Bulk Registration", "Visitor Management – Automated Visitor Passes via Bookings",
-        "Tenant Credentials – Wallet/NFC (Lenel, Genea, C-CURE, Genetec)",
-        "Visitor Credentials – QR Pass (Lenel, C-CURE, Genetec)",
+        "Tenant Credentials – Wallet/NFC (Lenel, Genea, C-CURE)",
+        "Visitor Credentials – QR Pass (Lenel, C-CURE)",
       ],
       "Q1 2026": [
         "Tenant Credentials – Wallet/NFC (AMAG, Integriti)",
@@ -106,10 +106,8 @@ const suites = [
         "Visitor Management – Kiosk & Self-Service Check-in",
       ],
       "Q2 2026": [
-        "Access Control – Brivo Integration",
-        "Access Control – Kastle Integration",
-        "Access Control – Genetec Integration",
-        "Visitor Management – Genetec Integration",
+        "Tenant Credentials – Wallet/NFC (Brivo, Kastle, Genetec)",
+        "Visitor Credentials – QR Pass (Brivo, Kastle, Genetec)",
       ],
       "Q3 2026": ["Access Control – Command Center Activity & Audit Logs"],
       "Q4 2026": ["Access Control – Command Center Unified Credential Visibility"],
