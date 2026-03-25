@@ -81,6 +81,10 @@ const suites = [
       "2025": [
         "Visitor Management – Loading Dock Support", "Visitor Management – Wallet Visitor Pass (Wavelynx)", "Visitor Management – Reporting Enhancements",
         "Access Control – Genetec Integration", "Visitor Management – Bulk Registration", "Visitor Management – Automated Visitor Passes via Bookings",
+        "Tenant Credentials – Wallet/NFC (Lenel OnGuard)", "Tenant Credentials – Wallet/NFC (Lenel NetBox)", "Tenant Credentials – Wallet/NFC (Genea)",
+        "Tenant Credentials – Wallet/NFC (C-CURE 9000)", "Tenant Credentials – Wallet/NFC (AMAG)", "Tenant Credentials – Wallet/NFC (Genetec)",
+        "Visitor Credentials – QR Pass (Lenel OnGuard)", "Visitor Credentials – QR Pass (Lenel NetBox)",
+        "Visitor Credentials – QR Pass (C-CURE 9000)", "Visitor Credentials – QR Pass (AMAG)", "Visitor Credentials – QR Pass (Genetec)", "Visitor Credentials – QR Pass (Integriti)",
       ],
       "Q1 2026": [
         "Access Control – AMAG Integration",
