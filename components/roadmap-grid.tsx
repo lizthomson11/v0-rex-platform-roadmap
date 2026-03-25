@@ -578,30 +578,19 @@ export function RoadmapGrid() {
                                     <div
                                       key={index}
                                       className={cn(
-                                        "animate-fade-in-up opacity-0 rounded-xl px-3 py-2.5 transition-all duration-200",
-                                        spotlight
-                                          ? "bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-orange-500/15 border border-amber-400/40 shadow-[0_0_20px_-8px_rgba(251,191,36,0.5)]"
-                                          : "bg-gradient-to-r from-cyan-500/15 via-teal-500/10 to-emerald-500/15 border border-cyan-400/30",
+                                        "animate-fade-in-up opacity-0 rounded-lg px-2.5 py-2 transition-all duration-200",
+                                        "bg-transparent border border-dashed border-roadmap-border/50 hover:border-roadmap-border",
                                         staggerClass,
                                       )}
                                     >
-                                      <div className={cn(
-                                        "text-[11px] font-medium mb-2 flex items-center gap-1",
-                                        spotlight ? "text-amber-200" : "text-cyan-200"
-                                      )}>
-                                        {spotlight && <Sparkles className="size-3 text-amber-400 animate-pulse-glow" />}
+                                      <div className="text-[10px] text-roadmap-text-secondary mb-1.5">
                                         {credentialData.label}
                                       </div>
                                       <div className="flex flex-wrap gap-1">
                                         {credentialData.acsSystems.map((acs, acsIndex) => (
                                           <span
                                             key={acsIndex}
-                                            className={cn(
-                                              "text-[9px] px-1.5 py-0.5 rounded-md border",
-                                              spotlight 
-                                                ? "bg-amber-500/20 text-amber-100 border-amber-400/30"
-                                                : "bg-white/10 text-roadmap-text-secondary border-white/10"
-                                            )}
+                                            className="text-[9px] px-1.5 py-0.5 rounded bg-roadmap-surface-hover/80 text-roadmap-text-primary border border-roadmap-border/30"
                                           >
                                             {acs}
                                           </span>
