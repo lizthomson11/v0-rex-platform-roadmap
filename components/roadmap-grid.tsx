@@ -95,7 +95,7 @@ const suites = [
     quarters: {
       "2025": [
         "Visitor Management – Loading Dock Support", "Visitor Management – Wallet Visitor Pass (Wavelynx)", "Visitor Management – Reporting Enhancements",
-        "Access Control – Genetec Integration", "Visitor Management – Bulk Registration", "Visitor Management – Automated Visitor Passes via Bookings",
+        "Visitor Management – Bulk Registration", "Visitor Management – Automated Visitor Passes via Bookings",
         "Tenant Credentials – Wallet/NFC (Lenel, Genea, C-CURE, Genetec)",
         "Visitor Credentials – QR Pass (Lenel, C-CURE, Genetec, Integriti)",
       ],
