@@ -19,6 +19,20 @@ function isSpotlightFeature(feature: string) {
   return SPOTLIGHT_FEATURES.has(feature)
 }
 
+/** Parse credential features to extract ACS systems */
+function parseCredentialFeature(feature: string): { label: string; acsSystems: string[] } | null {
+  const credentialMatch = feature.match(/^(Tenant Credentials|Visitor Credentials)\s*–\s*(.+?)\s*\((.+)\)$/)
+  if (credentialMatch) {
+    const [, type, method, acsString] = credentialMatch
+    const acsSystems = acsString.split(',').map(s => s.trim())
+    return {
+      label: `${type} – ${method}`,
+      acsSystems,
+    }
+  }
+  return null
+}
+
 /** Help documentation links for delivered features */
 function getHelpLink(feature: string): string | null {
   const lowerFeature = feature.toLowerCase()
@@ -536,6 +550,43 @@ export function RoadmapGrid() {
                                 const spotlight = isSpotlightFeature(feature)
                                 const isDelivered = quarter.status === "delivered"
                                 const helpLink = isDelivered ? getHelpLink(feature) : null
+                                const credentialData = parseCredentialFeature(feature)
+                                
+                                const staggerClass = cn(
+                                  index === 0 && "stagger-1",
+                                  index === 1 && "stagger-2",
+                                  index === 2 && "stagger-3",
+                                  index === 3 && "stagger-4",
+                                  index >= 4 && "stagger-5",
+                                )
+                                
+                                // Special rendering for credential features with ACS badges
+                                if (credentialData) {
+                                  return (
+                                    <div
+                                      key={index}
+                                      className={cn(
+                                        "animate-fade-in-up opacity-0 rounded-xl px-3 py-2.5 transition-all duration-200",
+                                        "bg-gradient-to-r from-cyan-500/15 via-teal-500/10 to-emerald-500/15 border border-cyan-400/30",
+                                        staggerClass,
+                                      )}
+                                    >
+                                      <div className="text-[11px] font-medium text-cyan-200 mb-2">
+                                        {credentialData.label}
+                                      </div>
+                                      <div className="flex flex-wrap gap-1">
+                                        {credentialData.acsSystems.map((acs, acsIndex) => (
+                                          <span
+                                            key={acsIndex}
+                                            className="text-[9px] px-1.5 py-0.5 rounded-md bg-white/10 text-roadmap-text-secondary border border-white/10"
+                                          >
+                                            {acs}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )
+                                }
                                 
                                 const pillClasses = cn(
                                   "animate-fade-in-up opacity-0 text-[11px] leading-snug rounded-full px-2.5 py-1.5 transition-all duration-200",
@@ -543,11 +594,7 @@ export function RoadmapGrid() {
                                     ? "bg-gradient-to-r from-amber-500/25 via-amber-500/15 to-orange-500/20 border border-amber-400/40 shadow-[0_0_20px_-8px_rgba(251,191,36,0.5)] hover:shadow-[0_0_25px_-5px_rgba(251,191,36,0.6)] hover:scale-[1.02]"
                                     : "bg-roadmap-surface-hover/60 border border-roadmap-border/30 hover:border-roadmap-border/50 hover:bg-roadmap-surface-hover",
                                   helpLink && "cursor-pointer hover:scale-[1.02]",
-                                  index === 0 && "stagger-1",
-                                  index === 1 && "stagger-2",
-                                  index === 2 && "stagger-3",
-                                  index === 3 && "stagger-4",
-                                  index >= 4 && "stagger-5",
+                                  staggerClass,
                                 )
                                 
                                 const pillContent = (
