@@ -8,8 +8,8 @@ import { cn } from "@/lib/utils"
 
 const SPOTLIGHT_FEATURES = new Set([
   "Resource Booking – Credits",
-  "Tenant Credentials – Wallet/NFC (AMAG)",
-  "Visitor Credentials – QR Pass (AMAG)",
+  "Tenant Credentials – Wallet/NFC (AMAG, Integriti)",
+  "Visitor Credentials – QR Pass (AMAG, Integriti)",
   "Service Requests – Teams, Catalogues & Routing",
   "Reporting – Tenant Health Score",
   "Leases – Lease Management",
@@ -97,12 +97,11 @@ const suites = [
         "Visitor Management – Loading Dock Support", "Visitor Management – Wallet Visitor Pass (Wavelynx)", "Visitor Management – Reporting Enhancements",
         "Visitor Management – Bulk Registration", "Visitor Management – Automated Visitor Passes via Bookings",
         "Tenant Credentials – Wallet/NFC (Lenel, Genea, C-CURE, Genetec)",
-        "Visitor Credentials – QR Pass (Lenel, C-CURE, Genetec, Integriti)",
+        "Visitor Credentials – QR Pass (Lenel, C-CURE, Genetec)",
       ],
       "Q1 2026": [
-        "Tenant Credentials – Wallet/NFC (AMAG)",
-        "Visitor Credentials – QR Pass (AMAG)",
-        "Access Control – Integriti Integration",
+        "Tenant Credentials – Wallet/NFC (AMAG, Integriti)",
+        "Visitor Credentials – QR Pass (AMAG, Integriti)",
         "Visitor Management – Tenant-Initiated Vendor Visit Requests",
         "Visitor Management – Kiosk & Self-Service Check-in",
       ],
