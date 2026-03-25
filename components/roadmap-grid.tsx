@@ -1,9 +1,43 @@
 "use client"
 
 import React from "react"
-import { Check, Clock, Calendar, Users, Star, Shield, Settings, BarChart3, Search, X } from "lucide-react"
+import { CircleCheck, Zap, Target, Search, X, Sparkles, ChevronLeft, ChevronsRight, ChevronUp, ChevronDown, ExternalLink } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
+
+const SPOTLIGHT_FEATURES = new Set([
+  "Resource Booking – Credits",
+  "Access Control – AMAG Integration",
+  "Service Requests – Teams, Catalogues & Routing",
+  "Reporting – Tenant Health Score",
+  "Leases – Lease Management",
+  "Events – Multi-day Events",
+])
+
+function isSpotlightFeature(feature: string) {
+  return SPOTLIGHT_FEATURES.has(feature)
+}
+
+/** Help documentation links for delivered features */
+function getHelpLink(feature: string): string | null {
+  const lowerFeature = feature.toLowerCase()
+  
+  if (lowerFeature.includes("reporting") || lowerFeature.includes("intelligence") || lowerFeature.includes("analytics")) {
+    return "https://helphub.hqo.com/help/analytics"
+  }
+  if (lowerFeature.includes("event")) {
+    return "https://helphub.hqo.com/help/events"
+  }
+  if (lowerFeature.includes("visitor management") || lowerFeature.includes("access control")) {
+    return "https://helphub.hqo.com/help/hqo-visitor-management-user-guides"
+  }
+  if (lowerFeature.includes("resource booking")) {
+    return "https://helphub.hqo.com/help/hqo-resource-booking"
+  }
+  
+  return null
+}
 
 const suites = [
   {
@@ -11,8 +45,7 @@ const suites = [
     description: "Customer Relationship Management tools for managing contacts, tours, and leases",
     color: "suite-crm",
     quarters: {
-      "Q3 2025": ["Contacts – Key Contacts", "Contacts – Contact Notes"],
-      "Q4 2025": ["Data Management – Building Object & Table", "Data Management – Tagging Framework"],
+      "2025": ["Contacts – Key Contacts", "Contacts – Contact Notes", "Data Management – Building Object & Table", "Data Management – Tagging Framework"],
       "Q1 2026": [],
       "Q2 2026": ["Leases - Yardi integration", "Leases – Lease Management"],
       "Q3 2026": ["Data Management – Pipeline & Lease Object", "Leases – Lease Terms with Credits", "Data Management – Custom Objects & Fields"],
@@ -24,12 +57,9 @@ const suites = [
     description: "Guest and tenant experiences including events, communications, and web portals",
     color: "suite-experience",
     quarters: {
-      "Q3 2025": ["Events – Tickets", "Events – QR Check-in", "Events – Waitlist", "Events – Discounts"],
-      "Q4 2025": [
-        "Events – Multi-slot Events",
-        "Events – Add Attendees from Admin",
-        "Communication – Rich Content",
-        "Communication – Newsletters",
+      "2025": [
+        "Events – Tickets", "Events – QR Check-in", "Events – Waitlist", "Events – Discounts",
+        "Events – Multi-slot Events", "Events – Add Attendees from Admin", "Communication – Rich Content", "Communication – Newsletters",
       ],
       "Q1 2026": ["Experience – Automated Localized Posts", "Web Experience – Public Registration"],
       "Q2 2026": ["Events – Limiting Session Claims", "Events – Cancellation Notice"],
@@ -48,15 +78,9 @@ const suites = [
     description: "Physical access and visitor management",
     color: "suite-access",
     quarters: {
-      "Q3 2025": [
-        "Visitor Management – Loading Dock Support",
-        "Visitor Management – Wallet Visitor Pass (Wavelynx)",
-        "Visitor Management – Reporting Enhancements",
-      ],
-      "Q4 2025": [
-        "Access Control – Genetec Integration",
-        "Visitor Management – Bulk Registration",
-        "Visitor Management – Automated Visitor Passes via Bookings",
+      "2025": [
+        "Visitor Management – Loading Dock Support", "Visitor Management – Wallet Visitor Pass (Wavelynx)", "Visitor Management – Reporting Enhancements",
+        "Access Control – Genetec Integration", "Visitor Management – Bulk Registration", "Visitor Management – Automated Visitor Passes via Bookings",
       ],
       "Q1 2026": [
         "Access Control – AMAG Integration",
@@ -79,17 +103,9 @@ const suites = [
     description: "Service requests, resource booking, and operational workflows",
     color: "suite-operations",
     quarters: {
-      "Q3 2025": [
-        "Resource Booking – Branded Emails",
-        "Resource Booking – Add Visitor to Booking",
-        "Resource Booking – Discounts",
-        "Resource Booking – On Account Payments",
-      ],
-      "Q4 2025": [
-        "Service Requests – Teams, Catalogues & Routing",
-        "Service Requests – Two-way Messaging",
-        "Resource Booking – Collections",
-        "Resource Booking – Combined Meeting Rooms",
+      "2025": [
+        "Resource Booking – Branded Emails", "Resource Booking – Add Visitor to Booking", "Resource Booking – Discounts", "Resource Booking – On Account Payments",
+        "Service Requests – Teams, Catalogues & Routing", "Service Requests – Two-way Messaging", "Resource Booking – Collections", "Resource Booking – Combined Meeting Rooms",
       ],
       "Q1 2026": [
         "Service Requests – Automated Feedback",
@@ -119,8 +135,7 @@ const suites = [
     description: "Analytics, reporting, and AI-powered automation",
     color: "suite-intelligence",
     quarters: {
-      "Q3 2025": ["Reporting- New intelligence platform", "AI Automation – Agent Development"],
-      "Q4 2025": ["AI Automation – Agent Development"],
+      "2025": ["Reporting – New Intelligence Platform", "AI Automation – Agent Development"],
       "Q1 2026": [
         "Reporting – New Access Performance Reports",
         "Reporting – New Content Performance Reports",
@@ -133,31 +148,28 @@ const suites = [
   },
 ]
 
-const quarterHeaders = [
-  { quarter: "Q3 2025", status: "delivered" as const },
-  { quarter: "Q4 2025", status: "delivered" as const },
-  { quarter: "Q1 2026", status: "in-progress" as const },
-  { quarter: "Q2 2026", status: "upcoming" as const },
-  { quarter: "Q3 2026", status: "upcoming" as const },
-  { quarter: "Q4 2026", status: "upcoming" as const },
+type QuarterColumn = {
+  id: string
+  label: string
+  sublabel?: string
+  status: "delivered" | "in-progress" | "upcoming"
+  defaultExpanded: boolean
+}
+
+const QUARTER_COLUMNS: QuarterColumn[] = [
+  { id: "2025", label: "2025", status: "delivered", defaultExpanded: false },
+  { id: "Q1 2026", label: "Q1 2026", status: "in-progress", defaultExpanded: true },
+  { id: "Q2 2026", label: "Q2 2026", status: "upcoming", defaultExpanded: true },
+  { id: "Q3 2026", label: "Q3 2026", status: "upcoming", defaultExpanded: true },
+  { id: "Q4 2026", label: "Q4 2026", status: "upcoming", defaultExpanded: true },
 ]
 
-const LEFT_COL_DESKTOP = 300
-const LEFT_COL_MOBILE = 60
-const COL_WIDTH_DESKTOP = 280
-const COL_WIDTH_DESKTOP_WIDE = 240
-const COL_WIDTH_MOBILE = 240
-const GAP = 24 // gap-6 in pixels
+function getFeaturesForQuarter(suite: (typeof suites)[0], quarterId: string): string[] {
+  return suite.quarters[quarterId as keyof typeof suite.quarters] ?? []
+}
 
-const getSuiteIcon = (name: string) => {
-  const icons: Record<string, React.ReactNode> = {
-    CRM: <Users className="size-5" />,
-    Experience: <Star className="size-5" />,
-    "Access Control (PAIR)": <Shield className="size-5" />,
-    Operations: <Settings className="size-5" />,
-    Intelligence: <BarChart3 className="size-5" />,
-  }
-  return icons[name] || <Users className="size-5" />
+function getTotalFeaturesForQuarter(quarterId: string): number {
+  return suites.reduce((total, suite) => total + getFeaturesForQuarter(suite, quarterId).length, 0)
 }
 
 const getBorderColor = (color: string) => {
@@ -171,58 +183,127 @@ const getBorderColor = (color: string) => {
   return colors[color] || "oklch(0.70 0.15 240)"
 }
 
+const getStatusIcon = (status: QuarterColumn["status"]) => {
+  switch (status) {
+    case "delivered":
+      return <CircleCheck className="size-3.5" strokeWidth={2.5} />
+    case "in-progress":
+      return <Zap className="size-3.5" strokeWidth={2.5} />
+    case "upcoming":
+      return <Target className="size-3.5" strokeWidth={2.5} />
+  }
+}
+
+const getStatusColor = (status: QuarterColumn["status"]) => {
+  switch (status) {
+    case "delivered":
+      return "bg-green-600"
+    case "in-progress":
+      return "bg-blue-600"
+    case "upcoming":
+      return "bg-amber-500"
+  }
+}
+
+const LEFT_COL_DESKTOP = 280
+const LEFT_COL_MOBILE = 100
+const COL_WIDTH_EXPANDED = 260
+const COL_WIDTH_COLLAPSED = 64
+
 export function RoadmapGrid() {
-  const colCount = quarterHeaders.length
-
-  const headerScrollRef = React.useRef<HTMLDivElement | null>(null)
-  const bodyScrollRef = React.useRef<HTMLDivElement | null>(null)
-  const syncingRef = React.useRef<"header" | "body" | null>(null)
-
-  const [isMobile, setIsMobile] = React.useState(false)
-  const [viewportWidth, setViewportWidth] = React.useState(0)
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null)
+  const headerScrollRef = React.useRef<HTMLDivElement>(null)
+  const isScrollSyncing = React.useRef(false)
   const [searchQuery, setSearchQuery] = React.useState("")
+  const [expandedQuarters, setExpandedQuarters] = React.useState<Set<string>>(() => {
+    return new Set(QUARTER_COLUMNS.filter((q) => q.defaultExpanded).map((q) => q.id))
+  })
+  const [isMobile, setIsMobile] = React.useState(false)
+  const [canScrollLeft, setCanScrollLeft] = React.useState(false)
+  const [canScrollRight, setCanScrollRight] = React.useState(false)
+
+  // Sync horizontal scroll between header and body
+  const syncScroll = React.useCallback((source: "header" | "body") => {
+    if (isScrollSyncing.current) return
+    isScrollSyncing.current = true
+    
+    const header = headerScrollRef.current
+    const body = scrollContainerRef.current
+    
+    if (source === "header" && header && body) {
+      body.scrollLeft = header.scrollLeft
+    } else if (source === "body" && header && body) {
+      header.scrollLeft = body.scrollLeft
+    }
+    
+    requestAnimationFrame(() => {
+      isScrollSyncing.current = false
+    })
+  }, [])
 
   React.useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth
-      setIsMobile(width < 768)
-      setViewportWidth(width)
-    }
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
     handleResize()
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  const LEFT_COL = isMobile ? LEFT_COL_MOBILE : LEFT_COL_DESKTOP
-  const COL_WIDTH = isMobile
-    ? COL_WIDTH_MOBILE
-    : viewportWidth >= 1536
-      ? COL_WIDTH_DESKTOP_WIDE
-      : COL_WIDTH_DESKTOP
+  // Check scroll position for indicators
+  const updateScrollIndicators = React.useCallback(() => {
+    const el = scrollContainerRef.current
+    if (!el) return
+    const hasHorizontalScroll = el.scrollWidth > el.clientWidth + 5
+    setCanScrollLeft(hasHorizontalScroll && el.scrollLeft > 20)
+    setCanScrollRight(hasHorizontalScroll && el.scrollLeft < el.scrollWidth - el.clientWidth - 20)
+  }, [])
 
-  const syncScroll = (source: "header" | "body") => {
-    const headerEl = headerScrollRef.current
-    const bodyEl = bodyScrollRef.current
-    if (!headerEl || !bodyEl) return
+  React.useEffect(() => {
+    const el = scrollContainerRef.current
+    if (!el) return
+    // Small delay to ensure content is rendered
+    const timer = setTimeout(updateScrollIndicators, 100)
+    el.addEventListener("scroll", updateScrollIndicators)
+    window.addEventListener("resize", updateScrollIndicators)
+    return () => {
+      clearTimeout(timer)
+      el.removeEventListener("scroll", updateScrollIndicators)
+      window.removeEventListener("resize", updateScrollIndicators)
+    }
+  }, [updateScrollIndicators, expandedQuarters])
 
-    if (syncingRef.current && syncingRef.current !== source) return
+  // Auto-expand quarters that have search matches
+  React.useEffect(() => {
+    if (!searchQuery.trim()) return
+    const quartersWithMatches = QUARTER_COLUMNS.filter((q) =>
+      suites.some((suite) => {
+        const features = getFeaturesForQuarter(suite, q.id)
+        return features.some((f) => f.toLowerCase().includes(searchQuery.toLowerCase()))
+      })
+    ).map((q) => q.id)
+    
+    if (quartersWithMatches.length > 0) {
+      setExpandedQuarters((prev) => {
+        const next = new Set(prev)
+        quartersWithMatches.forEach((id) => next.add(id))
+        return next
+      })
+    }
+  }, [searchQuery])
 
-    syncingRef.current = source
-
-    const left = source === "header" ? headerEl.scrollLeft : bodyEl.scrollLeft
-    if (source === "header") bodyEl.scrollLeft = left
-    else headerEl.scrollLeft = left
-
-    requestAnimationFrame(() => {
-      syncingRef.current = null
+  const toggleQuarter = (id: string) => {
+    setExpandedQuarters((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
     })
   }
 
-  const getQuarterTotal = (quarterName: string) => {
-    return suites.reduce((total, suite) => {
-      return total + (suite.quarters[quarterName as keyof typeof suite.quarters]?.length || 0)
-    }, 0)
-  }
+  const expandAll = () => setExpandedQuarters(new Set(QUARTER_COLUMNS.map((q) => q.id)))
+  const collapseAll = () => setExpandedQuarters(new Set())
 
   const getFilteredFeatures = (features: string[]) => {
     if (!searchQuery.trim()) return features
@@ -231,22 +312,25 @@ export function RoadmapGrid() {
 
   const suiteHasMatchingFeatures = (suite: (typeof suites)[0]) => {
     if (!searchQuery.trim()) return true
-    return Object.values(suite.quarters).some((features) =>
-      features.some((feature) => feature.toLowerCase().includes(searchQuery.toLowerCase())),
-    )
-  }
-
-  const contentWidth = LEFT_COL + colCount * COL_WIDTH + colCount * GAP
-
-  const gridColsStyle: React.CSSProperties = {
-    gridTemplateColumns: `${LEFT_COL}px repeat(${colCount}, ${COL_WIDTH}px)`,
+    return QUARTER_COLUMNS.some((q) => {
+      const features = getFeaturesForQuarter(suite, q.id)
+      return features.some((f) => f.toLowerCase().includes(searchQuery.toLowerCase()))
+    })
   }
 
   const filteredSuites = searchQuery.trim() ? suites.filter(suiteHasMatchingFeatures) : suites
 
+  const LEFT_COL = isMobile ? LEFT_COL_MOBILE : LEFT_COL_DESKTOP
+
+  const colWidths = QUARTER_COLUMNS.map((q) =>
+    expandedQuarters.has(q.id) ? COL_WIDTH_EXPANDED : COL_WIDTH_COLLAPSED
+  )
+  const totalWidth = LEFT_COL + colWidths.reduce((a, b) => a + b, 0) + (QUARTER_COLUMNS.length * 12)
+
   return (
-    <div className="w-full px-2 md:px-6 lg:px-0 2xl:px-6">
-      <div className="mb-4 md:mb-6">
+    <div className="w-full">
+      {/* Search */}
+      <div className="mb-6">
         <div className="relative max-w-md mx-auto">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-roadmap-text-secondary" />
           <Input
@@ -267,138 +351,271 @@ export function RoadmapGrid() {
         </div>
         {searchQuery && (
           <p className="text-center text-sm text-roadmap-text-secondary mt-2">
-            Showing results for "{searchQuery}" in {filteredSuites.length} suite(s)
+            Showing results for "{searchQuery}"
           </p>
         )}
-        {!searchQuery && (
-          <p className="text-center text-xs md:text-sm text-roadmap-text-secondary/80 mt-2">
-            {isMobile ? "Swipe horizontally to see more quarters →" : "Scroll horizontally to see more quarters →"}
-          </p>
-        )}
+        <div className="flex justify-center gap-3 mt-3">
+          <button
+            onClick={expandAll}
+            className="text-xs text-roadmap-text-secondary hover:text-roadmap-text-primary underline underline-offset-2"
+          >
+            Expand all
+          </button>
+          <span className="text-roadmap-text-secondary/50">·</span>
+          <button
+            onClick={collapseAll}
+            className="text-xs text-roadmap-text-secondary hover:text-roadmap-text-primary underline underline-offset-2"
+          >
+            Collapse all
+          </button>
+        </div>
       </div>
 
-      <div className="sticky top-0 z-50 bg-roadmap-background/90 backdrop-blur-xl pb-2 md:pb-4 shadow-lg">
-        <div
-          ref={headerScrollRef}
-          onScroll={() => syncScroll("header")}
-          className="overflow-x-auto overflow-y-hidden bg-roadmap-background pl-2 md:pl-4 [scrollbar-gutter:stable]"
-        >
-          <div className="grid gap-3 md:gap-6" style={{ ...gridColsStyle, width: contentWidth }}>
-            <div className="sticky left-0 z-[60] rounded-lg border border-roadmap-border bg-roadmap-background/90 backdrop-blur-xl px-2 md:px-4 py-2 md:py-4 flex items-center justify-center shadow-lg">
-              <h2 className="hidden md:block text-xl font-bold text-roadmap-text-primary">Suite</h2>
-              <span className="md:hidden text-xs font-bold text-roadmap-text-secondary">Suite</span>
-            </div>
-
-            {quarterHeaders.map((header) => (
-              <div
-                key={header.quarter}
-                className="rounded-lg border border-roadmap-border bg-roadmap-surface/80 backdrop-blur-xl px-2 md:px-4 py-2 md:py-4 shadow-lg flex flex-col justify-center"
-              >
-                <div className="flex flex-col items-center gap-1 md:gap-2">
-                  <div className="flex items-center justify-center flex-wrap gap-1 md:gap-2">
-                    <h2 className="text-center text-sm md:text-xl font-bold text-roadmap-text-primary">
-                      {header.quarter}
-                    </h2>
-
-                    {header.status === "delivered" && (
-                      <span className="inline-flex items-center gap-0.5 md:gap-1 rounded-full bg-green-600 px-1.5 md:px-2.5 py-0.5 md:py-1 text-[10px] md:text-xs font-bold text-white shadow-sm">
-                        <Check className="size-2.5 md:size-3.5" strokeWidth={3} />
-                        <span className="hidden sm:inline">Delivered</span>
-                      </span>
-                    )}
-                    {header.status === "in-progress" && (
-                      <span className="inline-flex items-center gap-0.5 md:gap-1 rounded-full bg-blue-600 px-1.5 md:px-2.5 py-0.5 md:py-1 text-[10px] md:text-xs font-bold text-white shadow-sm">
-                        <Clock className="size-2.5 md:size-3.5" strokeWidth={3} />
-                        <span className="hidden sm:inline">In Progress</span>
-                      </span>
-                    )}
-                    {header.status === "upcoming" && (
-                      <span className="inline-flex items-center gap-0.5 md:gap-1 rounded-full bg-amber-500 px-1.5 md:px-2.5 py-0.5 md:py-1 text-[10px] md:text-xs font-bold text-white shadow-sm">
-                        <Calendar className="size-2.5 md:size-3.5" strokeWidth={3} />
-                        <span className="hidden sm:inline">Planned</span>
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="text-xs md:text-sm font-medium text-roadmap-text-secondary">
-                    {getQuarterTotal(header.quarter)} <span className="hidden sm:inline">features</span>
-                  </div>
-                </div>
+      {/* Sticky header row */}
+      <div className="sticky top-0 z-50 bg-black pt-4 pb-4">
+        <div className="relative">
+          {/* Left scroll indicator for header */}
+          {canScrollLeft && (
+            <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-black via-black/80 to-transparent z-40 pointer-events-none flex items-center justify-start pl-1">
+              <div className="bg-roadmap-surface/90 rounded-full p-1.5 shadow-lg">
+                <ChevronLeft className="size-4 text-roadmap-text-secondary" />
               </div>
-            ))}
+            </div>
+          )}
+          
+          {/* Right scroll indicator for header */}
+          {canScrollRight && (
+            <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-black via-black/80 to-transparent z-40 pointer-events-none flex items-center justify-end pr-2">
+              <div className="bg-roadmap-surface/90 rounded-full p-1.5 shadow-lg flex items-center gap-1">
+                <span className="text-[10px] text-roadmap-text-secondary font-medium">More</span>
+                <ChevronsRight className="size-4 text-roadmap-text-secondary" />
+              </div>
+            </div>
+          )}
+
+          <div 
+            ref={headerScrollRef}
+            onScroll={() => syncScroll("header")}
+            className="overflow-x-auto scrollbar-hide"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            <div className="flex gap-3" style={{ minWidth: totalWidth }}>
+              {/* Spacer for suite column - sticky to match body */}
+              <div className="shrink-0 sticky left-0 z-[60] bg-black" style={{ width: LEFT_COL }} />
+
+              {/* Quarter column headers */}
+              {QUARTER_COLUMNS.map((quarter, idx) => {
+                const isExpanded = expandedQuarters.has(quarter.id)
+                const featureCount = getTotalFeaturesForQuarter(quarter.id)
+
+                const isNow = quarter.status === "in-progress"
+                
+                return (
+                  <button
+                    key={quarter.id}
+                    onClick={() => toggleQuarter(quarter.id)}
+                    className={cn(
+                      "group shrink-0 rounded-xl border transition-all duration-300 hover:scale-[1.02]",
+                      isNow 
+                        ? "border-blue-500/50 ring-2 ring-blue-500/20 shadow-[0_0_30px_-10px_rgba(59,130,246,0.5)]" 
+                        : "border-roadmap-border hover:border-roadmap-border-hover",
+                      isExpanded
+                        ? "bg-roadmap-surface/80 px-4 py-4"
+                        : "bg-roadmap-surface/40 hover:bg-roadmap-surface/60 px-2 py-3",
+                    )}
+                    style={{ width: colWidths[idx] }}
+                  >
+                    {isExpanded ? (
+                      <div className="flex flex-col items-center gap-2">
+                        {isNow && (
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-blue-400 animate-pulse">
+                            Now
+                          </span>
+                        )}
+                        <div className="flex items-center gap-2">
+                          <span className={cn("size-2 rounded-full shrink-0", getStatusColor(quarter.status))} />
+                          <span className="font-semibold text-roadmap-text-primary">{quarter.label}</span>
+                        </div>
+                        <span className="text-[11px] text-roadmap-text-secondary/70">{featureCount} features</span>
+                        <span className="flex items-center gap-1 text-[10px] text-roadmap-text-secondary/50 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <ChevronUp className="size-3" />
+                          <span>Hide</span>
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center gap-2 h-full">
+                        {isNow && (
+                          <span className="text-[8px] font-bold uppercase tracking-wider text-blue-400">
+                            Now
+                          </span>
+                        )}
+                        <span className={cn("size-2.5 rounded-full shrink-0", getStatusColor(quarter.status))} />
+                        <span className="text-[10px] font-semibold text-roadmap-text-primary text-center leading-tight">
+                          {quarter.label}
+                        </span>
+                        <span className="flex items-center gap-0.5 text-[9px] text-roadmap-text-secondary/50">
+                          <ChevronDown className="size-3" />
+                        </span>
+                      </div>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </div>
       </div>
 
-      <div
-        ref={bodyScrollRef}
-        onScroll={() => syncScroll("body")}
-        className="overflow-x-auto overflow-y-visible bg-roadmap-background pl-2 md:pl-4 [scrollbar-gutter:stable]"
-      >
-        <div className="space-y-3 md:space-y-4" style={{ width: contentWidth }}>
-          {filteredSuites.map((suite) => (
-            <div
-              key={suite.name}
-              className="grid gap-3 md:gap-6 pb-4 md:pb-6 border-b border-roadmap-border/30 last:border-b-0"
-              style={gridColsStyle}
-            >
-              <div className="sticky left-0 z-40 rounded-lg border border-roadmap-border bg-roadmap-background/90 backdrop-blur-sm p-2 pl-3 md:p-4 md:pl-6 flex flex-col md:flex-row items-center md:items-start gap-1 md:gap-4 shadow-md">
+      {/* Body with scroll sync */}
+      <div className="relative">
+        <div 
+          ref={scrollContainerRef}
+          onScroll={() => syncScroll("body")}
+          className="overflow-x-auto pb-4"
+        >
+          <div style={{ minWidth: totalWidth }}>
+            {/* Suite rows */}
+            <div className="space-y-4">
+            {filteredSuites.map((suite) => (
+              <div key={suite.name} className="flex gap-3">
+                {/* Suite info - sticky left */}
                 <div
-                  className="size-8 md:size-4 shrink-0 rounded-full ring-2 ring-offset-2 ring-offset-roadmap-background ring-current/30 flex items-center justify-center md:mt-1"
-                  style={{ backgroundColor: getBorderColor(suite.color) }}
+                  className="shrink-0 sticky left-0 z-40 rounded-xl border border-roadmap-border bg-roadmap-surface/95 backdrop-blur-sm p-4 md:p-5 transition-all duration-300 hover:bg-roadmap-surface shadow-lg"
+                  style={{ width: LEFT_COL, borderLeftColor: getBorderColor(suite.color), borderLeftWidth: 4 }}
                 >
-                  <span className="md:hidden text-white">{getSuiteIcon(suite.name)}</span>
+                  <div className="flex items-start gap-3">
+                    <div
+                      className="mt-1.5 size-3 shrink-0 rounded-full"
+                      style={{ backgroundColor: getBorderColor(suite.color) }}
+                    />
+                    <div className="min-w-0">
+                      <h3 className="text-sm md:text-base font-bold text-roadmap-text-primary">{suite.name}</h3>
+                      <p className="text-[10px] md:text-xs text-roadmap-text-secondary leading-relaxed hidden md:block">
+                        {suite.description}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div className="hidden md:block">
-                  <h3 className="text-xl font-bold text-roadmap-text-primary mb-2">{suite.name}</h3>
-                  <p className="text-sm text-roadmap-text-secondary leading-relaxed">{suite.description}</p>
-                </div>
-                <span className="md:hidden text-[10px] font-semibold text-roadmap-text-secondary text-center leading-tight">
-                  {suite.name.split(" ")[0]}
-                </span>
-              </div>
 
-              {quarterHeaders.map((header) => {
-                const allFeatures = suite.quarters[header.quarter as keyof typeof suite.quarters] || []
-                const features = getFilteredFeatures(allFeatures)
-                const hasHiddenFeatures = searchQuery && features.length < allFeatures.length
+                {/* Quarter cells */}
+                {QUARTER_COLUMNS.map((quarter, idx) => {
+                  const isExpanded = expandedQuarters.has(quarter.id)
+                  const allFeatures = getFeaturesForQuarter(suite, quarter.id)
+                  const features = getFilteredFeatures(allFeatures)
+                  const hasHiddenFeatures = searchQuery && features.length < allFeatures.length
 
-                return (
-                  <Card
-                    key={`${suite.name}-${header.quarter}`}
-                    className="border-l-4 border-t border-r border-b border-roadmap-border bg-roadmap-surface/60 backdrop-blur-sm transition-all hover:border-roadmap-border-hover hover:shadow-lg"
-                    style={{ borderLeftColor: getBorderColor(suite.color) }}
-                  >
-                    <CardContent className="p-2 md:p-5">
-                      {features.length > 0 ? (
-                        <>
-                          <ul className="space-y-1 md:space-y-2">
-                            {features.map((feature, index) => (
-                              <li key={index} className="flex items-start gap-1.5 md:gap-3 text-xs md:text-sm leading-snug">
-                                <span className="mt-1 md:mt-1.5 size-1.5 md:size-2 shrink-0 rounded-full bg-roadmap-text-secondary" />
-                                <span className="leading-relaxed text-roadmap-text-primary">
-                                  {searchQuery ? <HighlightText text={feature} highlight={searchQuery} /> : feature}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                          {hasHiddenFeatures && (
-                            <p className="text-xs text-roadmap-text-secondary/50 mt-2">
-                              +{allFeatures.length - features.length} more
-                            </p>
-                          )}
-                        </>
-                      ) : (
-                        <div className="text-center text-xs md:text-sm text-roadmap-text-secondary/50 py-2 md:py-4">
-                          {searchQuery ? "No matches" : "No features"}
-                        </div>
+                  // Sort spotlight features to top
+                  const sortedFeatures = [...features].sort((a, b) => {
+                    const aSpot = isSpotlightFeature(a) ? 0 : 1
+                    const bSpot = isSpotlightFeature(b) ? 0 : 1
+                    return aSpot - bSpot
+                  })
+
+                  return (
+                    <div
+                      key={quarter.id}
+                      className={cn(
+                        "shrink-0 rounded-xl border border-roadmap-border transition-all duration-300",
+                        isExpanded 
+                          ? "bg-roadmap-surface/60 p-4 hover:bg-roadmap-surface/70" 
+                          : "bg-roadmap-surface/30 hover:bg-roadmap-surface/40",
                       )}
-                    </CardContent>
-                  </Card>
-                )
-              })}
-            </div>
-          ))}
+                      style={{
+                        width: colWidths[idx],
+                        borderLeftColor: getBorderColor(suite.color),
+                        borderLeftWidth: 4,
+                      }}
+                    >
+                      {isExpanded ? (
+                        sortedFeatures.length > 0 ? (
+                          <>
+                            <div className="flex flex-wrap gap-1.5">
+                              {sortedFeatures.map((feature, index) => {
+                                const spotlight = isSpotlightFeature(feature)
+                                const isDelivered = quarter.status === "delivered"
+                                const helpLink = isDelivered ? getHelpLink(feature) : null
+                                
+                                const pillClasses = cn(
+                                  "animate-fade-in-up opacity-0 text-[11px] leading-snug rounded-full px-2.5 py-1.5 transition-all duration-200",
+                                  spotlight
+                                    ? "bg-gradient-to-r from-amber-500/25 via-amber-500/15 to-orange-500/20 border border-amber-400/40 shadow-[0_0_20px_-8px_rgba(251,191,36,0.5)] hover:shadow-[0_0_25px_-5px_rgba(251,191,36,0.6)] hover:scale-[1.02]"
+                                    : "bg-roadmap-surface-hover/60 border border-roadmap-border/30 hover:border-roadmap-border/50 hover:bg-roadmap-surface-hover",
+                                  helpLink && "cursor-pointer hover:scale-[1.02]",
+                                  index === 0 && "stagger-1",
+                                  index === 1 && "stagger-2",
+                                  index === 2 && "stagger-3",
+                                  index === 3 && "stagger-4",
+                                  index >= 4 && "stagger-5",
+                                )
+                                
+                                const pillContent = (
+                                  <>
+                                    {spotlight && (
+                                      <Sparkles className="inline size-3 text-amber-400 mr-1 animate-pulse-glow" />
+                                    )}
+                                    <span
+                                      className={cn(
+                                        "text-roadmap-text-primary",
+                                        spotlight && "font-medium text-amber-100",
+                                      )}
+                                    >
+                                      {searchQuery ? (
+                                        <HighlightText text={feature} highlight={searchQuery} />
+                                      ) : (
+                                        feature
+                                      )}
+                                    </span>
+                                    {helpLink && (
+                                      <ExternalLink className="inline size-3 text-roadmap-text-secondary/60 ml-1.5" />
+                                    )}
+                                  </>
+                                )
+                                
+                                return helpLink ? (
+                                  <a
+                                    key={index}
+                                    href={helpLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={pillClasses}
+                                  >
+                                    {pillContent}
+                                  </a>
+                                ) : (
+                                  <div key={index} className={pillClasses}>
+                                    {pillContent}
+                                  </div>
+                                )
+                              })}
+                            </div>
+                            {hasHiddenFeatures && (
+                              <p className="text-[10px] text-roadmap-text-secondary/50 mt-2">
+                                +{allFeatures.length - features.length} more
+                              </p>
+                            )}
+                          </>
+                        ) : (
+                          <p className="text-[11px] text-roadmap-text-secondary/40 text-center py-6 italic">
+                            {searchQuery ? "No matches" : "Stay tuned"}
+                          </p>
+                        )
+                      ) : (
+                        <button
+                          onClick={() => toggleQuarter(quarter.id)}
+                          className="h-full w-full flex flex-col items-center justify-center py-3 gap-1 hover:bg-roadmap-surface/50 rounded transition-colors cursor-pointer"
+                        >
+                          <span className="text-sm font-semibold text-roadmap-text-secondary/80">
+                            {allFeatures.length}
+                          </span>
+                          <span className="text-[9px] text-roadmap-text-secondary/50">click to view</span>
+                        </button>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            ))}
+          </div>
 
           {searchQuery && filteredSuites.length === 0 && (
             <div className="text-center py-12">
@@ -408,6 +625,7 @@ export function RoadmapGrid() {
               </button>
             </div>
           )}
+          </div>
         </div>
       </div>
     </div>
