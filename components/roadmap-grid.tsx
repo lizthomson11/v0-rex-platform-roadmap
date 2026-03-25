@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 const SPOTLIGHT_FEATURES = new Set([
   "Resource Booking – Credits",
   "Service Requests – Teams, Catalogues & Routing",
+  "Service Requests – Preventative Maintenance",
   "Reporting – Tenant Health Score",
   "Leases – Lease Management",
   "Events – Multi-day Events",
