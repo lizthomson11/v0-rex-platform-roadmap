@@ -127,7 +127,7 @@ const suites = [
       ],
       "Q2 2026": ["Reporting – New Communications Reports"],
       "Q3 2026": ["Reporting – New Service Request Performance Reports", "Reporting – Tenant Health Score", "Reporting – New CRM Reports & Reporting"],
-      "Q4 2026": ["Reporting – New Report Types", "Reporting – New Resource Booking Performance Reports", "Reporting – New Event Performance Reports"],
+      "Q4 2026": ["Reporting – New Resource Booking Performance Reports", "Reporting – New Event Performance Reports"],
     },
   },
 ]
