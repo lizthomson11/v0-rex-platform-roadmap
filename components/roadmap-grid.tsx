@@ -8,8 +8,6 @@ import { cn } from "@/lib/utils"
 
 const SPOTLIGHT_FEATURES = new Set([
   "Resource Booking – Credits",
-  "Tenant Credentials – Wallet/NFC (AMAG, Integriti)",
-  "Visitor Credentials – QR Pass (AMAG, Integriti)",
   "Service Requests – Teams, Catalogues & Routing",
   "Reporting – Tenant Health Score",
   "Leases – Lease Management",
