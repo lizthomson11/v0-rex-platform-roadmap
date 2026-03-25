@@ -99,10 +99,10 @@ const suites = [
       "Q2 2026": [
         "Service Requests – Inventory & Inspections",
         "Service Requests – Pricing & Payments",
+        "Service Requests – Billing & Yardi Invoicing",
         "Resource Booking – Automated Feedback",
         "Resource Booking – Office 365 (Outlook) Integration",
         "Resource Booking – Tripleseat Integration",
-        "Service Requests – Billing & Yardi Invoicing",
         "Admin On the Go – Service Request Management",
       ],
       "Q3 2026": [
