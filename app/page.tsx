@@ -36,22 +36,6 @@ export default function Page() {
             <p className="text-balance text-xs md:text-sm text-roadmap-text-secondary/70 max-w-sm mx-auto">
               ✨ What we're building for 2025–2026
             </p>
-            
-            {/* Cute status pills */}
-            <div className="mt-4 md:mt-5 flex justify-center gap-2 flex-wrap">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <span className="w-1 h-1 rounded-full bg-emerald-400" />
-                Delivered
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                <span className="w-1 h-1 rounded-full bg-blue-400 animate-pulse" />
-                In Progress
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                <span className="w-1 h-1 rounded-full bg-amber-400" />
-                Planned
-              </span>
-            </div>
           </div>
         </div>
         <RoadmapGrid />
