@@ -174,12 +174,23 @@ type QuarterColumn = {
 }
 
 const QUARTER_COLUMNS: QuarterColumn[] = [
-  { id: "2025", label: "2025", status: "delivered", defaultExpanded: false },
+  { id: "2025", label: "2025", status: "delivered", defaultExpanded: true },
   { id: "Q1 2026", label: "Q1 2026", status: "in-progress", defaultExpanded: true },
   { id: "Q2 2026", label: "Q2 2026", status: "upcoming", defaultExpanded: true },
   { id: "Q3 2026", label: "Q3 2026", status: "upcoming", defaultExpanded: true },
   { id: "Q4 2026", label: "Q4 2026", status: "upcoming", defaultExpanded: true },
 ]
+
+const getStatusLabel = (status: QuarterColumn["status"]) => {
+  switch (status) {
+    case "delivered":
+      return "Delivered"
+    case "in-progress":
+      return "In Progress"
+    case "upcoming":
+      return "Planned"
+  }
+}
 
 function getFeaturesForQuarter(suite: (typeof suites)[0], quarterId: string): string[] {
   return suite.quarters[quarterId as keyof typeof suite.quarters] ?? []
@@ -386,6 +397,9 @@ export function RoadmapGrid() {
             Collapse all
           </button>
         </div>
+        <p className="text-center text-[11px] text-roadmap-text-secondary/50 mt-3">
+          Scroll horizontally to see more quarters →
+        </p>
       </div>
 
       {/* Sticky header row */}
@@ -443,15 +457,17 @@ export function RoadmapGrid() {
                     style={{ width: colWidths[idx] }}
                   >
                     {isExpanded ? (
-                      <div className="flex flex-col items-center gap-2">
-                        {isNow && (
-                          <span className="text-[9px] font-bold uppercase tracking-wider text-blue-400 animate-pulse">
-                            Now
-                          </span>
-                        )}
+                      <div className="flex flex-col items-center gap-1.5">
                         <div className="flex items-center gap-2">
-                          <span className={cn("size-2 rounded-full shrink-0", getStatusColor(quarter.status))} />
                           <span className="font-semibold text-roadmap-text-primary">{quarter.label}</span>
+                          <span className={cn(
+                            "text-[9px] font-medium px-1.5 py-0.5 rounded-full",
+                            quarter.status === "delivered" && "bg-emerald-500/20 text-emerald-400",
+                            quarter.status === "in-progress" && "bg-blue-500/20 text-blue-400",
+                            quarter.status === "upcoming" && "bg-amber-500/20 text-amber-400",
+                          )}>
+                            {getStatusLabel(quarter.status)}
+                          </span>
                         </div>
                         <span className="text-[11px] text-roadmap-text-secondary/70">{featureCount} features</span>
                         <span className="flex items-center gap-1 text-[10px] text-roadmap-text-secondary/50 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -460,13 +476,8 @@ export function RoadmapGrid() {
                         </span>
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center justify-center gap-2 h-full">
-                        {isNow && (
-                          <span className="text-[8px] font-bold uppercase tracking-wider text-blue-400">
-                            Now
-                          </span>
-                        )}
-                        <span className={cn("size-2.5 rounded-full shrink-0", getStatusColor(quarter.status))} />
+                      <div className="flex flex-col items-center justify-center gap-1.5 h-full">
+                        <span className={cn("size-2 rounded-full shrink-0", getStatusColor(quarter.status))} />
                         <span className="text-[10px] font-semibold text-roadmap-text-primary text-center leading-tight">
                           {quarter.label}
                         </span>
@@ -603,7 +614,7 @@ export function RoadmapGrid() {
                                 const pillClasses = cn(
                                   "animate-fade-in-up opacity-0 text-[11px] leading-snug rounded-full px-2.5 py-1.5 transition-all duration-200",
                                   spotlight
-                                    ? "bg-gradient-to-r from-amber-500/25 via-amber-500/15 to-orange-500/20 border border-amber-400/40 shadow-[0_0_20px_-8px_rgba(251,191,36,0.5)] hover:shadow-[0_0_25px_-5px_rgba(251,191,36,0.6)] hover:scale-[1.02]"
+                                    ? "bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-orange-500/15 border border-amber-400/30 hover:border-amber-400/50 hover:scale-[1.02]"
                                     : "bg-roadmap-surface-hover/60 border border-roadmap-border/30 hover:border-roadmap-border/50 hover:bg-roadmap-surface-hover",
                                   helpLink && "cursor-pointer hover:scale-[1.02]",
                                   staggerClass,
@@ -612,7 +623,7 @@ export function RoadmapGrid() {
                                 const pillContent = (
                                   <>
                                     {spotlight && (
-                                      <Sparkles className="inline size-3 text-amber-400 mr-1 animate-pulse-glow" />
+                                      <Sparkles className="inline size-3 text-amber-400 mr-1" />
                                     )}
                                     <span
                                       className={cn(
