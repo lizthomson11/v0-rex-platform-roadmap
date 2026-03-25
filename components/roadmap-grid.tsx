@@ -92,13 +92,13 @@ const suites = [
         "Resource Booking – Combined Meeting Rooms",
       ],
       "Q1 2026": [
-        "Service Requests – Inventory & Inspections",
-        "Service Requests – Pricing & Payments",
         "Service Requests – Automated Feedback",
         "Resource Booking – Credits",
         "Resource Booking – Cancellation & Preset Refunds",
       ],
       "Q2 2026": [
+        "Service Requests – Inventory & Inspections",
+        "Service Requests – Pricing & Payments",
         "Resource Booking – Automated Feedback",
         "Resource Booking – Office 365 (Outlook) Integration",
         "Resource Booking – Tripleseat Integration",
