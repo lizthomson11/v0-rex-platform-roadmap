@@ -34,12 +34,11 @@ const suites = [
       "Q1 2026": ["Events – Flexible Payment Routing", "Experience – Automated Localized Posts"],
       "Q2 2026": ["Events – Multi-day Events", "Events – Automated Feedback"],
       "Q3 2026": [
-        "Web Experience – Public Property Page",
         "Web Experience – Public Registration",
         "Experience – Integrated Digital Signage",
         "Admin On the Go – Event Management, Check-in & Communications",
       ],
-      "Q4 2026": ["Events – Recurring Events", "AI Automation – Concierge Consumer App"],
+      "Q4 2026": ["Events – Recurring Events"],
     },
   },
   {
@@ -126,14 +125,9 @@ const suites = [
         "Reporting – Sentiment & Feedback Analysis",
         "Reporting – New Communications Reports",
       ],
-      "Q2 2026": [
-        "Reporting – New Service Request Performance Reports",
-        "Reporting – New Event Performance Reports",
-        "Reporting – New Resource Booking Performance Reports",
-        "Reporting – New CRM Reports",
-      ],
-      "Q3 2026": ["Reporting – Tenant Health Score", "Reporting – New CRM Reports & Reporting"],
-      "Q4 2026": ["Reporting – New Report Types"],
+      "Q2 2026": [],
+      "Q3 2026": ["Reporting – New Service Request Performance Reports", "Reporting – Tenant Health Score", "Reporting – New CRM Reports & Reporting"],
+      "Q4 2026": ["Reporting – New Report Types", "Reporting – New Resource Booking Performance Reports", "Reporting – New Event Performance Reports"],
     },
   },
 ]
