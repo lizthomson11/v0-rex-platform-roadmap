@@ -8,7 +8,8 @@ import { cn } from "@/lib/utils"
 
 const SPOTLIGHT_FEATURES = new Set([
   "Resource Booking – Credits",
-  "Access Control – AMAG Integration",
+  "Tenant Credentials – Wallet/NFC (AMAG)",
+  "Visitor Credentials – QR Pass (AMAG)",
   "Service Requests – Teams, Catalogues & Routing",
   "Reporting – Tenant Health Score",
   "Leases – Lease Management",
@@ -95,11 +96,12 @@ const suites = [
       "2025": [
         "Visitor Management – Loading Dock Support", "Visitor Management – Wallet Visitor Pass (Wavelynx)", "Visitor Management – Reporting Enhancements",
         "Access Control – Genetec Integration", "Visitor Management – Bulk Registration", "Visitor Management – Automated Visitor Passes via Bookings",
-        "Tenant Credentials – Wallet/NFC (Lenel, Genea, C-CURE, AMAG, Genetec)",
-        "Visitor Credentials – QR Pass (Lenel, C-CURE, AMAG, Genetec, Integriti)",
+        "Tenant Credentials – Wallet/NFC (Lenel, Genea, C-CURE, Genetec)",
+        "Visitor Credentials – QR Pass (Lenel, C-CURE, Genetec, Integriti)",
       ],
       "Q1 2026": [
-        "Access Control – AMAG Integration",
+        "Tenant Credentials – Wallet/NFC (AMAG)",
+        "Visitor Credentials – QR Pass (AMAG)",
         "Access Control – Integriti Integration",
         "Visitor Management – Tenant-Initiated Vendor Visit Requests",
         "Visitor Management – Kiosk & Self-Service Check-in",
@@ -567,18 +569,29 @@ export function RoadmapGrid() {
                                       key={index}
                                       className={cn(
                                         "animate-fade-in-up opacity-0 rounded-xl px-3 py-2.5 transition-all duration-200",
-                                        "bg-gradient-to-r from-cyan-500/15 via-teal-500/10 to-emerald-500/15 border border-cyan-400/30",
+                                        spotlight
+                                          ? "bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-orange-500/15 border border-amber-400/40 shadow-[0_0_20px_-8px_rgba(251,191,36,0.5)]"
+                                          : "bg-gradient-to-r from-cyan-500/15 via-teal-500/10 to-emerald-500/15 border border-cyan-400/30",
                                         staggerClass,
                                       )}
                                     >
-                                      <div className="text-[11px] font-medium text-cyan-200 mb-2">
+                                      <div className={cn(
+                                        "text-[11px] font-medium mb-2 flex items-center gap-1",
+                                        spotlight ? "text-amber-200" : "text-cyan-200"
+                                      )}>
+                                        {spotlight && <Sparkles className="size-3 text-amber-400 animate-pulse-glow" />}
                                         {credentialData.label}
                                       </div>
                                       <div className="flex flex-wrap gap-1">
                                         {credentialData.acsSystems.map((acs, acsIndex) => (
                                           <span
                                             key={acsIndex}
-                                            className="text-[9px] px-1.5 py-0.5 rounded-md bg-white/10 text-roadmap-text-secondary border border-white/10"
+                                            className={cn(
+                                              "text-[9px] px-1.5 py-0.5 rounded-md border",
+                                              spotlight 
+                                                ? "bg-amber-500/20 text-amber-100 border-amber-400/30"
+                                                : "bg-white/10 text-roadmap-text-secondary border-white/10"
+                                            )}
                                           >
                                             {acs}
                                           </span>
