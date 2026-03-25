@@ -532,8 +532,11 @@ export function RoadmapGrid() {
                   const features = getFilteredFeatures(allFeatures)
                   const hasHiddenFeatures = searchQuery && features.length < allFeatures.length
 
-                  // Sort spotlight features to top
+                  // Sort: credentials first, then spotlight, then regular
                   const sortedFeatures = [...features].sort((a, b) => {
+                    const aCredential = parseCredentialFeature(a) ? 0 : 1
+                    const bCredential = parseCredentialFeature(b) ? 0 : 1
+                    if (aCredential !== bCredential) return aCredential - bCredential
                     const aSpot = isSpotlightFeature(a) ? 0 : 1
                     const bSpot = isSpotlightFeature(b) ? 0 : 1
                     return aSpot - bSpot
@@ -579,7 +582,7 @@ export function RoadmapGrid() {
                                       key={index}
                                       className={cn(
                                         "animate-fade-in-up opacity-0 rounded-lg px-2.5 py-2 transition-all duration-200",
-                                        "bg-transparent border border-dashed border-roadmap-border/50 hover:border-roadmap-border",
+                                        "bg-roadmap-surface/40 border border-dashed border-roadmap-border hover:border-roadmap-text-secondary/50",
                                         staggerClass,
                                       )}
                                     >
@@ -590,7 +593,7 @@ export function RoadmapGrid() {
                                         {credentialData.acsSystems.map((acs, acsIndex) => (
                                           <span
                                             key={acsIndex}
-                                            className="text-[9px] px-1.5 py-0.5 rounded bg-roadmap-surface-hover/80 text-roadmap-text-primary border border-roadmap-border/30"
+                                            className="text-[9px] px-1.5 py-0.5 rounded bg-roadmap-surface-hover text-roadmap-text-primary border border-roadmap-border/50"
                                           >
                                             {acs}
                                           </span>
