@@ -14,12 +14,10 @@ export default function Page() {
       {/* Divider Banner */}
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-violet-500/20 to-teal-500/20" />
-        <div className="relative bg-slate-950/80 backdrop-blur-sm border-y border-white/5">
-          <div className="container mx-auto max-w-[1920px] px-5 sm:px-8 md:px-10 lg:px-14 xl:px-16 py-4">
-            <p className="text-center text-sm text-roadmap-text-secondary/80">
-              Explore our product development timeline below
-            </p>
-          </div>
+        <div className="relative bg-slate-950/80 backdrop-blur-sm border-y border-white/5 py-2">
+          <p className="text-center text-xs text-roadmap-text-secondary/60">
+            Explore our product development timeline below
+          </p>
         </div>
       </div>
       
