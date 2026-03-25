@@ -13,9 +13,9 @@ const suites = [
     quarters: {
       "Q3 2025": ["Contacts – Key Contacts", "Contacts – Contact Notes"],
       "Q4 2025": ["Data Management – Building Object & Table", "Data Management – Tagging Framework"],
-      "Q1 2026": ["Contacts – Contact Tracking", "Leases - Yardi integration"],
-      "Q2 2026": ["Data Management – Pipeline & Lease Object"],
-      "Q3 2026": ["Leases – Lease Terms with Credits", "Data Management – Custom Objects & Fields"],
+      "Q1 2026": ["Contacts – Contact Tracking"],
+      "Q2 2026": ["Leases - Yardi integration", "Leases – Lease Management"],
+      "Q3 2026": ["Data Management – Pipeline & Lease Object", "Leases – Lease Terms with Credits", "Data Management – Custom Objects & Fields"],
       "Q4 2026": ["Tours – Brochure & Tour Content Tools", "Onboarding – Customizable Tenant Onboarding Workflows"],
     },
   },
