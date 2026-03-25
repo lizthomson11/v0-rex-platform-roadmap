@@ -31,9 +31,10 @@ const suites = [
         "Communication – Rich Content",
         "Communication – Newsletters",
       ],
-      "Q1 2026": ["Events – Flexible Payment Routing", "Experience – Automated Localized Posts"],
+      "Q1 2026": ["Experience – Automated Localized Posts"],
       "Q2 2026": ["Events – Multi-day Events", "Events – Automated Feedback"],
       "Q3 2026": [
+        "Events – Flexible Payment Routing",
         "Web Experience – Public Registration",
         "Experience – Integrated Digital Signage",
         "Admin On the Go – Event Management, Check-in & Communications",
