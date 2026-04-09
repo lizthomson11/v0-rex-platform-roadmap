@@ -2,6 +2,7 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { HeroCarousel } from "@/components/hero-carousel"
 import { ThemeSections } from "@/components/theme-sections"
+import { AiChatButton } from "@/components/ai-chat"
 
 export default function Page() {
   return (
@@ -53,6 +54,7 @@ export default function Page() {
       </main>
 
       <SiteFooter />
+      <AiChatButton />
     </div>
   )
 }
