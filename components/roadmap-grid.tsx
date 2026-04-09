@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { CircleCheck, Zap, Target, Search, X, Sparkles, ChevronLeft, ChevronsRight, ChevronUp, ChevronDown, ExternalLink } from "lucide-react"
+import { CircleCheck, Zap, Target, Search, X, Sparkles, ChevronLeft, ChevronsRight, ExternalLink } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -236,17 +236,13 @@ const getStatusColor = (status: QuarterColumn["status"]) => {
 
 const LEFT_COL_DESKTOP = 280
 const LEFT_COL_MOBILE = 100
-const COL_WIDTH_EXPANDED = 260
-const COL_WIDTH_COLLAPSED = 64
+const COL_WIDTH = 260
 
 export function RoadmapGrid() {
   const scrollContainerRef = React.useRef<HTMLDivElement>(null)
   const headerScrollRef = React.useRef<HTMLDivElement>(null)
   const isScrollSyncing = React.useRef(false)
   const [searchQuery, setSearchQuery] = React.useState("")
-  const [expandedQuarters, setExpandedQuarters] = React.useState<Set<string>>(() => {
-    return new Set(QUARTER_COLUMNS.filter((q) => q.defaultExpanded).map((q) => q.id))
-  })
   const [isMobile, setIsMobile] = React.useState(false)
   const [canScrollLeft, setCanScrollLeft] = React.useState(false)
   const [canScrollRight, setCanScrollRight] = React.useState(false)
@@ -298,41 +294,7 @@ export function RoadmapGrid() {
       el.removeEventListener("scroll", updateScrollIndicators)
       window.removeEventListener("resize", updateScrollIndicators)
     }
-  }, [updateScrollIndicators, expandedQuarters])
-
-  // Auto-expand quarters that have search matches
-  React.useEffect(() => {
-    if (!searchQuery.trim()) return
-    const quartersWithMatches = QUARTER_COLUMNS.filter((q) =>
-      suites.some((suite) => {
-        const features = getFeaturesForQuarter(suite, q.id)
-        return features.some((f) => f.toLowerCase().includes(searchQuery.toLowerCase()))
-      })
-    ).map((q) => q.id)
-    
-    if (quartersWithMatches.length > 0) {
-      setExpandedQuarters((prev) => {
-        const next = new Set(prev)
-        quartersWithMatches.forEach((id) => next.add(id))
-        return next
-      })
-    }
-  }, [searchQuery])
-
-  const toggleQuarter = (id: string) => {
-    setExpandedQuarters((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) {
-        next.delete(id)
-      } else {
-        next.add(id)
-      }
-      return next
-    })
-  }
-
-  const expandAll = () => setExpandedQuarters(new Set(QUARTER_COLUMNS.map((q) => q.id)))
-  const collapseAll = () => setExpandedQuarters(new Set())
+  }, [updateScrollIndicators])
 
   const getFilteredFeatures = (features: string[]) => {
     if (!searchQuery.trim()) return features
@@ -351,9 +313,7 @@ export function RoadmapGrid() {
 
   const LEFT_COL = isMobile ? LEFT_COL_MOBILE : LEFT_COL_DESKTOP
 
-  const colWidths = QUARTER_COLUMNS.map((q) =>
-    expandedQuarters.has(q.id) ? COL_WIDTH_EXPANDED : COL_WIDTH_COLLAPSED
-  )
+  const colWidths = QUARTER_COLUMNS.map(() => COL_WIDTH)
   const totalWidth = LEFT_COL + colWidths.reduce((a, b) => a + b, 0) + (QUARTER_COLUMNS.length * 12)
 
   return (
@@ -422,57 +382,29 @@ export function RoadmapGrid() {
 
               {/* Quarter column headers */}
               {QUARTER_COLUMNS.map((quarter, idx) => {
-                const isExpanded = expandedQuarters.has(quarter.id)
                 const featureCount = getTotalFeaturesForQuarter(quarter.id)
-
-                const isNow = quarter.status === "in-progress"
                 
                 return (
-                  <button
+                  <div
                     key={quarter.id}
-                    onClick={() => toggleQuarter(quarter.id)}
-                    className={cn(
-                      "group shrink-0 rounded-xl border transition-all duration-300 hover:scale-[1.02]",
-                      isNow 
-                        ? "border-blue-500/50 ring-2 ring-blue-500/20 shadow-[0_0_30px_-10px_rgba(59,130,246,0.5)]" 
-                        : "border-roadmap-border hover:border-roadmap-border-hover",
-                      isExpanded
-                        ? "bg-roadmap-surface/80 px-4 py-4"
-                        : "bg-roadmap-surface/40 hover:bg-roadmap-surface/60 px-2 py-3",
-                    )}
+                    className="shrink-0 rounded-xl border border-roadmap-border bg-roadmap-surface/80 px-4 py-4"
                     style={{ width: colWidths[idx] }}
                   >
-                    {isExpanded ? (
-                      <div className="flex flex-col items-center gap-1.5">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-roadmap-text-primary">{quarter.label}</span>
-                          <span className={cn(
-                            "text-[9px] font-medium px-1.5 py-0.5 rounded-full",
-                            quarter.status === "delivered" && "bg-emerald-500/20 text-emerald-400",
-                            quarter.status === "in-progress" && "bg-blue-500/20 text-blue-400",
-                            quarter.status === "upcoming" && "bg-amber-500/20 text-amber-400",
-                          )}>
-                            {getStatusLabel(quarter.status)}
-                          </span>
-                        </div>
-                        <span className="text-[11px] text-roadmap-text-secondary/70">{featureCount} features</span>
-                        <span className="flex items-center gap-1 text-[10px] text-roadmap-text-secondary/50 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <ChevronUp className="size-3" />
-                          <span>Hide</span>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-roadmap-text-primary">{quarter.label}</span>
+                        <span className={cn(
+                          "text-[9px] font-medium px-1.5 py-0.5 rounded-full",
+                          quarter.status === "delivered" && "bg-emerald-500/20 text-emerald-400",
+                          quarter.status === "in-progress" && "bg-blue-500/20 text-blue-400",
+                          quarter.status === "upcoming" && "bg-amber-500/20 text-amber-400",
+                        )}>
+                          {getStatusLabel(quarter.status)}
                         </span>
                       </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center gap-1.5 h-full">
-                        <span className={cn("size-2 rounded-full shrink-0", getStatusColor(quarter.status))} />
-                        <span className="text-[10px] font-semibold text-roadmap-text-primary text-center leading-tight">
-                          {quarter.label}
-                        </span>
-                        <span className="flex items-center gap-0.5 text-[9px] text-roadmap-text-secondary/50">
-                          <ChevronDown className="size-3" />
-                        </span>
-                      </div>
-                    )}
-                  </button>
+                      <span className="text-[11px] text-roadmap-text-secondary/70">{featureCount} features</span>
+                    </div>
+                  </div>
                 )
               })}
             </div>
@@ -520,7 +452,6 @@ export function RoadmapGrid() {
 
                 {/* Quarter cells */}
                 {QUARTER_COLUMNS.map((quarter, idx) => {
-                  const isExpanded = expandedQuarters.has(quarter.id)
                   const allFeatures = getFeaturesForQuarter(suite, quarter.id)
                   const features = getFilteredFeatures(allFeatures)
                   const hasHiddenFeatures = searchQuery && features.length < allFeatures.length
@@ -538,35 +469,29 @@ export function RoadmapGrid() {
                   return (
                     <div
                       key={quarter.id}
-                      className={cn(
-                        "shrink-0 rounded-xl border border-roadmap-border transition-all duration-300",
-                        isExpanded 
-                          ? "bg-roadmap-surface/60 p-4 hover:bg-roadmap-surface/70" 
-                          : "bg-roadmap-surface/30 hover:bg-roadmap-surface/40",
-                      )}
+                      className="shrink-0 rounded-xl border border-roadmap-border transition-all duration-300 bg-roadmap-surface/60 p-4 hover:bg-roadmap-surface/70"
                       style={{
                         width: colWidths[idx],
                         borderLeftColor: getBorderColor(suite.color),
                         borderLeftWidth: 4,
                       }}
                     >
-                      {isExpanded ? (
-                        sortedFeatures.length > 0 ? (
-                          <>
-                            <div className="flex flex-wrap gap-1.5">
-                              {sortedFeatures.map((feature, index) => {
-                                const spotlight = isSpotlightFeature(feature)
-                                const isDelivered = quarter.status === "delivered"
-                                const helpLink = isDelivered ? getHelpLink(feature) : null
-                                const credentialData = parseCredentialFeature(feature)
-                                
-                                const staggerClass = cn(
-                                  index === 0 && "stagger-1",
-                                  index === 1 && "stagger-2",
-                                  index === 2 && "stagger-3",
-                                  index === 3 && "stagger-4",
-                                  index >= 4 && "stagger-5",
-                                )
+                      {sortedFeatures.length > 0 ? (
+                        <>
+                          <div className="flex flex-wrap gap-1.5">
+                            {sortedFeatures.map((feature, index) => {
+                              const spotlight = isSpotlightFeature(feature)
+                              const isDelivered = quarter.status === "delivered"
+                              const helpLink = isDelivered ? getHelpLink(feature) : null
+                              const credentialData = parseCredentialFeature(feature)
+                              
+                              const staggerClass = cn(
+                                index === 0 && "stagger-1",
+                                index === 1 && "stagger-2",
+                                index === 2 && "stagger-3",
+                                index === 3 && "stagger-4",
+                                index >= 4 && "stagger-5",
+                              )
                                 
                                 // Special rendering for credential features with ACS badges
                                 if (credentialData) {
@@ -644,28 +569,17 @@ export function RoadmapGrid() {
                                   </div>
                                 )
                               })}
-                            </div>
-                            {hasHiddenFeatures && (
-                              <p className="text-[10px] text-roadmap-text-secondary/50 mt-2">
-                                +{allFeatures.length - features.length} more
-                              </p>
-                            )}
-                          </>
-                        ) : (
-                          <p className="text-[11px] text-roadmap-text-secondary/40 text-center py-6 italic">
-                            {searchQuery ? "No matches" : "Stay tuned"}
-                          </p>
-                        )
+                          </div>
+                          {hasHiddenFeatures && (
+                            <p className="text-[10px] text-roadmap-text-secondary/50 mt-2">
+                              +{allFeatures.length - features.length} more
+                            </p>
+                          )}
+                        </>
                       ) : (
-                        <button
-                          onClick={() => toggleQuarter(quarter.id)}
-                          className="h-full w-full flex flex-col items-center justify-center py-3 gap-1 hover:bg-roadmap-surface/50 rounded transition-colors cursor-pointer"
-                        >
-                          <span className="text-sm font-semibold text-roadmap-text-secondary/80">
-                            {allFeatures.length}
-                          </span>
-                          <span className="text-[9px] text-roadmap-text-secondary/50">click to view</span>
-                        </button>
+                        <p className="text-[11px] text-roadmap-text-secondary/40 text-center py-6 italic">
+                          {searchQuery ? "No matches" : "Stay tuned"}
+                        </p>
                       )}
                     </div>
                   )
