@@ -189,7 +189,7 @@ const getStatusLabel = (status: QuarterColumn["status"]) => {
     case "in-progress":
       return "In Progress"
     case "upcoming":
-      return "On our radar"
+      return "Exploring"
   }
 }
 
