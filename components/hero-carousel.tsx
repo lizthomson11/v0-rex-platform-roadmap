@@ -19,7 +19,7 @@ const KEY_THEMES: KeyTheme[] = [
     title: "Workflow Automation",
     subtitle: "Service Requests + Resource Booking",
     icon: Zap,
-    color: "from-amber-500/20 to-orange-500/20 border-amber-500/30",
+    color: "violet",
     description: "Seamlessly connect Service Requests and Resource Booking to create automated workflows that save time and reduce manual work.",
     features: [
       "Auto-generate service requests from bookings",
@@ -33,7 +33,7 @@ const KEY_THEMES: KeyTheme[] = [
     title: "Connected Invoicing",
     subtitle: "Unified billing across operations",
     icon: Receipt,
-    color: "from-emerald-500/20 to-teal-500/20 border-emerald-500/30",
+    color: "violet",
     description: "Generate invoices automatically from service requests, bookings, and other platform activities with direct Yardi integration.",
     features: [
       "Automated invoice generation",
@@ -47,7 +47,7 @@ const KEY_THEMES: KeyTheme[] = [
     title: "AI Lease Abstraction",
     subtitle: "Intelligent document processing",
     icon: Brain,
-    color: "from-violet-500/20 to-purple-500/20 border-violet-500/30",
+    color: "violet",
     description: "Use AI to automatically extract and structure key terms from lease documents, reducing manual data entry and improving accuracy.",
     features: [
       "Automatic term extraction",
@@ -61,7 +61,7 @@ const KEY_THEMES: KeyTheme[] = [
     title: "Deep Integrations",
     subtitle: "Connect your systems",
     icon: Link2,
-    color: "from-blue-500/20 to-cyan-500/20 border-blue-500/30",
+    color: "violet",
     description: "Expand connectivity with Office 365, Tripleseat, and more to create a unified property management ecosystem.",
     features: [
       "Office 365 (Outlook) calendar sync",
@@ -75,7 +75,7 @@ const KEY_THEMES: KeyTheme[] = [
     title: "AI Admin Assistant",
     subtitle: "Intelligent automation",
     icon: Sparkles,
-    color: "from-pink-500/20 to-rose-500/20 border-pink-500/30",
+    color: "violet",
     description: "An AI-powered assistant to help property managers automate routine tasks and get intelligent recommendations.",
     features: [
       "Natural language commands",
@@ -89,7 +89,7 @@ const KEY_THEMES: KeyTheme[] = [
     title: "Command Center",
     subtitle: "Unified access control visibility",
     icon: Building2,
-    color: "from-slate-500/20 to-gray-500/20 border-slate-500/30",
+    color: "violet",
     description: "A centralized dashboard for managing credentials, viewing activity logs, and maintaining security across your portfolio.",
     features: [
       "Unified credential visibility",
@@ -138,19 +138,21 @@ export function HeroCarousel() {
       <button
         key={`${theme.id}-${index}`}
         onClick={() => setSelectedTheme(theme)}
-        className={`shrink-0 group relative bg-gradient-to-br ${theme.color} backdrop-blur-sm rounded-xl border p-4 w-[240px] text-left transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-white/5`}
+        className="shrink-0 group relative rounded-xl p-[1px] w-[240px] text-left transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-violet-500/50 via-fuchsia-500/30 to-violet-500/50 hover:from-violet-400/70 hover:via-fuchsia-400/50 hover:to-violet-400/70"
       >
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-white/10 shrink-0">
-              <Icon className="size-5 text-white" />
+        <div className="h-full rounded-xl bg-black/90 backdrop-blur-sm p-4">
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-violet-500/20 border border-violet-500/30 shrink-0">
+                <Icon className="size-5 text-violet-300" />
+              </div>
+              <h3 className="text-sm font-semibold text-white">{theme.title}</h3>
             </div>
-            <h3 className="text-sm font-semibold text-white">{theme.title}</h3>
+            <p className="text-[11px] text-roadmap-text-secondary/70 leading-relaxed">{theme.subtitle}</p>
           </div>
-          <p className="text-[11px] text-roadmap-text-secondary/70 leading-relaxed">{theme.subtitle}</p>
-        </div>
-        <div className="absolute bottom-2 right-2 text-[10px] text-roadmap-text-secondary/50 opacity-0 group-hover:opacity-100 transition-opacity">
-          Learn more →
+          <div className="absolute bottom-3 right-3 text-[10px] text-violet-400/60 opacity-0 group-hover:opacity-100 transition-opacity">
+            Learn more →
+          </div>
         </div>
       </button>
     )
@@ -184,51 +186,53 @@ export function HeroCarousel() {
           
           {/* Modal content */}
           <div 
-            className={`relative bg-gradient-to-br ${selectedTheme.color} bg-black/90 backdrop-blur-md rounded-2xl border max-w-lg w-full p-6 shadow-2xl`}
+            className="relative rounded-2xl p-[1px] max-w-lg w-full bg-gradient-to-br from-violet-500/60 via-fuchsia-500/40 to-violet-500/60 shadow-2xl shadow-violet-500/20"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close button */}
-            <button
-              onClick={() => setSelectedTheme(null)}
-              className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-            >
-              <X className="size-4 text-white" />
-            </button>
+            <div className="bg-black/95 backdrop-blur-md rounded-2xl p-6">
+              {/* Close button */}
+              <button
+                onClick={() => setSelectedTheme(null)}
+                className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+              >
+                <X className="size-4 text-white" />
+              </button>
 
-            {/* Header */}
-            <div className="flex items-start gap-4 mb-6">
-              <div className="p-3 rounded-xl bg-white/10">
-                <selectedTheme.icon className="size-6 text-white" />
+              {/* Header */}
+              <div className="flex items-start gap-4 mb-6">
+                <div className="p-3 rounded-xl bg-violet-500/20 border border-violet-500/30">
+                  <selectedTheme.icon className="size-6 text-violet-300" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-white">{selectedTheme.title}</h2>
+                  <p className="text-sm text-roadmap-text-secondary/70">{selectedTheme.subtitle}</p>
+                </div>
               </div>
+
+              {/* Description */}
+              <p className="text-sm text-roadmap-text-secondary/90 leading-relaxed mb-6">
+                {selectedTheme.description}
+              </p>
+
+              {/* Features */}
               <div>
-                <h2 className="text-xl font-bold text-white">{selectedTheme.title}</h2>
-                <p className="text-sm text-roadmap-text-secondary/70">{selectedTheme.subtitle}</p>
-              </div>
-            </div>
-
-            {/* Description */}
-            <p className="text-sm text-roadmap-text-secondary/90 leading-relaxed mb-6">
-              {selectedTheme.description}
-            </p>
-
-            {/* Features */}
-            <div>
-              <h3 className="text-xs font-semibold text-roadmap-text-secondary/60 uppercase tracking-wider mb-3">What's included</h3>
-              <ul className="space-y-2">
-                {selectedTheme.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-center gap-2 text-sm text-white">
-                    <div className="size-1.5 rounded-full bg-emerald-400" />
+                <h3 className="text-xs font-semibold text-roadmap-text-secondary/60 uppercase tracking-wider mb-3">What's included</h3>
+                <ul className="space-y-2">
+                  {selectedTheme.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-center gap-2 text-sm text-white">
+                      <div className="size-1.5 rounded-full bg-violet-400" />
                     {feature}
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Footer */}
-            <div className="mt-6 pt-4 border-t border-white/10">
-              <p className="text-[11px] text-roadmap-text-secondary/50 italic">
-                Explore the roadmap below for detailed timelines
-              </p>
+              {/* Footer */}
+              <div className="mt-6 pt-4 border-t border-white/10">
+                <p className="text-[11px] text-roadmap-text-secondary/50 italic">
+                  Explore the roadmap below for detailed timelines
+                </p>
+              </div>
             </div>
           </div>
         </div>
