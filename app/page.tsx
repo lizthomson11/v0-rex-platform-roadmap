@@ -1,7 +1,6 @@
 import { RoadmapGrid } from "@/components/roadmap-grid"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
-import { HeroCarousel } from "@/components/hero-carousel"
 
 export default function Page() {
   return (
@@ -27,7 +26,7 @@ export default function Page() {
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-violet-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4" />
           <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4" />
           
-          <div className="relative container mx-auto max-w-[1920px] px-5 sm:px-8 md:px-10 lg:px-14 xl:px-16 py-12 md:py-16 lg:py-20">
+          <div className="relative container mx-auto max-w-[1920px] px-5 sm:px-8 md:px-10 lg:px-14 xl:px-16 py-16 md:py-20 lg:py-28">
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-roadmap-text-secondary mb-6">
                 <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -40,8 +39,6 @@ export default function Page() {
                 See what we're building for the REX Platform. This is a look at our current priorities and what's ahead for 2026.
               </p>
             </div>
-            
-            <HeroCarousel />
           </div>
         </section>
 
