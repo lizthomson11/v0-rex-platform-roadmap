@@ -1,60 +1,9 @@
 "use client"
 
 import React from "react"
-import { CircleCheck, Zap, Target, Search, X, Sparkles, ChevronLeft, ChevronsRight, ExternalLink } from "lucide-react"
+import { Check, Clock, Calendar, Users, Star, Shield, Settings, BarChart3, Search, X } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
-
-const SPOTLIGHT_FEATURES = new Set([
-  "Resource Booking – Credits",
-  "Service Requests – Teams, Catalogues & Routing",
-  "Service Requests – Preventative Maintenance",
-  "Reporting – Tenant Health Score",
-  "Leases – Lease Management & AI Abstraction",
-  "Events – Multi-day Events",
-])
-
-function isSpotlightFeature(feature: string) {
-  return SPOTLIGHT_FEATURES.has(feature)
-}
-
-/** Parse credential features to extract ACS systems */
-function parseCredentialFeature(feature: string): { label: string; acsSystems: string[] } | null {
-  const credentialMatch = feature.match(/^(Tenant Credentials|Visitor Credentials)\s*–\s*(.+?)\s*\((.+)\)$/)
-  if (credentialMatch) {
-    const [, type, method, acsString] = credentialMatch
-    const acsSystems = acsString.split(',').map(s => s.trim())
-    return {
-      label: `${type} – ${method}`,
-      acsSystems,
-    }
-  }
-  return null
-}
-
-/** Help documentation links for delivered features */
-function getHelpLink(feature: string): string | null {
-  const lowerFeature = feature.toLowerCase()
-  
-  if (lowerFeature.includes("reporting") || lowerFeature.includes("intelligence") || lowerFeature.includes("analytics")) {
-    return "https://helphub.hqo.com/help/analytics"
-  }
-  if (lowerFeature.includes("event")) {
-    return "https://helphub.hqo.com/help/events"
-  }
-  if (lowerFeature.includes("visitor management") || lowerFeature.includes("access control")) {
-    return "https://helphub.hqo.com/help/hqo-visitor-management-user-guides"
-  }
-  if (lowerFeature.includes("resource booking")) {
-    return "https://helphub.hqo.com/help/hqo-resource-booking"
-  }
-  if (lowerFeature.includes("custom domain")) {
-    return "https://helphub.hqo.com/help/tenant-web-setup-branding"
-  }
-  
-  return null
-}
 
 const suites = [
   {
@@ -62,11 +11,12 @@ const suites = [
     description: "Customer Relationship Management tools for managing contacts, tours, and leases",
     color: "suite-crm",
     quarters: {
-      "2025": ["Contacts – Key Contacts", "Contacts – Contact Notes", "Data Management – Building Object & Table", "Data Management – Tagging Framework"],
-      "Q1 2026": ["User Profile – Activity Enhancements"],
-      "Q2 2026": ["Leases - Yardi integration", "Leases – Lease Management & AI Abstraction"],
-      "Q3 2026": ["Data Management – Custom Objects & Fields"],
-      "Q4 2026": ["Tours – Brochure & Tour Content Tools", "Onboarding – Customizable Tenant Onboarding Workflows", "Leases – Lease Terms with Credits"],
+      "Q3 2025": ["Contacts – Key Contacts", "Contacts – Contact Notes"],
+      "Q4 2025": ["Data Management – Building Object & Table", "Data Management – Tagging Framework"],
+      "Q1 2026": ["Contacts – Contact Tracking", "Leases - Yardi integration"],
+      "Q2 2026": ["Data Management – Pipeline & Lease Object"],
+      "Q3 2026": ["Leases – Lease Terms with Credits", "Data Management – Custom Objects & Fields"],
+      "Q4 2026": ["Tours – Brochure & Tour Content Tools", "Onboarding – Customizable Tenant Onboarding Workflows"],
     },
   },
   {
@@ -74,28 +24,22 @@ const suites = [
     description: "Guest and tenant experiences including events, communications, and web portals",
     color: "suite-experience",
     quarters: {
-      "2025": [
-        "Events – Tickets", "Events – QR Check-in", "Events – Waitlist", "Events – Discounts",
-        "Events – Multi-slot Events", "Events – Add Attendees from Admin", "Communication – Rich Content", "Communication – Newsletters",
+      "Q3 2025": ["Events – Tickets", "Events – QR Check-in", "Events – Waitlist", "Events – Discounts"],
+      "Q4 2025": [
+        "Events – Multi-slot Events",
+        "Events – Add Attendees from Admin",
+        "Communication – Rich Content",
+        "Communication – Newsletters",
       ],
-      "Q1 2026": [
+      "Q1 2026": ["Events – Flexible Payment Routing", "Experience – Automated Localized Posts"],
+      "Q2 2026": ["Events – Multi-day Events", "Events – Automated Feedback"],
+      "Q3 2026": [
+        "Web Experience – Public Property Page",
         "Web Experience – Public Registration",
-        "Web Experience – Customization Enhancements",
-        "Web Experience – Custom Domain Setup",
-      ],
-      "Q2 2026": [
-        "Experience – Automated Localized Posts",
-        "Events – Limiting Session Claims",
-        "Events – Cancellation Notice",
+        "Experience – Integrated Digital Signage",
         "Admin On the Go – Event Management, Check-in & Communications",
       ],
-      "Q3 2026": [
-        "Events – Automated Feedback",
-        "Events – Multi-day Events",
-        "Events – Flexible Payment Routing",
-        "Experience – Integrated Digital Signage",
-      ],
-      "Q4 2026": ["Events – Recurring Events"],
+      "Q4 2026": ["Events – Recurring Events", "AI Automation – Concierge Consumer App"],
     },
   },
   {
@@ -103,29 +47,30 @@ const suites = [
     description: "Physical access and visitor management",
     color: "suite-access",
     quarters: {
-      "2025": [
-        "Visitor Management – Loading Dock Support", "Visitor Management – Wallet Visitor Pass (Wavelynx)", "Visitor Management – Reporting Enhancements",
-        "Visitor Management – Bulk Registration", "Visitor Management – Automated Visitor Passes via Bookings",
-        "Tenant Credentials – Wallet/NFC (Lenel, Genea, C-CURE)",
-        "Visitor Credentials – QR Pass (Lenel, C-CURE)",
+      "Q3 2025": [
+        "Visitor Management – Loading Dock Support",
+        "Visitor Management – Wallet Visitor Pass (Wavelynx)",
+        "Visitor Management – Reporting Enhancements",
+      ],
+      "Q4 2025": [
+        "Access Control – Genetec Integration",
+        "Visitor Management – Bulk Registration",
+        "Visitor Management – Automated Visitor Passes via Bookings",
       ],
       "Q1 2026": [
-        "Tenant Credentials – Wallet/NFC (AMAG, Integriti)",
-        "Visitor Credentials – QR Pass (AMAG, Integriti)",
+        "Access Control – AMAG Integration",
+        "Access Control – Integriti Integration",
         "Visitor Management – Tenant-Initiated Vendor Visit Requests",
         "Visitor Management – Kiosk & Self-Service Check-in",
       ],
       "Q2 2026": [
-        "Tenant Credentials – Wallet/NFC (Genetec)",
-        "Tenant Credentials – BLE (Brivo)",
-        "Visitor Credentials – QR Pass (Genetec)",
+        "Access Control – Brivo Integration",
+        "Access Control – Kastle Integration",
+        "Access Control – Genetec Integration",
+        "Visitor Management – Genetec Integration",
       ],
       "Q3 2026": ["Access Control – Command Center Activity & Audit Logs"],
-      "Q4 2026": [
-        "Access Control – Command Center Unified Credential Visibility",
-        "Tenant Credentials – Wallet/NFC (Kastle)",
-        "Visitor Credentials – QR Pass (Kastle)",
-      ],
+      "Q4 2026": ["Access Control – Command Center Unified Credential Visibility"],
     },
   },
   {
@@ -133,28 +78,35 @@ const suites = [
     description: "Service requests, resource booking, and operational workflows",
     color: "suite-operations",
     quarters: {
-      "2025": [
-        "Resource Booking – Branded Emails", "Resource Booking – Add Visitor to Booking", "Resource Booking – Discounts", "Resource Booking – On Account Payments",
-        "Resource Booking – Collections", "Resource Booking – Combined Meeting Rooms",
+      "Q3 2025": [
+        "Resource Booking – Branded Emails",
+        "Resource Booking – Add Visitor to Booking",
+        "Resource Booking – Discounts",
+        "Resource Booking – On Account Payments",
+      ],
+      "Q4 2025": [
+        "Service Requests – Teams, Catalogues & Routing",
+        "Service Requests – Two-way Messaging",
+        "Resource Booking – Collections",
+        "Resource Booking – Combined Meeting Rooms",
       ],
       "Q1 2026": [
+        "Service Requests – Inventory & Inspections",
+        "Service Requests – Pricing & Payments",
+        "Service Requests – Automated Feedback",
         "Resource Booking – Credits",
         "Resource Booking – Cancellation & Preset Refunds",
       ],
       "Q2 2026": [
-        "Service Requests – Teams, Catalogues & Routing",
-        "Service Requests – Messaging & Feedback",
-        "Service Requests – Pricing & Payments",
-        "Service Requests – Billing & Yardi Invoicing",
-        "Admin On the Go – Service Request Management",
-        "Resource Booking – Room Kiosks",
+        "Resource Booking – Automated Feedback",
         "Resource Booking – Office 365 (Outlook) Integration",
         "Resource Booking – Tripleseat Integration",
+        "Service Requests – Billing & Yardi Invoicing",
+        "Admin On the Go – Service Request Management",
       ],
       "Q3 2026": [
-        "Service Requests – Inventory & Inspections",
         "Service Requests – Preventative Maintenance",
-        "Resource Booking – Automated Feedback",
+        "Resource Booking – Room Kiosks",
         "Resource Booking – Two-way Messaging",
         "Automation – Resource Booking → Service Request Integration",
       ],
@@ -166,82 +118,58 @@ const suites = [
     description: "Analytics, reporting, and AI-powered automation",
     color: "suite-intelligence",
     quarters: {
-      "2025": ["Reporting – New Intelligence Platform", "AI Automation – Agent Development"],
+      "Q3 2025": ["Reporting- New intelligence platform", "AI Automation – Agent Development"],
+      "Q4 2025": ["AI Automation – Agent Development"],
       "Q1 2026": [
         "Reporting – New Access Performance Reports",
         "Reporting – New Content Performance Reports",
         "Reporting – Sentiment & Feedback Analysis",
+        "Reporting – New Communications Reports",
       ],
-      "Q2 2026": ["Reporting – New Communications Reports", "Reporting – New Service Request Performance Reports"],
+      "Q2 2026": [
+        "Reporting – New Service Request Performance Reports",
+        "Reporting – New Event Performance Reports",
+        "Reporting – New Resource Booking Performance Reports",
+        "Reporting – New CRM Reports",
+      ],
       "Q3 2026": ["Reporting – Tenant Health Score", "Reporting – New CRM Reports & Reporting"],
-      "Q4 2026": ["Reporting – New Resource Booking Performance Reports", "Reporting – New Event Performance Reports"],
+      "Q4 2026": ["Reporting – New Report Types"],
     },
   },
 ]
 
-type QuarterColumn = {
-  id: string
-  label: string
-  sublabel?: string
-  defaultExpanded: boolean
-}
-
-// Auto-calculate status based on current date
-function getQuarterStatus(quarterId: string): "delivered" | "in-progress" | "upcoming" {
-  const now = new Date()
-  const currentYear = now.getFullYear()
-  const currentMonth = now.getMonth() + 1 // 1-12
-  
-  // Determine current quarter
-  const currentQuarter = Math.ceil(currentMonth / 3)
-  
-  if (quarterId === "2025") {
-    return currentYear > 2025 ? "delivered" : currentYear === 2025 ? "in-progress" : "upcoming"
-  }
-  
-  // Parse quarter like "Q1 2026"
-  const match = quarterId.match(/Q(\d)\s+(\d{4})/)
-  if (!match) return "upcoming"
-  
-  const quarterNum = parseInt(match[1])
-  const year = parseInt(match[2])
-  
-  if (year < currentYear) return "delivered"
-  if (year > currentYear) return "upcoming"
-  
-  // Same year - compare quarters
-  if (quarterNum < currentQuarter) return "delivered"
-  if (quarterNum === currentQuarter) return "in-progress"
-  return "upcoming"
-}
-
-const QUARTER_COLUMNS: QuarterColumn[] = [
-  { id: "2025", label: "2025", defaultExpanded: true },
-  { id: "Q1 2026", label: "Q1 2026", defaultExpanded: true },
-  { id: "Q2 2026", label: "Q2 2026", defaultExpanded: true },
-  { id: "Q3 2026", label: "Q3 2026", defaultExpanded: true },
-  { id: "Q4 2026", label: "Q4 2026", defaultExpanded: true },
+const quarterHeaders = [
+  { quarter: "Q3 2025", status: "delivered" as const },
+  { quarter: "Q4 2025", status: "delivered" as const },
+  { quarter: "Q1 2026", status: "in-progress" as const },
+  { quarter: "Q2 2026", status: "upcoming" as const },
+  { quarter: "Q3 2026", status: "upcoming" as const },
+  { quarter: "Q4 2026", status: "upcoming" as const },
 ]
 
-type QuarterStatus = "delivered" | "in-progress" | "upcoming"
+/** Narrow sticky rail: icon + short label; full description on hover */
+const LEFT_COL_DESKTOP = 100
+const LEFT_COL_MOBILE = 56
+const COL_WIDTH_DESKTOP = 280
+const COL_WIDTH_DESKTOP_WIDE = 240
+const COL_WIDTH_MOBILE = 240
+const GAP = 24 // gap-6 in pixels
 
-const getStatusLabel = (status: QuarterStatus) => {
-  switch (status) {
-    case "delivered":
-      return "Delivered"
-    case "in-progress":
-      return "In Progress"
-    case "upcoming":
-      return "Exploring"
+const getSuiteIcon = (name: string) => {
+  const icons: Record<string, React.ReactNode> = {
+    CRM: <Users className="size-4 md:size-5" />,
+    Experience: <Star className="size-4 md:size-5" />,
+    "Access Control (PAIR)": <Shield className="size-4 md:size-5" />,
+    Operations: <Settings className="size-4 md:size-5" />,
+    Intelligence: <BarChart3 className="size-4 md:size-5" />,
   }
+  return icons[name] || <Users className="size-4 md:size-5" />
 }
 
-function getFeaturesForQuarter(suite: (typeof suites)[0], quarterId: string): string[] {
-  return suite.quarters[quarterId as keyof typeof suite.quarters] ?? []
-}
-
-function getTotalFeaturesForQuarter(quarterId: string): number {
-  return suites.reduce((total, suite) => total + getFeaturesForQuarter(suite, quarterId).length, 0)
+/** Short label for the minimized left rail (full name in title tooltip) */
+const getSuiteRailLabel = (name: string) => {
+  if (name === "Access Control (PAIR)") return "Access"
+  return name
 }
 
 const getBorderColor = (color: string) => {
@@ -255,89 +183,58 @@ const getBorderColor = (color: string) => {
   return colors[color] || "oklch(0.70 0.15 240)"
 }
 
-const getStatusIcon = (status: QuarterStatus) => {
-  switch (status) {
-    case "delivered":
-      return <CircleCheck className="size-3.5" strokeWidth={2.5} />
-    case "in-progress":
-      return <Zap className="size-3.5" strokeWidth={2.5} />
-    case "upcoming":
-      return <Target className="size-3.5" strokeWidth={2.5} />
-  }
-}
-
-const getStatusColor = (status: QuarterStatus) => {
-  switch (status) {
-    case "delivered":
-      return "bg-green-600"
-    case "in-progress":
-      return "bg-blue-600"
-    case "upcoming":
-      return "bg-amber-500"
-  }
-}
-
-const LEFT_COL_DESKTOP = 280
-const LEFT_COL_MOBILE = 100
-const COL_WIDTH = 260
-
 export function RoadmapGrid() {
-  const scrollContainerRef = React.useRef<HTMLDivElement>(null)
-  const headerScrollRef = React.useRef<HTMLDivElement>(null)
-  const isScrollSyncing = React.useRef(false)
-  const [searchQuery, setSearchQuery] = React.useState("")
-  const [isMobile, setIsMobile] = React.useState(false)
-  const [canScrollLeft, setCanScrollLeft] = React.useState(false)
-  const [canScrollRight, setCanScrollRight] = React.useState(false)
+  const colCount = quarterHeaders.length
 
-  // Sync horizontal scroll between header and body
-  const syncScroll = React.useCallback((source: "header" | "body") => {
-    if (isScrollSyncing.current) return
-    isScrollSyncing.current = true
-    
-    const header = headerScrollRef.current
-    const body = scrollContainerRef.current
-    
-    if (source === "header" && header && body) {
-      body.scrollLeft = header.scrollLeft
-    } else if (source === "body" && header && body) {
-      header.scrollLeft = body.scrollLeft
-    }
-    
-    requestAnimationFrame(() => {
-      isScrollSyncing.current = false
-    })
-  }, [])
+  const headerScrollRef = React.useRef<HTMLDivElement | null>(null)
+  const bodyScrollRef = React.useRef<HTMLDivElement | null>(null)
+  const syncingRef = React.useRef<"header" | "body" | null>(null)
+
+  const [isMobile, setIsMobile] = React.useState(false)
+  const [viewportWidth, setViewportWidth] = React.useState(0)
+  const [searchQuery, setSearchQuery] = React.useState("")
 
   React.useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    const handleResize = () => {
+      const width = window.innerWidth
+      setIsMobile(width < 768)
+      setViewportWidth(width)
+    }
     handleResize()
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  // Check scroll position for indicators
-  const updateScrollIndicators = React.useCallback(() => {
-    const el = scrollContainerRef.current
-    if (!el) return
-    const hasHorizontalScroll = el.scrollWidth > el.clientWidth + 5
-    setCanScrollLeft(hasHorizontalScroll && el.scrollLeft > 20)
-    setCanScrollRight(hasHorizontalScroll && el.scrollLeft < el.scrollWidth - el.clientWidth - 20)
-  }, [])
+  const LEFT_COL = isMobile ? LEFT_COL_MOBILE : LEFT_COL_DESKTOP
+  const COL_WIDTH = isMobile
+    ? COL_WIDTH_MOBILE
+    : viewportWidth >= 1536
+      ? COL_WIDTH_DESKTOP_WIDE
+      : COL_WIDTH_DESKTOP
 
-  React.useEffect(() => {
-    const el = scrollContainerRef.current
-    if (!el) return
-    // Small delay to ensure content is rendered
-    const timer = setTimeout(updateScrollIndicators, 100)
-    el.addEventListener("scroll", updateScrollIndicators)
-    window.addEventListener("resize", updateScrollIndicators)
-    return () => {
-      clearTimeout(timer)
-      el.removeEventListener("scroll", updateScrollIndicators)
-      window.removeEventListener("resize", updateScrollIndicators)
-    }
-  }, [updateScrollIndicators])
+  const syncScroll = (source: "header" | "body") => {
+    const headerEl = headerScrollRef.current
+    const bodyEl = bodyScrollRef.current
+    if (!headerEl || !bodyEl) return
+
+    if (syncingRef.current && syncingRef.current !== source) return
+
+    syncingRef.current = source
+
+    const left = source === "header" ? headerEl.scrollLeft : bodyEl.scrollLeft
+    if (source === "header") bodyEl.scrollLeft = left
+    else headerEl.scrollLeft = left
+
+    requestAnimationFrame(() => {
+      syncingRef.current = null
+    })
+  }
+
+  const getQuarterTotal = (quarterName: string) => {
+    return suites.reduce((total, suite) => {
+      return total + (suite.quarters[quarterName as keyof typeof suite.quarters]?.length || 0)
+    }, 0)
+  }
 
   const getFilteredFeatures = (features: string[]) => {
     if (!searchQuery.trim()) return features
@@ -346,23 +243,22 @@ export function RoadmapGrid() {
 
   const suiteHasMatchingFeatures = (suite: (typeof suites)[0]) => {
     if (!searchQuery.trim()) return true
-    return QUARTER_COLUMNS.some((q) => {
-      const features = getFeaturesForQuarter(suite, q.id)
-      return features.some((f) => f.toLowerCase().includes(searchQuery.toLowerCase()))
-    })
+    return Object.values(suite.quarters).some((features) =>
+      features.some((feature) => feature.toLowerCase().includes(searchQuery.toLowerCase())),
+    )
+  }
+
+  const contentWidth = LEFT_COL + colCount * COL_WIDTH + colCount * GAP
+
+  const gridColsStyle: React.CSSProperties = {
+    gridTemplateColumns: `${LEFT_COL}px repeat(${colCount}, ${COL_WIDTH}px)`,
   }
 
   const filteredSuites = searchQuery.trim() ? suites.filter(suiteHasMatchingFeatures) : suites
 
-  const LEFT_COL = isMobile ? LEFT_COL_MOBILE : LEFT_COL_DESKTOP
-
-  const colWidths = QUARTER_COLUMNS.map(() => COL_WIDTH)
-  const totalWidth = LEFT_COL + colWidths.reduce((a, b) => a + b, 0) + (QUARTER_COLUMNS.length * 12)
-
   return (
-    <div className="w-full">
-      {/* Search */}
-      <div className="mb-4">
+    <div className="w-full px-2 md:px-6 lg:px-0 2xl:px-6">
+      <div className="mb-4 md:mb-6">
         <div className="relative max-w-md mx-auto">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-roadmap-text-secondary" />
           <Input
@@ -383,262 +279,139 @@ export function RoadmapGrid() {
         </div>
         {searchQuery && (
           <p className="text-center text-sm text-roadmap-text-secondary mt-2">
-            Showing results for "{searchQuery}"
+            Showing results for "{searchQuery}" in {filteredSuites.length} suite(s)
+          </p>
+        )}
+        {!searchQuery && (
+          <p className="text-center text-xs md:text-sm text-roadmap-text-secondary/80 mt-2">
+            {isMobile ? "Swipe horizontally to see more quarters →" : "Scroll horizontally to see more quarters →"}
           </p>
         )}
       </div>
 
-      {/* Sticky header row - hidden on mobile, offset for site header */}
-      <div className="hidden md:block sticky top-16 z-40 bg-black pt-2 pb-3">
-        <div className="relative">
-          {/* Left scroll indicator for header */}
-          {canScrollLeft && (
-            <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-black via-black/80 to-transparent z-40 pointer-events-none flex items-center justify-start pl-1">
-              <div className="bg-roadmap-surface/90 rounded-full p-1.5 shadow-lg">
-                <ChevronLeft className="size-4 text-roadmap-text-secondary" />
-              </div>
+      <div className="sticky top-0 z-50 bg-roadmap-background/90 backdrop-blur-xl pb-2 md:pb-4 shadow-lg">
+        <div
+          ref={headerScrollRef}
+          onScroll={() => syncScroll("header")}
+          className="overflow-x-auto overflow-y-hidden bg-roadmap-background pl-2 md:pl-4 [scrollbar-gutter:stable]"
+        >
+          <div className="grid gap-3 md:gap-6" style={{ ...gridColsStyle, width: contentWidth }}>
+            <div className="sticky left-0 z-[60] rounded-lg border border-roadmap-border bg-roadmap-background/90 backdrop-blur-xl px-1.5 md:px-2 py-2 md:py-3 flex items-center justify-center shadow-lg">
+              <h2 className="hidden md:block text-[11px] font-bold uppercase tracking-wide text-roadmap-text-secondary text-center leading-tight">
+                Suite
+              </h2>
+              <span className="md:hidden text-[10px] font-bold text-roadmap-text-secondary">Su</span>
             </div>
-          )}
-          
-          {/* Right scroll indicator for header */}
-          {canScrollRight && (
-            <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-black via-black/80 to-transparent z-40 pointer-events-none flex items-center justify-end pr-2">
-              <div className="bg-roadmap-surface/90 rounded-full p-1.5 shadow-lg flex items-center gap-1">
-                <span className="text-[10px] text-roadmap-text-secondary font-medium">More</span>
-                <ChevronsRight className="size-4 text-roadmap-text-secondary" />
-              </div>
-            </div>
-          )}
 
-          <div 
-            ref={headerScrollRef}
-            onScroll={() => syncScroll("header")}
-            className="overflow-x-auto scrollbar-hide"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            <div className="flex gap-3" style={{ minWidth: totalWidth }}>
-              {/* Spacer for suite column - sticky to match body */}
-              <div className="shrink-0 sticky left-0 z-[60] bg-black" style={{ width: LEFT_COL }} />
+            {quarterHeaders.map((header) => (
+              <div
+                key={header.quarter}
+                className="rounded-lg border border-roadmap-border bg-roadmap-surface/80 backdrop-blur-xl px-2 md:px-4 py-2 md:py-4 shadow-lg flex flex-col justify-center"
+              >
+                <div className="flex flex-col items-center gap-1 md:gap-2">
+                  <div className="flex items-center justify-center flex-wrap gap-1 md:gap-2">
+                    <h2 className="text-center text-sm md:text-xl font-bold text-roadmap-text-primary">
+                      {header.quarter}
+                    </h2>
 
-              {/* Quarter column headers */}
-              {QUARTER_COLUMNS.map((quarter, idx) => {
-                const featureCount = getTotalFeaturesForQuarter(quarter.id)
-                const status = getQuarterStatus(quarter.id)
-                
-                return (
-                  <div
-                    key={quarter.id}
-                    className="shrink-0 rounded-xl border border-roadmap-border bg-roadmap-surface/80 px-4 py-4"
-                    style={{ width: colWidths[idx] }}
-                  >
-                    <div className="flex flex-col items-center gap-1.5">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-roadmap-text-primary">{quarter.label}</span>
-                        <span className="relative group">
-                          <span 
-                            className={cn(
-                              "text-[9px] font-medium px-1.5 py-0.5 rounded-full transition-all duration-300",
-                              status === "delivered" && "bg-emerald-500/20 text-emerald-400",
-                              status === "in-progress" && "bg-blue-500/20 text-blue-400",
-                              status === "upcoming" && "bg-amber-500/20 text-amber-400 cursor-pointer group-hover:scale-110 group-hover:bg-amber-500/30 group-hover:shadow-[0_0_10px_rgba(251,191,36,0.3)]",
-                            )}
-                          >
-                            {getStatusLabel(status)}
-                          </span>
-                          {status === "upcoming" && (
-                            <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[10px] bg-black/90 text-amber-300 px-2 py-1 rounded-md pointer-events-none">
-                              🔮 Still taking shape
-                            </span>
-                          )}
-                        </span>
-                      </div>
-                      <span className="text-[11px] text-roadmap-text-secondary/70">{featureCount} features</span>
-                    </div>
+                    {header.status === "delivered" && (
+                      <span className="inline-flex items-center gap-0.5 md:gap-1 rounded-full bg-green-600 px-1.5 md:px-2.5 py-0.5 md:py-1 text-[10px] md:text-xs font-bold text-white shadow-sm">
+                        <Check className="size-2.5 md:size-3.5" strokeWidth={3} />
+                        <span className="hidden sm:inline">Delivered</span>
+                      </span>
+                    )}
+                    {header.status === "in-progress" && (
+                      <span className="inline-flex items-center gap-0.5 md:gap-1 rounded-full bg-blue-600 px-1.5 md:px-2.5 py-0.5 md:py-1 text-[10px] md:text-xs font-bold text-white shadow-sm">
+                        <Clock className="size-2.5 md:size-3.5" strokeWidth={3} />
+                        <span className="hidden sm:inline">In Progress</span>
+                      </span>
+                    )}
+                    {header.status === "upcoming" && (
+                      <span className="inline-flex items-center gap-0.5 md:gap-1 rounded-full bg-amber-500 px-1.5 md:px-2.5 py-0.5 md:py-1 text-[10px] md:text-xs font-bold text-white shadow-sm">
+                        <Calendar className="size-2.5 md:size-3.5" strokeWidth={3} />
+                        <span className="hidden sm:inline">Planned</span>
+                      </span>
+                    )}
                   </div>
-                )
-              })}
-            </div>
+
+                  <div className="text-xs md:text-sm font-medium text-roadmap-text-secondary">
+                    {getQuarterTotal(header.quarter)} <span className="hidden sm:inline">features</span>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Body with scroll sync */}
-      <div className="relative">
-        <div 
-          ref={scrollContainerRef}
-          onScroll={() => syncScroll("body")}
-          className="overflow-x-auto pb-4"
-        >
-          <div style={{ minWidth: totalWidth }}>
-            {/* Suite rows */}
-            <div className="space-y-4">
-            {filteredSuites.map((suite) => (
-              <div key={suite.name} className="flex flex-col md:flex-row gap-3">
-                {/* Suite info - full width on mobile, sticky left on desktop */}
+      <div
+        ref={bodyScrollRef}
+        onScroll={() => syncScroll("body")}
+        className="overflow-x-auto overflow-y-visible bg-roadmap-background pl-2 md:pl-4 [scrollbar-gutter:stable]"
+      >
+        <div className="space-y-3 md:space-y-4" style={{ width: contentWidth }}>
+          {filteredSuites.map((suite) => (
+            <div
+              key={suite.name}
+              className="grid gap-3 md:gap-6 pb-4 md:pb-6 border-b border-roadmap-border/30 last:border-b-0"
+              style={gridColsStyle}
+            >
+              <div
+                className="sticky left-0 z-40 rounded-lg border border-roadmap-border bg-roadmap-background/90 backdrop-blur-sm p-1.5 md:p-2 flex flex-col items-center justify-center gap-1 md:gap-1.5 shadow-md"
+                title={`${suite.name}: ${suite.description}`}
+              >
                 <div
-                  className="w-full md:w-auto shrink-0 md:sticky md:left-0 z-40 rounded-xl border border-roadmap-border bg-roadmap-surface/95 backdrop-blur-sm p-4 md:p-5 transition-all duration-300 hover:bg-roadmap-surface shadow-lg"
-                  style={{ 
-                    width: isMobile ? '100%' : LEFT_COL, 
-                    borderLeftColor: getBorderColor(suite.color), 
-                    borderLeftWidth: 4 
-                  }}
+                  className="size-8 md:size-9 shrink-0 rounded-full ring-2 ring-offset-1 md:ring-offset-2 ring-offset-roadmap-background ring-current/30 flex items-center justify-center text-white"
+                  style={{ backgroundColor: getBorderColor(suite.color) }}
                 >
-                  <div className="flex items-start gap-3">
-                    <div
-                      className="mt-1.5 size-3 shrink-0 rounded-full"
-                      style={{ backgroundColor: getBorderColor(suite.color) }}
-                    />
-                    <div className="min-w-0 flex-1">
-                      <h3 className="text-sm md:text-base font-bold text-roadmap-text-primary">{suite.name}</h3>
-                      <p className="text-[10px] md:text-xs text-roadmap-text-secondary leading-relaxed">
-                        {suite.description}
-                      </p>
-                    </div>
-                  </div>
+                  {getSuiteIcon(suite.name)}
                 </div>
-                
-                {/* Quarter cells - horizontal scroll on mobile */}
-                <div className="flex gap-3 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
+                <span className="text-[9px] md:text-[11px] font-semibold text-roadmap-text-primary text-center leading-tight line-clamp-4">
+                  {isMobile ? getSuiteRailLabel(suite.name) : suite.name}
+                </span>
+              </div>
 
-                {/* Quarter cells */}
-                {QUARTER_COLUMNS.map((quarter, idx) => {
-                  const allFeatures = getFeaturesForQuarter(suite, quarter.id)
-                  const features = getFilteredFeatures(allFeatures)
-                  const hasHiddenFeatures = searchQuery && features.length < allFeatures.length
-                  const quarterStatus = getQuarterStatus(quarter.id)
+              {quarterHeaders.map((header) => {
+                const allFeatures = suite.quarters[header.quarter as keyof typeof suite.quarters] || []
+                const features = getFilteredFeatures(allFeatures)
+                const hasHiddenFeatures = searchQuery && features.length < allFeatures.length
 
-                  // Sort: credentials first, then spotlight, then regular
-                  const sortedFeatures = [...features].sort((a, b) => {
-                    const aCredential = parseCredentialFeature(a) ? 0 : 1
-                    const bCredential = parseCredentialFeature(b) ? 0 : 1
-                    if (aCredential !== bCredential) return aCredential - bCredential
-                    const aSpot = isSpotlightFeature(a) ? 0 : 1
-                    const bSpot = isSpotlightFeature(b) ? 0 : 1
-                    return aSpot - bSpot
-                  })
-
-                  return (
-                    <div
-                      key={quarter.id}
-                      className="shrink-0 rounded-xl border border-roadmap-border transition-all duration-300 bg-roadmap-surface/60 p-4 hover:bg-roadmap-surface/70"
-                      style={{
-                        width: colWidths[idx],
-                        borderLeftColor: getBorderColor(suite.color),
-                        borderLeftWidth: 4,
-                      }}
-                    >
-                      {sortedFeatures.length > 0 ? (
+                return (
+                  <Card
+                    key={`${suite.name}-${header.quarter}`}
+                    className="border-l-4 border-t border-r border-b border-roadmap-border bg-roadmap-surface/60 backdrop-blur-sm transition-all hover:border-roadmap-border-hover hover:shadow-lg"
+                    style={{ borderLeftColor: getBorderColor(suite.color) }}
+                  >
+                    <CardContent className="p-2 md:p-5">
+                      {features.length > 0 ? (
                         <>
-                          <div className="flex flex-wrap gap-1.5">
-                            {sortedFeatures.map((feature, index) => {
-                              const spotlight = isSpotlightFeature(feature)
-                              const isDelivered = quarterStatus === "delivered"
-                              const helpLink = isDelivered ? getHelpLink(feature) : null
-                              const credentialData = parseCredentialFeature(feature)
-                              
-                              const staggerClass = cn(
-                                index === 0 && "stagger-1",
-                                index === 1 && "stagger-2",
-                                index === 2 && "stagger-3",
-                                index === 3 && "stagger-4",
-                                index >= 4 && "stagger-5",
-                              )
-                                
-                                // Special rendering for credential features with ACS badges
-                                if (credentialData) {
-                                  return (
-                                    <div
-                                      key={index}
-                                      className={cn(
-                                        "animate-fade-in-up opacity-0 rounded-lg px-2.5 py-2 transition-all duration-200",
-                                        "bg-roadmap-surface/40 border border-dashed border-roadmap-border hover:border-roadmap-text-secondary/50",
-                                        staggerClass,
-                                      )}
-                                    >
-                                      <div className="text-[10px] text-roadmap-text-secondary mb-1.5">
-                                        {credentialData.label}
-                                      </div>
-                                      <div className="flex flex-wrap gap-1">
-                                        {credentialData.acsSystems.map((acs, acsIndex) => (
-                                          <span
-                                            key={acsIndex}
-                                            className="text-[10px] px-2 py-1 rounded bg-roadmap-surface-hover text-roadmap-text-primary border border-roadmap-border/50"
-                                          >
-                                            {acs}
-                                          </span>
-                                        ))}
-                                      </div>
-                                    </div>
-                                  )
-                                }
-                                
-                                const pillClasses = cn(
-                                  "animate-fade-in-up opacity-0 text-[11px] leading-snug rounded-full px-2.5 py-1.5 transition-all duration-200",
-                                  spotlight
-                                    ? "bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-orange-500/15 border border-amber-400/30 hover:border-amber-400/50 hover:scale-[1.02]"
-                                    : "bg-roadmap-surface-hover/60 border border-roadmap-border/30 hover:border-roadmap-border/50 hover:bg-roadmap-surface-hover",
-                                  helpLink && "cursor-pointer hover:scale-[1.02]",
-                                  staggerClass,
-                                )
-                                
-                                const pillContent = (
-                                  <>
-                                    {spotlight && (
-                                      <Sparkles className="inline size-3 text-amber-400 mr-1" />
-                                    )}
-                                    <span
-                                      className={cn(
-                                        "text-roadmap-text-primary",
-                                        spotlight && "font-medium text-amber-100",
-                                      )}
-                                    >
-                                      {searchQuery ? (
-                                        <HighlightText text={feature} highlight={searchQuery} />
-                                      ) : (
-                                        feature
-                                      )}
-                                    </span>
-                                    {helpLink && (
-                                      <ExternalLink className="inline size-3 text-roadmap-text-secondary/60 ml-1.5" />
-                                    )}
-                                  </>
-                                )
-                                
-                                return helpLink ? (
-                                  <a
-                                    key={index}
-                                    href={helpLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={pillClasses}
-                                  >
-                                    {pillContent}
-                                  </a>
-                                ) : (
-                                  <div key={index} className={pillClasses}>
-                                    {pillContent}
-                                  </div>
-                                )
-                              })}
-                          </div>
+                          <ul className="space-y-1 md:space-y-2">
+                            {features.map((feature, index) => (
+                              <li key={index} className="flex items-start gap-1.5 md:gap-3 text-xs md:text-sm leading-snug">
+                                <span className="mt-1 md:mt-1.5 size-1.5 md:size-2 shrink-0 rounded-full bg-roadmap-text-secondary" />
+                                <span className="leading-relaxed text-roadmap-text-primary">
+                                  {searchQuery ? <HighlightText text={feature} highlight={searchQuery} /> : feature}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
                           {hasHiddenFeatures && (
-                            <p className="text-[10px] text-roadmap-text-secondary/50 mt-2">
+                            <p className="text-xs text-roadmap-text-secondary/50 mt-2">
                               +{allFeatures.length - features.length} more
                             </p>
                           )}
                         </>
                       ) : (
-                        <p className="text-[11px] text-roadmap-text-secondary/40 text-center py-6 italic">
-                          {searchQuery ? "No matches" : "Stay tuned"}
-                        </p>
+                        <div className="text-center text-xs md:text-sm text-roadmap-text-secondary/50 py-2 md:py-4">
+                          {searchQuery ? "No matches" : "No features"}
+                        </div>
                       )}
-                    </div>
-                  )
-                })}
-                </div>
-              </div>
-            ))}
-          </div>
+                    </CardContent>
+                  </Card>
+                )
+              })}
+            </div>
+          ))}
 
           {searchQuery && filteredSuites.length === 0 && (
             <div className="text-center py-12">
@@ -648,10 +421,8 @@ export function RoadmapGrid() {
               </button>
             </div>
           )}
-          </div>
         </div>
       </div>
-      
     </div>
   )
 }
