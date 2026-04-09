@@ -49,6 +49,9 @@ function getHelpLink(feature: string): string | null {
   if (lowerFeature.includes("resource booking")) {
     return "https://helphub.hqo.com/help/hqo-resource-booking"
   }
+  if (lowerFeature.includes("custom domain")) {
+    return "https://helphub.hqo.com/help/tenant-web-setup-branding"
+  }
   
   return null
 }
