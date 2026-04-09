@@ -586,7 +586,7 @@ export function RoadmapGrid() {
                                         {credentialData.acsSystems.map((acs, acsIndex) => (
                                           <span
                                             key={acsIndex}
-                                            className="text-[9px] px-1.5 py-0.5 rounded bg-roadmap-surface-hover text-roadmap-text-primary border border-roadmap-border/50"
+                                            className="text-[10px] px-2 py-1 rounded bg-roadmap-surface-hover text-roadmap-text-primary border border-roadmap-border/50"
                                           >
                                             {acs}
                                           </span>
