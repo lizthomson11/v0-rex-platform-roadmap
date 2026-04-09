@@ -47,7 +47,7 @@ export default function Page() {
 
         {/* Roadmap Section */}
         <section className="bg-black">
-          <div className="container mx-auto max-w-[1920px] px-5 sm:px-8 md:px-10 lg:px-14 xl:px-16 py-10 md:py-14 pb-12 md:pb-20">
+          <div className="container mx-auto max-w-[1920px] px-5 sm:px-8 md:px-10 lg:px-14 xl:px-16 py-6 md:py-8 pb-12 md:pb-20">
             <RoadmapGrid />
           </div>
         </section>

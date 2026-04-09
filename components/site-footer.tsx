@@ -51,7 +51,7 @@ export function SiteFooter() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
           {/* Brand column */}
           <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
+            <div className="mb-4">
               <Image
                 src="/images/hqo-profile-pic-x2.png"
                 alt="HqO Logo"
@@ -59,7 +59,6 @@ export function SiteFooter() {
                 height={32}
                 className="rounded-full"
               />
-              <span className="font-semibold text-white">HqO</span>
             </div>
             <p className="text-xs text-roadmap-text-secondary/60 mb-4 max-w-[200px]">
               The unified platform for experience-driven CRE portfolios.

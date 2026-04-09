@@ -361,7 +361,7 @@ export function RoadmapGrid() {
   return (
     <div className="w-full">
       {/* Search */}
-      <div className="mb-6">
+      <div className="mb-4">
         <div className="relative max-w-md mx-auto">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-roadmap-text-secondary" />
           <Input
@@ -385,13 +385,10 @@ export function RoadmapGrid() {
             Showing results for "{searchQuery}"
           </p>
         )}
-        <p className="hidden md:block text-center text-[11px] text-roadmap-text-secondary/50 mt-3">
-          Scroll horizontally to see more quarters →
-        </p>
       </div>
 
       {/* Sticky header row - hidden on mobile, offset for site header */}
-      <div className="hidden md:block sticky top-16 z-40 bg-black pt-4 pb-4">
+      <div className="hidden md:block sticky top-16 z-40 bg-black pt-2 pb-3">
         <div className="relative">
           {/* Left scroll indicator for header */}
           {canScrollLeft && (
