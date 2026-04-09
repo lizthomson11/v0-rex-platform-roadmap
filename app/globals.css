@@ -232,6 +232,15 @@
     var(--roadmap-background);
 }
 
+/* AI Chat typing indicator */
+@keyframes typing-bounce {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-4px); }
+}
+.animate-typing-1 { animation: typing-bounce 1.4s ease-in-out infinite; }
+.animate-typing-2 { animation: typing-bounce 1.4s ease-in-out infinite 0.2s; }
+.animate-typing-3 { animation: typing-bounce 1.4s ease-in-out infinite 0.4s; }
+
 /* Hide scrollbar but keep functionality */
 .scrollbar-hide {
   -ms-overflow-style: none;
