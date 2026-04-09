@@ -75,8 +75,12 @@ const suites = [
         "Events – Tickets", "Events – QR Check-in", "Events – Waitlist", "Events – Discounts",
         "Events – Multi-slot Events", "Events – Add Attendees from Admin", "Communication – Rich Content", "Communication – Newsletters",
       ],
-      "Q1 2026": ["Experience – Automated Localized Posts", "Web Experience – Public Registration"],
-      "Q2 2026": ["Events – Limiting Session Claims", "Events – Cancellation Notice"],
+      "Q1 2026": [
+        "Web Experience – Public Registration",
+        "Web Experience – Customization Enhancements",
+        "Web Experience – Custom Domain Setup",
+      ],
+      "Q2 2026": ["Experience – Automated Localized Posts", "Events – Limiting Session Claims", "Events – Cancellation Notice"],
       "Q3 2026": [
         "Events – Automated Feedback",
         "Events – Multi-day Events",
