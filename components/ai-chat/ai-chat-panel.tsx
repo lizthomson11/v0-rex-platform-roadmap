@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useAiChat } from '@/hooks/use-ai-chat';
 import { ChatMessageBubble } from './chat-message';
+import type { QuickReply } from '@/lib/ai-chat-types';
 
 const ICON_MAP: Record<string, LucideIcon> = {
   TrendingUp,
@@ -68,6 +69,11 @@ export function AiChatPanel({ isOpen, onClose }: AiChatPanelProps) {
   function handlePromptClick(label: string) {
     if (isStreaming) return;
     sendMessage(label);
+  }
+
+  function handleQuickReply(reply: QuickReply) {
+    if (isStreaming) return;
+    sendMessage(reply.label);
   }
 
   const canSend = input.trim().length > 0 && !isStreaming;
@@ -136,7 +142,7 @@ export function AiChatPanel({ isOpen, onClose }: AiChatPanelProps) {
         className="flex-1 overflow-y-auto px-4 pt-2 pb-4 space-y-4"
       >
         {messages.map((msg) => (
-          <ChatMessageBubble key={msg.id} message={msg} />
+          <ChatMessageBubble key={msg.id} message={msg} onQuickReply={handleQuickReply} />
         ))}
 
         {/* Suggested prompts — inside scroll area */}

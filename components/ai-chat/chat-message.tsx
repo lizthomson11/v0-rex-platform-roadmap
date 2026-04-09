@@ -1,19 +1,20 @@
 'use client';
 
 import Image from 'next/image';
-import type { ChatMessage } from '@/lib/ai-chat-types';
+import type { ChatMessage, QuickReply } from '@/lib/ai-chat-types';
 import { InlineArtifact } from './inline-artifact';
 
 interface ChatMessageProps {
   message: ChatMessage;
+  onQuickReply?: (reply: QuickReply) => void;
 }
 
-export function ChatMessageBubble({ message }: ChatMessageProps) {
+export function ChatMessageBubble({ message, onQuickReply }: ChatMessageProps) {
   if (message.role === 'user') {
     return <UserMessage content={message.content} />;
   }
 
-  return <AssistantMessage message={message} />;
+  return <AssistantMessage message={message} onQuickReply={onQuickReply} />;
 }
 
 function UserMessage({ content }: { content: string }) {
@@ -26,7 +27,13 @@ function UserMessage({ content }: { content: string }) {
   );
 }
 
-function AssistantMessage({ message }: { message: ChatMessage }) {
+function AssistantMessage({
+  message,
+  onQuickReply,
+}: {
+  message: ChatMessage;
+  onQuickReply?: (reply: QuickReply) => void;
+}) {
   const showTypingIndicator = message.isStreaming && !message.content;
   const showCursor = message.isStreaming && !!message.content;
 
@@ -59,9 +66,35 @@ function AssistantMessage({ message }: { message: ChatMessage }) {
                 isVisible={message.artifactsVisible ?? false}
               />
             ))}
+
+            {message.quickReplies && message.quickRepliesVisible && (
+              <QuickReplies replies={message.quickReplies} onSelect={onQuickReply} />
+            )}
           </>
         )}
       </div>
+    </div>
+  );
+}
+
+function QuickReplies({
+  replies,
+  onSelect,
+}: {
+  replies: QuickReply[];
+  onSelect?: (reply: QuickReply) => void;
+}) {
+  return (
+    <div className="flex flex-wrap gap-2 mt-3">
+      {replies.map((reply) => (
+        <button
+          key={reply.id}
+          onClick={() => onSelect?.(reply)}
+          className="text-left bg-violet-500/10 border border-violet-500/25 rounded-xl px-3.5 py-2 text-[12px] text-violet-200 hover:bg-violet-500/20 hover:border-violet-500/40 hover:text-white cursor-pointer transition-all duration-200 max-w-[90%]"
+        >
+          {reply.label}
+        </button>
+      ))}
     </div>
   );
 }
