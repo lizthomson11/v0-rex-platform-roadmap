@@ -11,7 +11,7 @@ const SPOTLIGHT_FEATURES = new Set([
   "Service Requests – Teams, Catalogues & Routing",
   "Service Requests – Preventative Maintenance",
   "Reporting – Tenant Health Score",
-  "Leases – Lease Management",
+  "Leases – Lease Management & AI Abstraction",
   "Events – Multi-day Events",
 ])
 
@@ -64,7 +64,7 @@ const suites = [
     quarters: {
       "2025": ["Contacts – Key Contacts", "Contacts – Contact Notes", "Data Management – Building Object & Table", "Data Management – Tagging Framework"],
       "Q1 2026": ["User Profile – Activity Enhancements"],
-      "Q2 2026": ["Leases - Yardi integration", "Leases – Lease Management"],
+      "Q2 2026": ["Leases - Yardi integration", "Leases – Lease Management & AI Abstraction"],
       "Q3 2026": ["Data Management – Custom Objects & Fields"],
       "Q4 2026": ["Tours – Brochure & Tour Content Tools", "Onboarding – Customizable Tenant Onboarding Workflows", "Leases – Lease Terms with Credits"],
     },
