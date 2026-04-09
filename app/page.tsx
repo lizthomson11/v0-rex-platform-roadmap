@@ -1,45 +1,59 @@
 import { RoadmapGrid } from "@/components/roadmap-grid"
-import Image from "next/image"
+import { SiteHeader } from "@/components/site-header"
+import { SiteFooter } from "@/components/site-footer"
 
 export default function Page() {
   return (
-    <div className="min-h-screen bg-black">
-      <div className="container mx-auto max-w-[1920px] px-5 sm:px-8 md:px-10 lg:px-14 xl:px-16 py-8 md:py-12 lg:py-16 pb-12 md:pb-20">
-        {/* Modern Header */}
-        <div className="mb-8 md:mb-12 text-center relative">
-          {/* Subtle glow effect behind header */}
-          <div className="absolute inset-0 -top-10 flex justify-center pointer-events-none">
-            <div className="w-[400px] h-[200px] bg-gradient-to-b from-violet-500/8 via-fuchsia-500/5 to-transparent blur-3xl opacity-70" />
-          </div>
+    <div className="min-h-screen bg-black flex flex-col">
+      <SiteHeader />
+      
+      <main className="flex-1">
+        {/* Hero Section */}
+        <section className="relative font-[family-name:var(--font-source-sans)] overflow-hidden">
+          {/* Background gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-900/80 via-black to-black" />
           
-          <div className="relative">
-            {/* Logo with cute glow */}
-            <div className="mb-4 md:mb-5 flex justify-center">
-              <div className="relative group">
-                <div className="absolute -inset-2 bg-gradient-to-r from-violet-400/25 via-fuchsia-400/20 to-pink-400/25 rounded-full blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500 animate-pulse" />
-                <Image
-                  src="/images/hqo-profile-pic-x2.png"
-                  alt="HqO Logo"
-                  width={64}
-                  height={64}
-                  className="relative rounded-full w-12 h-12 md:w-16 md:h-16 ring-2 ring-white/10 shadow-lg"
-                />
+          {/* Subtle grid pattern */}
+          <div 
+            className="absolute inset-0 opacity-[0.03]"
+            style={{
+              backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+              backgroundSize: '60px 60px'
+            }}
+          />
+          
+          {/* Gradient orbs for visual interest */}
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-violet-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4" />
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4" />
+          
+          <div className="relative container mx-auto max-w-[1920px] px-5 sm:px-8 md:px-10 lg:px-14 xl:px-16 py-16 md:py-20 lg:py-28">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-roadmap-text-secondary mb-6">
+                <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Updated for Q2 2026
               </div>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-4">
+                Product Roadmap
+              </h1>
+              <p className="text-base md:text-lg text-roadmap-text-secondary/80 leading-relaxed">
+                See what we're building for the REX Platform. This is a look at our current priorities and what's ahead for 2026.
+              </p>
             </div>
-            
-            {/* Title - smaller and cuter */}
-            <h1 className="mb-2 md:mb-3 text-xl md:text-2xl lg:text-3xl font-semibold tracking-tight text-white">
-              REX Platform Roadmap
-            </h1>
-            
-            {/* Subtitle */}
-            <p className="text-balance text-xs md:text-sm text-roadmap-text-secondary/70 max-w-sm mx-auto">
-              What we're building for 2025–2026
-            </p>
           </div>
-        </div>
-        <RoadmapGrid />
-      </div>
+        </section>
+
+        {/* Divider */}
+        <div className="relative h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+        {/* Roadmap Section */}
+        <section className="bg-black">
+          <div className="container mx-auto max-w-[1920px] px-5 sm:px-8 md:px-10 lg:px-14 xl:px-16 py-10 md:py-14 pb-12 md:pb-20">
+            <RoadmapGrid />
+          </div>
+        </section>
+      </main>
+
+      <SiteFooter />
     </div>
   )
 }

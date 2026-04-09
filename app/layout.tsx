@@ -1,11 +1,15 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import { Geist, Geist_Mono, Source_Sans_3 } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
+export const sourceSans = Source_Sans_3({ 
+  subsets: ["latin"],
+  variable: "--font-source-sans",
+})
 
 export const metadata: Metadata = {
   title: "HqO Roadmap",
@@ -48,7 +52,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans antialiased`}>
+      <body className={`font-sans antialiased ${sourceSans.variable}`}>
         {children}
         <Analytics />
       </body>

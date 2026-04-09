@@ -390,8 +390,8 @@ export function RoadmapGrid() {
         </p>
       </div>
 
-      {/* Sticky header row - hidden on mobile */}
-      <div className="hidden md:block sticky top-0 z-50 bg-black pt-4 pb-4">
+      {/* Sticky header row - hidden on mobile, offset for site header */}
+      <div className="hidden md:block sticky top-16 z-40 bg-black pt-4 pb-4">
         <div className="relative">
           {/* Left scroll indicator for header */}
           {canScrollLeft && (
@@ -654,12 +654,6 @@ export function RoadmapGrid() {
         </div>
       </div>
       
-      {/* Footer disclaimer */}
-      <div className="mt-8 text-center">
-        <p className="text-[11px] text-roadmap-text-secondary/50 italic">
-          The further out, the fuzzier things get 🔮 — plans may shift as we learn and grow
-        </p>
-      </div>
     </div>
   )
 }
