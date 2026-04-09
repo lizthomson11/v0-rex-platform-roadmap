@@ -123,23 +123,24 @@ const suites = [
     quarters: {
       "2025": [
         "Resource Booking – Branded Emails", "Resource Booking – Add Visitor to Booking", "Resource Booking – Discounts", "Resource Booking – On Account Payments",
-        "Service Requests – Teams, Catalogues & Routing", "Service Requests – Two-way Messaging", "Resource Booking – Collections", "Resource Booking – Combined Meeting Rooms",
+        "Service Requests – Two-way Messaging", "Resource Booking – Collections", "Resource Booking – Combined Meeting Rooms",
       ],
       "Q1 2026": [
-        "Service Requests – Automated Feedback",
         "Resource Booking – Credits",
         "Resource Booking – Cancellation & Preset Refunds",
       ],
       "Q2 2026": [
-        "Service Requests – Inventory & Inspections",
+        "Service Requests – Teams, Catalogues & Routing",
+        "Service Requests – Automated Feedback",
         "Service Requests – Pricing & Payments",
         "Service Requests – Billing & Yardi Invoicing",
+        "Admin On the Go – Service Request Management",
         "Resource Booking – Automated Feedback",
         "Resource Booking – Office 365 (Outlook) Integration",
         "Resource Booking – Tripleseat Integration",
-        "Admin On the Go – Service Request Management",
       ],
       "Q3 2026": [
+        "Service Requests – Inventory & Inspections",
         "Service Requests – Preventative Maintenance",
         "Resource Booking – Room Kiosks",
         "Resource Booking – Two-way Messaging",
