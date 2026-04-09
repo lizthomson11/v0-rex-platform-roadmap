@@ -189,7 +189,7 @@ const getStatusLabel = (status: QuarterColumn["status"]) => {
     case "in-progress":
       return "In Progress"
     case "upcoming":
-      return "Planned"
+      return "On our radar"
   }
 }
 
@@ -578,7 +578,7 @@ export function RoadmapGrid() {
                         </>
                       ) : (
                         <p className="text-[11px] text-roadmap-text-secondary/40 text-center py-6 italic">
-                          {searchQuery ? "No matches" : "On our radar"}
+                          {searchQuery ? "No matches" : "Stay tuned"}
                         </p>
                       )}
                     </div>
