@@ -10,6 +10,8 @@ import {
   KeyRound,
   FileText,
   Sparkles,
+  Zap,
+  Receipt,
   type LucideIcon,
 } from 'lucide-react';
 import { useAiChat } from '@/hooks/use-ai-chat';
@@ -21,6 +23,8 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Workflow,
   KeyRound,
   FileText,
+  Zap,
+  Receipt,
 };
 
 interface AiChatPanelProps {
