@@ -578,7 +578,7 @@ export function RoadmapGrid() {
                         </>
                       ) : (
                         <p className="text-[11px] text-roadmap-text-secondary/40 text-center py-6 italic">
-                          {searchQuery ? "No matches" : "Stay tuned"}
+                          {searchQuery ? "No matches" : "On our radar 📡"}
                         </p>
                       )}
                     </div>
