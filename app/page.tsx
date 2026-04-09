@@ -32,9 +32,9 @@ export default function Page() {
               REX Platform Roadmap
             </h1>
             
-            {/* Subtitle with sparkle */}
+            {/* Subtitle */}
             <p className="text-balance text-xs md:text-sm text-roadmap-text-secondary/70 max-w-sm mx-auto">
-              ✨ What we're building for 2025–2026
+              What we're building for 2025–2026
             </p>
           </div>
         </div>

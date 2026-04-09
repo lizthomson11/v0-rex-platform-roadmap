@@ -383,28 +383,13 @@ export function RoadmapGrid() {
             Showing results for "{searchQuery}"
           </p>
         )}
-        <div className="flex justify-center gap-3 mt-3">
-          <button
-            onClick={expandAll}
-            className="text-xs text-roadmap-text-secondary hover:text-roadmap-text-primary underline underline-offset-2"
-          >
-            Expand all
-          </button>
-          <span className="text-roadmap-text-secondary/50">·</span>
-          <button
-            onClick={collapseAll}
-            className="text-xs text-roadmap-text-secondary hover:text-roadmap-text-primary underline underline-offset-2"
-          >
-            Collapse all
-          </button>
-        </div>
-        <p className="text-center text-[11px] text-roadmap-text-secondary/50 mt-3">
+        <p className="hidden md:block text-center text-[11px] text-roadmap-text-secondary/50 mt-3">
           Scroll horizontally to see more quarters →
         </p>
       </div>
 
-      {/* Sticky header row */}
-      <div className="sticky top-0 z-50 bg-black pt-4 pb-4">
+      {/* Sticky header row - hidden on mobile */}
+      <div className="hidden md:block sticky top-0 z-50 bg-black pt-4 pb-4">
         <div className="relative">
           {/* Left scroll indicator for header */}
           {canScrollLeft && (
@@ -506,25 +491,32 @@ export function RoadmapGrid() {
             {/* Suite rows */}
             <div className="space-y-4">
             {filteredSuites.map((suite) => (
-              <div key={suite.name} className="flex gap-3">
-                {/* Suite info - sticky left */}
+              <div key={suite.name} className="flex flex-col md:flex-row gap-3">
+                {/* Suite info - full width on mobile, sticky left on desktop */}
                 <div
-                  className="shrink-0 sticky left-0 z-40 rounded-xl border border-roadmap-border bg-roadmap-surface/95 backdrop-blur-sm p-4 md:p-5 transition-all duration-300 hover:bg-roadmap-surface shadow-lg"
-                  style={{ width: LEFT_COL, borderLeftColor: getBorderColor(suite.color), borderLeftWidth: 4 }}
+                  className="w-full md:w-auto shrink-0 md:sticky md:left-0 z-40 rounded-xl border border-roadmap-border bg-roadmap-surface/95 backdrop-blur-sm p-4 md:p-5 transition-all duration-300 hover:bg-roadmap-surface shadow-lg"
+                  style={{ 
+                    width: isMobile ? '100%' : LEFT_COL, 
+                    borderLeftColor: getBorderColor(suite.color), 
+                    borderLeftWidth: 4 
+                  }}
                 >
                   <div className="flex items-start gap-3">
                     <div
                       className="mt-1.5 size-3 shrink-0 rounded-full"
                       style={{ backgroundColor: getBorderColor(suite.color) }}
                     />
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <h3 className="text-sm md:text-base font-bold text-roadmap-text-primary">{suite.name}</h3>
-                      <p className="text-[10px] md:text-xs text-roadmap-text-secondary leading-relaxed hidden md:block">
+                      <p className="text-[10px] md:text-xs text-roadmap-text-secondary leading-relaxed">
                         {suite.description}
                       </p>
                     </div>
                   </div>
                 </div>
+                
+                {/* Quarter cells - horizontal scroll on mobile */}
+                <div className="flex gap-3 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
 
                 {/* Quarter cells */}
                 {QUARTER_COLUMNS.map((quarter, idx) => {
@@ -678,6 +670,7 @@ export function RoadmapGrid() {
                     </div>
                   )
                 })}
+                </div>
               </div>
             ))}
           </div>
