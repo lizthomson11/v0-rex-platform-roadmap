@@ -170,19 +170,49 @@ type QuarterColumn = {
   id: string
   label: string
   sublabel?: string
-  status: "delivered" | "in-progress" | "upcoming"
   defaultExpanded: boolean
 }
 
+// Auto-calculate status based on current date
+function getQuarterStatus(quarterId: string): "delivered" | "in-progress" | "upcoming" {
+  const now = new Date()
+  const currentYear = now.getFullYear()
+  const currentMonth = now.getMonth() + 1 // 1-12
+  
+  // Determine current quarter
+  const currentQuarter = Math.ceil(currentMonth / 3)
+  
+  if (quarterId === "2025") {
+    return currentYear > 2025 ? "delivered" : currentYear === 2025 ? "in-progress" : "upcoming"
+  }
+  
+  // Parse quarter like "Q1 2026"
+  const match = quarterId.match(/Q(\d)\s+(\d{4})/)
+  if (!match) return "upcoming"
+  
+  const quarterNum = parseInt(match[1])
+  const year = parseInt(match[2])
+  
+  if (year < currentYear) return "delivered"
+  if (year > currentYear) return "upcoming"
+  
+  // Same year - compare quarters
+  if (quarterNum < currentQuarter) return "delivered"
+  if (quarterNum === currentQuarter) return "in-progress"
+  return "upcoming"
+}
+
 const QUARTER_COLUMNS: QuarterColumn[] = [
-  { id: "2025", label: "2025", status: "delivered", defaultExpanded: true },
-  { id: "Q1 2026", label: "Q1 2026", status: "delivered", defaultExpanded: true },
-  { id: "Q2 2026", label: "Q2 2026", status: "upcoming", defaultExpanded: true },
-  { id: "Q3 2026", label: "Q3 2026", status: "upcoming", defaultExpanded: true },
-  { id: "Q4 2026", label: "Q4 2026", status: "upcoming", defaultExpanded: true },
+  { id: "2025", label: "2025", defaultExpanded: true },
+  { id: "Q1 2026", label: "Q1 2026", defaultExpanded: true },
+  { id: "Q2 2026", label: "Q2 2026", defaultExpanded: true },
+  { id: "Q3 2026", label: "Q3 2026", defaultExpanded: true },
+  { id: "Q4 2026", label: "Q4 2026", defaultExpanded: true },
 ]
 
-const getStatusLabel = (status: QuarterColumn["status"]) => {
+type QuarterStatus = "delivered" | "in-progress" | "upcoming"
+
+const getStatusLabel = (status: QuarterStatus) => {
   switch (status) {
     case "delivered":
       return "Delivered"
@@ -212,7 +242,7 @@ const getBorderColor = (color: string) => {
   return colors[color] || "oklch(0.70 0.15 240)"
 }
 
-const getStatusIcon = (status: QuarterColumn["status"]) => {
+const getStatusIcon = (status: QuarterStatus) => {
   switch (status) {
     case "delivered":
       return <CircleCheck className="size-3.5" strokeWidth={2.5} />
@@ -223,7 +253,7 @@ const getStatusIcon = (status: QuarterColumn["status"]) => {
   }
 }
 
-const getStatusColor = (status: QuarterColumn["status"]) => {
+const getStatusColor = (status: QuarterStatus) => {
   switch (status) {
     case "delivered":
       return "bg-green-600"
@@ -383,6 +413,7 @@ export function RoadmapGrid() {
               {/* Quarter column headers */}
               {QUARTER_COLUMNS.map((quarter, idx) => {
                 const featureCount = getTotalFeaturesForQuarter(quarter.id)
+                const status = getQuarterStatus(quarter.id)
                 
                 return (
                   <div
@@ -397,14 +428,14 @@ export function RoadmapGrid() {
                           <span 
                             className={cn(
                               "text-[9px] font-medium px-1.5 py-0.5 rounded-full transition-all duration-300",
-                              quarter.status === "delivered" && "bg-emerald-500/20 text-emerald-400",
-                              quarter.status === "in-progress" && "bg-blue-500/20 text-blue-400",
-                              quarter.status === "upcoming" && "bg-amber-500/20 text-amber-400 cursor-pointer group-hover:scale-110 group-hover:bg-amber-500/30 group-hover:shadow-[0_0_10px_rgba(251,191,36,0.3)]",
+                              status === "delivered" && "bg-emerald-500/20 text-emerald-400",
+                              status === "in-progress" && "bg-blue-500/20 text-blue-400",
+                              status === "upcoming" && "bg-amber-500/20 text-amber-400 cursor-pointer group-hover:scale-110 group-hover:bg-amber-500/30 group-hover:shadow-[0_0_10px_rgba(251,191,36,0.3)]",
                             )}
                           >
-                            {getStatusLabel(quarter.status)}
+                            {getStatusLabel(status)}
                           </span>
-                          {quarter.status === "upcoming" && (
+                          {status === "upcoming" && (
                             <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[10px] bg-black/90 text-amber-300 px-2 py-1 rounded-md pointer-events-none">
                               🔮 Still taking shape
                             </span>
@@ -464,6 +495,7 @@ export function RoadmapGrid() {
                   const allFeatures = getFeaturesForQuarter(suite, quarter.id)
                   const features = getFilteredFeatures(allFeatures)
                   const hasHiddenFeatures = searchQuery && features.length < allFeatures.length
+                  const quarterStatus = getQuarterStatus(quarter.id)
 
                   // Sort: credentials first, then spotlight, then regular
                   const sortedFeatures = [...features].sort((a, b) => {
@@ -490,7 +522,7 @@ export function RoadmapGrid() {
                           <div className="flex flex-wrap gap-1.5">
                             {sortedFeatures.map((feature, index) => {
                               const spotlight = isSpotlightFeature(feature)
-                              const isDelivered = quarter.status === "delivered"
+                              const isDelivered = quarterStatus === "delivered"
                               const helpLink = isDelivered ? getHelpLink(feature) : null
                               const credentialData = parseCredentialFeature(feature)
                               
