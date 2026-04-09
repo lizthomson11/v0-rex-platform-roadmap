@@ -12,6 +12,8 @@ import {
   Sparkles,
   Zap,
   Receipt,
+  Maximize2,
+  Minimize2,
   type LucideIcon,
 } from 'lucide-react';
 import { useAiChat } from '@/hooks/use-ai-chat';
@@ -36,6 +38,7 @@ export function AiChatPanel({ isOpen, onClose }: AiChatPanelProps) {
   const { messages, isStreaming, sendMessage, clearMessages, suggestedPrompts } =
     useAiChat();
   const [input, setInput] = useState('');
+  const [isExpanded, setIsExpanded] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -67,15 +70,24 @@ export function AiChatPanel({ isOpen, onClose }: AiChatPanelProps) {
     sendMessage(label);
   }
 
-  const showSuggestions = messages.length <= 1;
   const canSend = input.trim().length > 0 && !isStreaming;
+
+  const usedLabels = new Set(
+    messages.filter((m) => m.role === 'user').map((m) => m.content),
+  );
+  const availablePrompts = suggestedPrompts.filter(
+    (p) => !usedLabels.has(p.label),
+  );
 
   return (
     <div
       className={`
         fixed z-50 font-[family-name:var(--font-source-sans)]
-        bottom-24 right-6 w-[420px] max-w-[calc(100vw-2rem)]
-        h-[600px] max-h-[calc(100vh-8rem)]
+        bottom-24 right-6
+        ${isExpanded
+          ? 'w-[720px] h-[80vh] max-w-[calc(100vw-2rem)] max-h-[calc(100vh-6rem)]'
+          : 'w-[420px] h-[600px] max-w-[calc(100vw-2rem)] max-h-[calc(100vh-8rem)]'
+        }
         max-sm:inset-x-3 max-sm:right-auto max-sm:w-auto max-sm:bottom-20 max-sm:h-[70vh]
         rounded-2xl border border-white/10 bg-[#0a0a0f]/95 backdrop-blur-xl
         shadow-2xl shadow-black/50
@@ -95,50 +107,62 @@ export function AiChatPanel({ isOpen, onClose }: AiChatPanelProps) {
           <span className="size-1.5 bg-emerald-400 rounded-full animate-pulse" />
           <span className="text-[11px] text-gray-500">AI Assistant</span>
         </div>
-        <button
-          onClick={onClose}
-          className="p-1 rounded-md text-gray-400 hover:text-white hover:bg-white/[0.06] transition-colors"
-        >
-          <X className="size-4" />
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setIsExpanded((prev) => !prev)}
+            className="p-1 rounded-md text-gray-400 hover:text-white hover:bg-white/[0.06] transition-colors max-sm:hidden"
+          >
+            {isExpanded ? (
+              <Minimize2 className="size-3.5" />
+            ) : (
+              <Maximize2 className="size-3.5" />
+            )}
+          </button>
+          <button
+            onClick={onClose}
+            className="p-1 rounded-md text-gray-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
       </div>
 
       {/* Scroll fade */}
-      <div className="absolute top-[49px] left-0 right-0 h-6 bg-gradient-to-b from-[#0a0a0f] to-transparent z-10 pointer-events-none" />
+      <div className="absolute top-[49px] left-0 right-0 h-4 bg-gradient-to-b from-[#0a0a0f] to-transparent z-10 pointer-events-none" />
 
-      {/* Messages */}
+      {/* Messages + suggested prompts (scrollable) */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-4 py-4 space-y-4"
+        className="flex-1 overflow-y-auto px-4 pt-2 pb-4 space-y-4"
       >
         {messages.map((msg) => (
           <ChatMessageBubble key={msg.id} message={msg} />
         ))}
-      </div>
 
-      {/* Suggested prompts */}
-      {showSuggestions && (
-        <div className="px-4 pb-3">
-          <div className="text-[10px] uppercase tracking-widest text-gray-600 mb-2">
-            Try asking
+        {/* Suggested prompts — inside scroll area */}
+        {!isStreaming && availablePrompts.length > 0 && (
+          <div className="pt-2">
+            <div className="text-[10px] uppercase tracking-widest text-gray-600 mb-2">
+              {messages.length <= 1 ? 'Try asking' : 'Ask something else'}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {availablePrompts.map((prompt) => {
+                const Icon = ICON_MAP[prompt.icon];
+                return (
+                  <button
+                    key={prompt.id}
+                    onClick={() => handlePromptClick(prompt.label)}
+                    className="group flex items-center gap-1.5 bg-white/[0.04] border border-white/[0.08] rounded-full px-3 py-1.5 text-[11px] text-gray-400 hover:bg-white/[0.08] hover:text-gray-200 hover:border-white/[0.15] cursor-pointer transition-all duration-200"
+                  >
+                    {Icon && <Icon className="size-3" />}
+                    {prompt.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {suggestedPrompts.map((prompt) => {
-              const Icon = ICON_MAP[prompt.icon];
-              return (
-                <button
-                  key={prompt.id}
-                  onClick={() => handlePromptClick(prompt.label)}
-                  className="group flex items-center gap-1.5 bg-white/[0.04] border border-white/[0.08] rounded-full px-3 py-1.5 text-[11px] text-gray-400 hover:bg-white/[0.08] hover:text-gray-200 hover:border-white/[0.15] cursor-pointer transition-all duration-200"
-                >
-                  {Icon && <Icon className="size-3" />}
-                  {prompt.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Input */}
       <form

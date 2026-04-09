@@ -1,3 +1,9 @@
+export interface QuickReply {
+  id: string;
+  label: string;
+  icon?: string;
+}
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -5,6 +11,8 @@ export interface ChatMessage {
   artifacts?: Artifact[];
   artifactsVisible?: boolean;
   isStreaming?: boolean;
+  quickReplies?: QuickReply[];
+  quickRepliesVisible?: boolean;
 }
 
 export type Artifact =

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import type { Artifact } from '@/lib/ai-chat-types';
 import {
   ResponsiveContainer,
@@ -16,7 +16,7 @@ import {
   Legend,
 } from 'recharts';
 
-const AXIS_TICK_STYLE = { fill: '#9ca3af', fontSize: 11 };
+const AXIS_TICK_STYLE = { fill: '#9ca3af', fontSize: 10 };
 
 const TOOLTIP_STYLE = {
   contentStyle: {
@@ -60,7 +60,7 @@ export function InlineArtifact({ artifact, isVisible }: InlineArtifactProps) {
       {artifact.type === 'line-chart' && <LineChartArtifact artifact={artifact} />}
       {artifact.type === 'metric-cards' && <MetricCardsArtifact artifact={artifact} />}
       {artifact.type === 'table' && <TableArtifact artifact={artifact} />}
-      {artifact.type === 'workflow-steps' && <WorkflowStepsArtifactView artifact={artifact} />}
+      {artifact.type === 'workflow-steps' && <WorkflowStepsArtifactView artifact={artifact} isVisible={isVisible} />}
       {artifact.type === 'invoice-preview' && <InvoicePreviewArtifactView artifact={artifact} />}
     </div>
   );
@@ -95,7 +95,7 @@ function BarChartArtifact({
             tick={AXIS_TICK_STYLE}
             axisLine={false}
             tickLine={false}
-            width={40}
+            width={35}
           />
           <Tooltip {...TOOLTIP_STYLE} />
           <Bar dataKey="value" radius={[4, 4, 0, 0]} fill="#8b5cf6">
@@ -130,10 +130,10 @@ function LineChartArtifact({
             tick={AXIS_TICK_STYLE}
             axisLine={false}
             tickLine={false}
-            width={40}
+            width={35}
           />
           <Tooltip {...TOOLTIP_STYLE} />
-          <Legend wrapperStyle={{ fontSize: '11px', color: '#9ca3af' }} />
+          <Legend wrapperStyle={{ fontSize: '10px', color: '#9ca3af' }} iconSize={8} />
           {artifact.lines.map((line) => (
             <Line
               key={line.key}
@@ -157,16 +157,16 @@ function MetricCardsArtifact({
   artifact: Extract<Artifact, { type: 'metric-cards' }>;
 }) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 gap-2">
       {artifact.cards.map((card, i) => (
         <div
           key={i}
-          className="bg-white/[0.04] border border-white/[0.08] rounded-lg p-3"
+          className="bg-white/[0.04] border border-white/[0.08] rounded-lg p-2.5"
         >
-          <div className="text-[11px] text-gray-500 uppercase tracking-wide">
+          <div className="text-[11px] text-gray-500 uppercase tracking-wide leading-tight">
             {card.label}
           </div>
-          <div className="text-lg font-bold text-white mt-1">{card.value}</div>
+          <div className="text-base font-bold text-white mt-1">{card.value}</div>
           {card.delta && (
             <span
               className={`text-[11px] mt-1 inline-flex items-center gap-1 ${
@@ -238,39 +238,171 @@ function TableArtifact({
   );
 }
 
+type StepVisualStatus = 'pending' | 'in-progress' | 'completed';
+
+function parseDurationMs(duration: string | undefined): number {
+  if (!duration) return 800;
+  const seconds = parseFloat(duration);
+  if (isNaN(seconds)) return 800;
+  return Math.max(seconds * 1000 * 4, 800);
+}
+
 function WorkflowStepsArtifactView({
   artifact,
+  isVisible,
 }: {
   artifact: Extract<Artifact, { type: 'workflow-steps' }>;
+  isVisible: boolean;
 }) {
-  const allCompleted = artifact.steps.every((s) => s.status === 'completed');
+  const stepCount = artifact.steps.length;
+  const [statuses, setStatuses] = useState<StepVisualStatus[]>(
+    () => Array(stepCount).fill('pending') as StepVisualStatus[],
+  );
+  const [showBanner, setShowBanner] = useState(false);
+  const [finished, setFinished] = useState(false);
+  const [readyToAnimate, setReadyToAnimate] = useState(false);
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const hasStartedRef = useRef(false);
 
   const totalDuration = artifact.steps.reduce((sum, s) => {
     if (!s.duration) return sum;
     return sum + parseFloat(s.duration);
   }, 0);
 
+  const clearTimers = useCallback(() => {
+    timersRef.current.forEach(clearTimeout);
+    timersRef.current = [];
+  }, []);
+
+  const runSequence = useCallback(
+    (startIndex: number) => {
+      let delay = startIndex === 0 ? 500 : 0;
+
+      for (let i = startIndex; i < stepCount; i++) {
+        const progressDelay = delay;
+        const stepDuration = parseDurationMs(artifact.steps[i].duration);
+        const completeDelay = progressDelay + stepDuration;
+        const beatDelay = completeDelay + 300;
+
+        // Transition to in-progress
+        timersRef.current.push(
+          setTimeout(() => {
+            setStatuses((prev) => {
+              const next = [...prev];
+              next[i] = 'in-progress';
+              return next;
+            });
+          }, progressDelay),
+        );
+
+        // Transition to completed
+        timersRef.current.push(
+          setTimeout(() => {
+            setStatuses((prev) => {
+              const next = [...prev];
+              next[i] = 'completed';
+              return next;
+            });
+          }, completeDelay),
+        );
+
+        // If last step, show banner after completion
+        if (i === stepCount - 1) {
+          timersRef.current.push(
+            setTimeout(() => {
+              setShowBanner(true);
+              setFinished(true);
+            }, completeDelay + 400),
+          );
+        }
+
+        delay = beatDelay;
+      }
+    },
+    [stepCount, artifact.steps],
+  );
+
+  // Wait for paint before starting animation
+  useEffect(() => {
+    if (isVisible && !readyToAnimate) {
+      const raf = requestAnimationFrame(() => {
+        const timer = setTimeout(() => setReadyToAnimate(true), 100);
+        timersRef.current.push(timer);
+      });
+      return () => cancelAnimationFrame(raf);
+    }
+  }, [isVisible, readyToAnimate]);
+
+  // Kick off animation once ready
+  useEffect(() => {
+    if (readyToAnimate && !hasStartedRef.current) {
+      hasStartedRef.current = true;
+      runSequence(0);
+    }
+    return clearTimers;
+  }, [readyToAnimate, runSequence, clearTimers]);
+
+  function handleSkip() {
+    clearTimers();
+    setStatuses(Array(stepCount).fill('completed') as StepVisualStatus[]);
+    setShowBanner(true);
+    setFinished(true);
+  }
+
+  function handleReplay() {
+    clearTimers();
+    setStatuses(Array(stepCount).fill('pending') as StepVisualStatus[]);
+    setShowBanner(false);
+    setFinished(false);
+    hasStartedRef.current = false;
+    setReadyToAnimate(false);
+    // Re-trigger after React flushes
+    timersRef.current.push(setTimeout(() => setReadyToAnimate(true), 100));
+  }
+
+  const allCompleted = statuses.every((s) => s === 'completed');
+  const ghostBtn =
+    'text-[10px] text-gray-500 hover:text-gray-300 px-2 py-0.5 rounded border border-white/[0.06] hover:border-white/[0.12] transition-colors';
+
   return (
     <>
-      <ArtifactTitle>{artifact.title}</ArtifactTitle>
+      {/* Title row with controls */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="text-xs font-medium text-gray-400 uppercase tracking-wide">
+          {artifact.title}
+        </div>
+        <div className="flex items-center gap-1.5">
+          {!finished && (
+            <button onClick={handleSkip} className={ghostBtn}>
+              Skip ⏭
+            </button>
+          )}
+          {finished && (
+            <button onClick={handleReplay} className={ghostBtn}>
+              ↻ Replay
+            </button>
+          )}
+        </div>
+      </div>
+
       <div className="relative">
         {/* Vertical connecting line */}
         <div
           className="absolute left-[9px] top-[10px] w-px"
-          style={{ bottom: allCompleted ? 10 : 10 }}
+          style={{ bottom: 10 }}
         >
-          {artifact.steps.map((step, i) => {
-            if (i === artifact.steps.length - 1) return null;
+          {artifact.steps.map((_, i) => {
+            if (i === stepCount - 1) return null;
             return (
               <div
                 key={i}
-                className={`w-full ${
-                  step.status === 'completed'
+                className={`w-full transition-colors duration-300 ${
+                  statuses[i] === 'completed'
                     ? 'bg-emerald-500/30'
                     : 'bg-white/10'
                 }`}
                 style={{
-                  height: `${100 / (artifact.steps.length - 1)}%`,
+                  height: `${100 / (stepCount - 1)}%`,
                 }}
               />
             );
@@ -279,71 +411,91 @@ function WorkflowStepsArtifactView({
 
         {/* Steps */}
         <div className="space-y-3">
-          {artifact.steps.map((step, i) => (
-            <div
-              key={i}
-              className="relative flex gap-3 animate-workflow-step"
-              style={{ animationDelay: `${i * 150}ms` }}
-            >
-              {/* Status icon */}
-              <div className="relative z-10 shrink-0 mt-0.5">
-                {step.status === 'completed' && (
-                  <div className="size-5 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
-                    <span className="text-emerald-400 text-[10px] leading-none">✓</span>
-                  </div>
-                )}
-                {step.status === 'in-progress' && (
-                  <div className="size-5 rounded-full bg-violet-500/20 border border-violet-500/40 flex items-center justify-center">
-                    <span
-                      className="block size-2 border border-violet-400 border-t-transparent rounded-full"
-                      style={{ animation: 'spin 0.8s linear infinite' }}
-                    />
-                  </div>
-                )}
-                {step.status === 'pending' && (
-                  <div className="size-5 rounded-full bg-white/5 border border-white/10" />
-                )}
-              </div>
-
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-white">{step.label}</span>
-                  {step.duration && (
-                    <span className="text-[10px] text-gray-600 ml-auto shrink-0">
-                      {step.duration}
-                    </span>
+          {artifact.steps.map((step, i) => {
+            const status = statuses[i];
+            return (
+              <div key={i} className="relative flex gap-3">
+                {/* Status icon */}
+                <div className="relative z-10 shrink-0 mt-0.5">
+                  {status === 'completed' && (
+                    <div className="size-5 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
+                      <span className="text-emerald-400 text-[10px] leading-none">
+                        ✓
+                      </span>
+                    </div>
+                  )}
+                  {status === 'in-progress' && (
+                    <div className="size-5 rounded-full bg-violet-500/20 border border-violet-500/40 flex items-center justify-center">
+                      <span
+                        className="block size-2 border border-violet-400 border-t-transparent rounded-full"
+                        style={{ animation: 'spin 0.8s linear infinite' }}
+                      />
+                    </div>
+                  )}
+                  {status === 'pending' && (
+                    <div className="size-5 rounded-full bg-white/5 border border-white/10" />
                   )}
                 </div>
-                <div className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-300 mt-1">
-                  <span className="text-[8px]">⚙</span>
-                  {step.tool}
-                </div>
-                <div className="text-[11px] text-gray-500 mt-0.5">
-                  {step.description}
-                </div>
-                {step.result && (
-                  <div className="text-[11px] text-emerald-400/80 mt-0.5">
-                    → {step.result}
+
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-sm font-medium text-white ${
+                        status === 'in-progress' ? 'animate-pulse' : ''
+                      }`}
+                    >
+                      {step.label}
+                    </span>
+                    {step.duration && (
+                      <span className="text-[10px] text-gray-600 ml-auto shrink-0">
+                        {step.duration}
+                      </span>
+                    )}
                   </div>
-                )}
+                  {status !== 'pending' && (
+                    <div className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-300 mt-1">
+                      <span className="text-[8px]">⚙</span>
+                      {step.tool}
+                    </div>
+                  )}
+                  {status !== 'pending' && (
+                    <div className="text-[11px] text-gray-500 mt-0.5">
+                      {step.description}
+                    </div>
+                  )}
+                  {step.result && (
+                    <div
+                      className="text-[11px] text-emerald-400/80 mt-0.5"
+                      style={{
+                        opacity: status === 'completed' ? 1 : 0,
+                        transition: 'opacity 200ms ease-out',
+                      }}
+                    >
+                      → {step.result}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Completion banner */}
-        {allCompleted && (
-          <div
-            className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2 mt-3 flex items-center justify-between animate-workflow-step"
-            style={{ animationDelay: `${artifact.steps.length * 150}ms` }}
-          >
-            <span className="text-emerald-400 text-xs">✓ Workflow completed</span>
-            <span className="text-emerald-400/60 text-[10px]">
-              {totalDuration.toFixed(1)}s total
-            </span>
-          </div>
-        )}
+        <div
+          className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2 mt-3 flex items-center justify-between"
+          style={{
+            opacity: showBanner ? 1 : 0,
+            transform: showBanner ? 'translateY(0)' : 'translateY(4px)',
+            transition: 'opacity 400ms ease-out, transform 400ms ease-out',
+            pointerEvents: showBanner ? 'auto' : 'none',
+          }}
+        >
+          <span className="text-emerald-400 text-xs">✓ Workflow completed</span>
+          <span className="text-emerald-400/60 text-[10px]">
+            {totalDuration.toFixed(1)}s total
+          </span>
+        </div>
       </div>
     </>
   );
