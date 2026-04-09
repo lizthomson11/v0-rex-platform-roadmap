@@ -116,8 +116,9 @@ const suites = [
         "Visitor Management – Kiosk & Self-Service Check-in",
       ],
       "Q2 2026": [
-        "Tenant Credentials – Wallet/NFC (Brivo, Genetec)",
-        "Visitor Credentials – QR Pass (Brivo, Genetec)",
+        "Tenant Credentials – Wallet/NFC (Genetec)",
+        "Tenant Credentials – BLE (Brivo)",
+        "Visitor Credentials – QR Pass (Genetec)",
       ],
       "Q3 2026": ["Access Control – Command Center Activity & Audit Logs"],
       "Q4 2026": [
