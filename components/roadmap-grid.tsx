@@ -123,7 +123,7 @@ const suites = [
     quarters: {
       "2025": [
         "Resource Booking – Branded Emails", "Resource Booking – Add Visitor to Booking", "Resource Booking – Discounts", "Resource Booking – On Account Payments",
-        "Service Requests – Two-way Messaging", "Resource Booking – Collections", "Resource Booking – Combined Meeting Rooms",
+        "Resource Booking – Collections", "Resource Booking – Combined Meeting Rooms",
       ],
       "Q1 2026": [
         "Resource Booking – Credits",
@@ -131,7 +131,7 @@ const suites = [
       ],
       "Q2 2026": [
         "Service Requests – Teams, Catalogues & Routing",
-        "Service Requests – Automated Feedback",
+        "Service Requests – Messaging & Feedback",
         "Service Requests – Pricing & Payments",
         "Service Requests – Billing & Yardi Invoicing",
         "Admin On the Go – Service Request Management",
