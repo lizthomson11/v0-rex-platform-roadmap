@@ -600,6 +600,13 @@ export function RoadmapGrid() {
           </div>
         </div>
       </div>
+      
+      {/* Footer disclaimer */}
+      <div className="mt-8 text-center">
+        <p className="text-[11px] text-roadmap-text-secondary/50 italic">
+          The further out, the fuzzier things get 🔮 — plans may shift as we learn and grow
+        </p>
+      </div>
     </div>
   )
 }
