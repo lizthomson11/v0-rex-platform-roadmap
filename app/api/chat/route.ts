@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import Anthropic from '@anthropic-ai/sdk';
 
 const DAWKINS_SYSTEM_PROMPT = `You are Dawkins, HqO's building intelligence assistant — an AI built into the REX Platform to help property teams and tenant experience managers make faster, data-driven decisions.
 
@@ -21,9 +22,6 @@ When discussing metrics or data, be specific — cite numbers, percentages, and 
 - Preventative Maintenance workflows (Q3 2026)
 
 Keep responses concise — 2-3 short paragraphs max. Be helpful, professional, and conversational without being overly formal. You are a demo assistant showcasing HqO's AI capabilities for the REX Platform.`;
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_AI_API_URL || 'http://localhost:3000';
-const REQUEST_TIMEOUT_MS = 30_000;
 
 function corsHeaders() {
   return {
@@ -52,78 +50,59 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const fullMessages = [
-      { role: 'system', content: DAWKINS_SYSTEM_PROMPT },
-      ...messages,
-    ];
-
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-
-    try {
-      const response = await fetch(`${BACKEND_URL}/api/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: fullMessages,
-          model: model || 'dawkins',
-        }),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeout);
-
-      if (!response.ok) {
-        const errorText = await response.text().catch(() => 'Unknown error');
-        return NextResponse.json(
-          {
-            message: {
-              role: 'assistant',
-              content: `I encountered an issue processing that request (${response.status}). Please try again.`,
-            },
-            model: model || 'dawkins',
-            error: errorText,
-          },
-          { status: response.status, headers: corsHeaders() },
-        );
-      }
-
-      const data = await response.json();
-
-      return NextResponse.json(
-        {
-          message: data.message,
-          model: data.model || model || 'dawkins',
-        },
-        { headers: corsHeaders() },
-      );
-    } catch (fetchError: unknown) {
-      clearTimeout(timeout);
-
-      if (fetchError instanceof DOMException && fetchError.name === 'AbortError') {
-        return NextResponse.json(
-          {
-            message: {
-              role: 'assistant',
-              content:
-                'The request timed out — Dawkins is taking longer than usual. The model may be under heavy load. Please try again in a moment.',
-            },
-            model: model || 'dawkins',
-          },
-          { status: 504, headers: corsHeaders() },
-        );
-      }
-
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
       return NextResponse.json(
         {
           message: {
             role: 'assistant',
-            content:
-              'Dawkins is currently offline. The GPU instances may need to be started. Please contact your administrator or try again later.',
+            content: 'Dawkins is not configured — missing ANTHROPIC_API_KEY. Please add it to your .env.local file.',
+          },
+          model: 'dawkins',
+        },
+        { status: 503, headers: corsHeaders() },
+      );
+    }
+
+    const anthropic = new Anthropic({ apiKey });
+
+    // Separate system messages from conversation messages
+    const conversationMessages = messages
+      .filter((m) => m.role !== 'system')
+      .map((m) => ({
+        role: m.role as 'user' | 'assistant',
+        content: m.content,
+      }));
+
+    try {
+      const response = await anthropic.messages.create({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1024,
+        system: DAWKINS_SYSTEM_PROMPT,
+        messages: conversationMessages,
+      });
+
+      const content = response.content[0];
+      const responseText = content.type === 'text' ? content.text : '';
+
+      return NextResponse.json(
+        {
+          message: { role: 'assistant', content: responseText },
+          model: model || 'dawkins',
+        },
+        { headers: corsHeaders() },
+      );
+    } catch (apiError: unknown) {
+      const message = apiError instanceof Error ? apiError.message : 'Unknown API error';
+      return NextResponse.json(
+        {
+          message: {
+            role: 'assistant',
+            content: `I encountered an issue processing that request. ${message}`,
           },
           model: model || 'dawkins',
         },
-        { status: 503, headers: corsHeaders() },
+        { status: 502, headers: corsHeaders() },
       );
     }
   } catch {
