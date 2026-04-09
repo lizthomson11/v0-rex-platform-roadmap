@@ -176,7 +176,7 @@ type QuarterColumn = {
 
 const QUARTER_COLUMNS: QuarterColumn[] = [
   { id: "2025", label: "2025", status: "delivered", defaultExpanded: true },
-  { id: "Q1 2026", label: "Q1 2026", status: "in-progress", defaultExpanded: true },
+  { id: "Q1 2026", label: "Q1 2026", status: "delivered", defaultExpanded: true },
   { id: "Q2 2026", label: "Q2 2026", status: "upcoming", defaultExpanded: true },
   { id: "Q3 2026", label: "Q3 2026", status: "upcoming", defaultExpanded: true },
   { id: "Q4 2026", label: "Q4 2026", status: "upcoming", defaultExpanded: true },
