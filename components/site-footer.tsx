@@ -125,7 +125,7 @@ export function SiteFooter() {
             <p className="text-[10px] text-roadmap-text-secondary/40">
               © {new Date().getFullYear()} HqO, Inc. All rights reserved.
             </p>
-            <p className="text-[10px] text-roadmap-text-secondary/40 italic">
+            <p className="text-[10px] text-roadmap-text-secondary/85 italic px-3 py-1.5 rounded-full border border-white/20 bg-white/5">
               Roadmap items are subject to change. The further out, the fuzzier things get 🔮
             </p>
           </div>

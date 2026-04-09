@@ -236,6 +236,10 @@ const getStatusLabel = (status: QuarterStatus) => {
   }
 }
 
+const getMobileStatusLabel = (status: QuarterStatus) => {
+  return status === "delivered" ? "Delivered" : "Planned"
+}
+
 function getFeaturesForQuarter(suite: (typeof suites)[0], quarterId: string): string[] {
   return suite.quarters[quarterId as keyof typeof suite.quarters] ?? []
 }
@@ -527,6 +531,21 @@ export function RoadmapGrid() {
                         borderLeftWidth: 4,
                       }}
                     >
+                      <div className="md:hidden mb-3 flex items-center justify-between gap-2">
+                        <span className="text-[11px] font-semibold text-roadmap-text-primary">
+                          {quarter.label}
+                        </span>
+                        <span
+                          className={cn(
+                            "text-[9px] font-medium px-1.5 py-0.5 rounded-full",
+                            quarterStatus === "delivered"
+                              ? "bg-emerald-500/20 text-emerald-400"
+                              : "bg-amber-500/20 text-amber-400",
+                          )}
+                        >
+                          {getMobileStatusLabel(quarterStatus)}
+                        </span>
+                      </div>
                       {sortedFeatures.length > 0 ? (
                         <>
                           <div className="flex flex-wrap gap-1.5">
