@@ -60,7 +60,7 @@ const suites = [
     color: "suite-crm",
     quarters: {
       "2025": ["Contacts – Key Contacts", "Contacts – Contact Notes", "Data Management – Building Object & Table", "Data Management – Tagging Framework"],
-      "Q1 2026": [],
+      "Q1 2026": ["User Profile – Activity Enhancements"],
       "Q2 2026": ["Leases - Yardi integration", "Leases – Lease Management"],
       "Q3 2026": ["Data Management – Custom Objects & Fields"],
       "Q4 2026": ["Tours – Brochure & Tour Content Tools", "Onboarding – Customizable Tenant Onboarding Workflows", "Leases – Lease Terms with Credits"],
