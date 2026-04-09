@@ -394,10 +394,10 @@ export function RoadmapGrid() {
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-roadmap-text-primary">{quarter.label}</span>
                         <span className={cn(
-                          "text-[9px] font-medium px-1.5 py-0.5 rounded-full",
+                          "text-[9px] font-medium px-1.5 py-0.5 rounded-full transition-all duration-300",
                           quarter.status === "delivered" && "bg-emerald-500/20 text-emerald-400",
                           quarter.status === "in-progress" && "bg-blue-500/20 text-blue-400",
-                          quarter.status === "upcoming" && "bg-amber-500/20 text-amber-400",
+                          quarter.status === "upcoming" && "bg-amber-500/20 text-amber-400 cursor-help hover:scale-110 hover:bg-amber-500/30 hover:shadow-[0_0_10px_rgba(251,191,36,0.3)] hover:animate-pulse",
                         )}>
                           {getStatusLabel(quarter.status)}
                         </span>
