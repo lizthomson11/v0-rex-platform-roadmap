@@ -393,16 +393,22 @@ export function RoadmapGrid() {
                     <div className="flex flex-col items-center gap-1.5">
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-roadmap-text-primary">{quarter.label}</span>
-                        <span 
-                          className={cn(
-                            "text-[9px] font-medium px-1.5 py-0.5 rounded-full transition-all duration-300",
-                            quarter.status === "delivered" && "bg-emerald-500/20 text-emerald-400",
-                            quarter.status === "in-progress" && "bg-blue-500/20 text-blue-400",
-                            quarter.status === "upcoming" && "bg-amber-500/20 text-amber-400 cursor-pointer hover:scale-110 hover:bg-amber-500/30 hover:shadow-[0_0_10px_rgba(251,191,36,0.3)]",
+                        <span className="relative group">
+                          <span 
+                            className={cn(
+                              "text-[9px] font-medium px-1.5 py-0.5 rounded-full transition-all duration-300",
+                              quarter.status === "delivered" && "bg-emerald-500/20 text-emerald-400",
+                              quarter.status === "in-progress" && "bg-blue-500/20 text-blue-400",
+                              quarter.status === "upcoming" && "bg-amber-500/20 text-amber-400 cursor-pointer group-hover:scale-110 group-hover:bg-amber-500/30 group-hover:shadow-[0_0_10px_rgba(251,191,36,0.3)]",
+                            )}
+                          >
+                            {getStatusLabel(quarter.status)}
+                          </span>
+                          {quarter.status === "upcoming" && (
+                            <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[10px] bg-black/90 text-amber-300 px-2 py-1 rounded-md pointer-events-none">
+                              🔮 Still taking shape
+                            </span>
                           )}
-                          title={quarter.status === "upcoming" ? "🔮 The future is still taking shape..." : undefined}
-                        >
-                          {getStatusLabel(quarter.status)}
                         </span>
                       </div>
                       <span className="text-[11px] text-roadmap-text-secondary/70">{featureCount} features</span>
