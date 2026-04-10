@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Anthropic from '@anthropic-ai/sdk';
 
 const DAWKINS_SYSTEM_PROMPT = `You are Dawkins, HqO's building intelligence assistant — an AI built into the REX Platform to help property teams and tenant experience managers make faster, data-driven decisions.
 
@@ -50,55 +49,43 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) {
-      return NextResponse.json(
-        {
-          message: {
-            role: 'assistant',
-            content: 'Dawkins is not configured — missing ANTHROPIC_API_KEY. Please add it to your .env.local file.',
-          },
-          model: 'dawkins',
-        },
-        { status: 503, headers: corsHeaders() },
-      );
-    }
+    const backendUrl = process.env.AI_API_URL || 'https://ai-api-poc-production.up.railway.app';
 
-    const anthropic = new Anthropic({ apiKey });
-
-    // Separate system messages from conversation messages
-    const conversationMessages = messages
-      .filter((m) => m.role !== 'system')
-      .map((m) => ({
-        role: m.role as 'user' | 'assistant',
-        content: m.content,
-      }));
+    // Prepend system prompt as a system message
+    const messagesWithSystem = [
+      { role: 'system', content: DAWKINS_SYSTEM_PROMPT },
+      ...messages.filter((m) => m.role !== 'system'),
+    ];
 
     try {
-      const response = await anthropic.messages.create({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1024,
-        system: DAWKINS_SYSTEM_PROMPT,
-        messages: conversationMessages,
+      const response = await fetch(`${backendUrl}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: messagesWithSystem,
+          model: model || 'dawkins',
+        }),
       });
 
-      const content = response.content[0];
-      const responseText = content.type === 'text' ? content.text : '';
+      if (!response.ok) {
+        throw new Error(`Backend returned ${response.status}`);
+      }
+
+      const data = await response.json() as { message: { role: string; content: string }; model: string };
 
       return NextResponse.json(
         {
-          message: { role: 'assistant', content: responseText },
-          model: model || 'dawkins',
+          message: data.message,
+          model: data.model || model || 'dawkins',
         },
         { headers: corsHeaders() },
       );
-    } catch (apiError: unknown) {
-      const message = apiError instanceof Error ? apiError.message : 'Unknown API error';
+    } catch {
       return NextResponse.json(
         {
           message: {
             role: 'assistant',
-            content: `I encountered an issue processing that request. ${message}`,
+            content: 'Dawkins is currently offline. Please try again in a moment.',
           },
           model: model || 'dawkins',
         },
