@@ -9,7 +9,7 @@ const WELCOME_MESSAGE: ChatMessage = {
   id: 'welcome',
   role: 'assistant',
   content:
-    "Hi! I'm Dawkins — HqO's building intelligence assistant. I can help you explore tenant engagement data, operational metrics, access control status, and upcoming platform features. Try one of the suggestions below, or ask me anything about your buildings.",
+    "Hi! I'm Dawkins — a demo of HqO's building intelligence assistant for the REX Platform. I can walk you through what's on the roadmap, simulate what I could do for your team, or help you find features that address your biggest challenges. This is a prototype — any data or metrics I show are illustrative examples, not your real numbers. Try one of the suggestions below to get started.",
 };
 
 const CHARS_PER_TICK = 4;

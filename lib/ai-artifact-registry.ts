@@ -1,35 +1,62 @@
 import type { Artifact, SuggestedPrompt } from './ai-chat-types';
 
 export const SUGGESTED_PROMPTS: SuggestedPrompt[] = [
+  // Roadmap
   {
-    id: 'engagement',
-    label: 'Show me tenant engagement trends',
-    icon: 'TrendingUp',
-    description: 'View engagement metrics across your portfolio',
-  },
-  {
-    id: 'roadmap',
+    id: 'roadmap-q2',
     label: "What's coming in Q2 2026?",
     icon: 'Calendar',
     description: 'Explore upcoming platform features',
   },
   {
-    id: 'operations',
-    label: 'How efficient are our operations?',
-    icon: 'Workflow',
-    description: 'Analyze service request performance',
-  },
-  {
-    id: 'access',
-    label: 'Access control overview',
+    id: 'access-roadmap',
+    label: "What's on the access control roadmap?",
     icon: 'KeyRound',
-    description: 'Review credential provisioning status',
+    description: 'See upcoming credential and access features',
   },
   {
-    id: 'leasing',
-    label: 'Leasing pipeline status',
+    id: 'lease-abstraction',
+    label: 'Tell me about AI Lease Abstraction',
     icon: 'FileText',
-    description: 'Check lease extraction and revenue data',
+    description: 'Learn about the AI-powered lease management feature',
+  },
+  // Problem-framed
+  {
+    id: 'service-requests',
+    label: 'Our team wastes too much time on manual service requests',
+    icon: 'Workflow',
+    description: 'See how Teams, Routing & Automation can help',
+  },
+  {
+    id: 'tenant-churn',
+    label: 'How do I know which tenants are at risk of leaving?',
+    icon: 'Users',
+    description: 'Explore Tenant Health Score and retention tools',
+  },
+  {
+    id: 'lease-slow',
+    label: 'Our lease process is too slow and manual',
+    icon: 'Clock',
+    description: 'See how AI Abstraction and Yardi integration help',
+  },
+  {
+    id: 'fragmented-access',
+    label: 'We manage credentials across multiple disconnected systems',
+    icon: 'Layers',
+    description: 'Explore unified access control across AMAG, Genetec, Brivo',
+  },
+  {
+    id: 'event-programming',
+    label: 'We struggle to deliver engaging tenant programming',
+    icon: 'Sparkles',
+    description: 'See event management and experience features',
+  },
+  // Simulations
+  {
+    id: 'tenant-health',
+    label: 'Show me what a Tenant Health Score looks like',
+    icon: 'TrendingUp',
+    description: 'See a simulated health score dashboard',
   },
   {
     id: 'booking-workflow',
