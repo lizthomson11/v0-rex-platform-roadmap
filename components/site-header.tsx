@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { ExternalLink } from "lucide-react"
 
 export function SiteHeader() {
@@ -9,7 +10,7 @@ export function SiteHeader() {
       <div className="container mx-auto max-w-[1920px] px-5 sm:px-8 md:px-10 lg:px-14 xl:px-16">
         <div className="flex h-16 items-center justify-between">
           {/* Logo and title */}
-          <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
             <Image
               src="/images/hqo-profile-pic-x2.png"
               alt="HqO Logo"
@@ -21,7 +22,7 @@ export function SiteHeader() {
               <span className="text-sm font-semibold text-white">REX Platform</span>
               <span className="text-[10px] text-gray-400 hidden sm:block">Product Roadmap</span>
             </div>
-          </div>
+          </Link>
 
           {/* Navigation */}
           <nav className="flex items-center gap-4">
