@@ -139,7 +139,7 @@ const suites = [
       ],
       "Q1 2026": [
         "Resource Booking – Credits",
-        "Resource Booking – Paid Bookings in Admin",
+        "Resource Booking – Manage Paid Bookings in Admin",
       ],
       "Q2 2026": [
         "Resource Booking – Cancellation & Preset Refunds",
