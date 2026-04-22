@@ -113,12 +113,12 @@ const suites = [
         "Tenant Credentials – Wallet/NFC (AMAG, Integriti)",
         "Visitor Credentials – QR Pass (AMAG, Integriti)",
         "Visitor Management – Tenant-Initiated Vendor Visit Requests",
-        "Visitor Management – Kiosk & Self-Service Check-in",
       ],
       "Q2 2026": [
         "Tenant Credentials – Wallet/NFC (Genetec)",
         "Tenant Credentials – BLE (Brivo)",
         "Visitor Credentials – QR Pass (Genetec)",
+        "Visitor Management – Kiosk & Self-Service Check-in",
       ],
       "Q3 2026": ["Access Control – Command Center Activity & Audit Logs"],
       "Q4 2026": [
@@ -139,9 +139,10 @@ const suites = [
       ],
       "Q1 2026": [
         "Resource Booking – Credits",
-        "Resource Booking – Cancellation & Preset Refunds",
+        "Resource Booking – Paid Bookings in Admin",
       ],
       "Q2 2026": [
+        "Resource Booking – Cancellation & Preset Refunds",
         "Service Requests – Teams, Catalogues & Routing",
         "Service Requests – Messaging & Feedback",
         "Service Requests – Pricing & Payments",
