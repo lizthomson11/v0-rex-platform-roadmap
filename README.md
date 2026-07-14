@@ -10,6 +10,14 @@
 This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
 Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
 
+## Roadmap data comes from Linear
+
+The `/roadmap` grid (and the Dawkins demo chat) are driven by **Linear** — every
+project labeled `Roadmap` shows up automatically, so there's no separate list to
+maintain in code. Requires a `LINEAR_API_KEY` env var; without it the site falls
+back to a built-in static roadmap. See **[docs/LINEAR_SYNC.md](docs/LINEAR_SYNC.md)**
+for setup and how the mapping works.
+
 ## Deployment
 
 Your project is live at:

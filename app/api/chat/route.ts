@@ -1,6 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getRoadmap, type RoadmapData } from '@/lib/linear';
+import { ARCHIVED_THROUGH_QUARTER } from '@/lib/roadmap-config';
 
-const DAWKINS_SYSTEM_PROMPT = `You are Dawkins, a demo version of HqO's building intelligence assistant — an AI concept built into the REX Platform to help property teams and tenant experience managers make faster, data-driven decisions.
+// Quarters that are shipped history — Dawkins talks about what's *coming*, so
+// these are excluded from the generated roadmap knowledge below.
+const DELIVERED_QUARTER_IDS = new Set(['2025', 'Q1 2026', 'Q2 2026']);
+
+/** Build the "what's coming" list for the prompt from the live roadmap. */
+function buildRoadmapKnowledge(roadmap: RoadmapData): string {
+  const lines: string[] = [];
+  for (const suite of roadmap.suites) {
+    for (const [quarter, features] of Object.entries(suite.quarters)) {
+      if (DELIVERED_QUARTER_IDS.has(quarter)) continue;
+      for (const feature of features) {
+        lines.push(`- ${feature} (${quarter})`);
+      }
+    }
+  }
+  return lines.length > 0 ? lines.join('\n') : '- (roadmap is being updated)';
+}
+
+const DAWKINS_INTRO = `You are Dawkins, a demo version of HqO's building intelligence assistant — an AI concept built into the REX Platform to help property teams and tenant experience managers make faster, data-driven decisions.
 
 IMPORTANT — YOU ARE A DEMO:
 - You are simulating what Dawkins could do for a real property team, not providing real data
@@ -19,20 +39,18 @@ HOW TO RESPOND:
 - Use phrases like "In a live environment, Dawkins could...", "Imagine you asked about...", "A real property team using this might see..."
 - When showing off a capability, describe what the experience would look like, then invite them to explore more
 - Keep it conversational and exciting — you're demoing a product, not writing a report
-- 2-3 short paragraphs max
+- 2-3 short paragraphs max`;
 
-ROADMAP KNOWLEDGE (reference these when relevant):
-- Lease Management & AI Abstraction (Q2 2026)
-- Yardi Integration (Q2 2026)
-- Teams & Routing for service requests (Q2 2026)
-- Admin On the Go mobile experience (Q2 2026)
-- Genetec & Brivo credential integrations (Q2 2026)
-- O365 Integration (Q2 2026)
-- Manage Paid Bookings in Admin (Q1 2026)
-- Visitor Management – Kiosk & Self-Service Check-in (Q2 2026)
-- Resource Booking – Cancellation & Preset Refunds (Q2 2026)
-- Tenant Health Score (Q3 2026)
-- Preventative Maintenance workflows (Q3 2026)`;
+/**
+ * Assemble the system prompt, injecting the live roadmap (sourced from Linear,
+ * shared with the /roadmap page) so Dawkins and the grid never drift apart.
+ */
+function buildSystemPrompt(roadmap: RoadmapData): string {
+  return `${DAWKINS_INTRO}
+
+ROADMAP KNOWLEDGE (upcoming features — reference these when relevant; delivered work through ${ARCHIVED_THROUGH_QUARTER} is already live):
+${buildRoadmapKnowledge(roadmap)}`;
+}
 
 function corsHeaders() {
   return {
@@ -63,9 +81,11 @@ export async function POST(request: NextRequest) {
 
     const backendUrl = process.env.AI_API_URL || 'https://ai-api-poc-production.up.railway.app';
 
-    // Prepend system prompt as a system message
+    // Prepend system prompt as a system message, with the roadmap pulled from
+    // the same Linear-backed source as the /roadmap grid.
+    const roadmap = await getRoadmap();
     const messagesWithSystem = [
-      { role: 'system', content: DAWKINS_SYSTEM_PROMPT },
+      { role: 'system', content: buildSystemPrompt(roadmap) },
       ...messages.filter((m) => m.role !== 'system'),
     ];
 
