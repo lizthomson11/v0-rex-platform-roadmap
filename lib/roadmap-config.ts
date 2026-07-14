@@ -399,9 +399,11 @@ export function resolveQuarter(targetDate?: string | null): string {
 }
 
 /** Normalized form for comparing feature names across the archive and Linear. */
-function featureKey(name: string): string {
+export function normalizeFeatureName(name: string): string {
   return normalizeDash(name).toLowerCase().replace(/\s+/g, " ").trim()
 }
+// Internal alias kept for readability at call sites.
+const featureKey = normalizeFeatureName
 
 /** Chronological sort key for a quarter column id. "2025" first, "Later" last. */
 function quarterOrder(id: string): number {
@@ -532,4 +534,19 @@ export function limitToPublishedQuarters(data: {
   }))
 
   return { suites, quarterColumns }
+}
+
+/**
+ * Map every roadmap feature (normalized name) to its quarter id. Used by the
+ * overview page so its curated cards show the same quarter/status as the
+ * Linear-backed roadmap instead of a hand-maintained value that can drift.
+ */
+export function featureQuarterLookup(data: { suites: Suite[] }): Record<string, string> {
+  const lookup: Record<string, string> = {}
+  for (const suite of data.suites) {
+    for (const [quarter, features] of Object.entries(suite.quarters)) {
+      for (const feature of features) lookup[normalizeFeatureName(feature)] = quarter
+    }
+  }
+  return lookup
 }

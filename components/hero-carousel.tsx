@@ -4,11 +4,6 @@ import { useRef, useEffect } from "react"
 import { Workflow, TrendingUp, KeyRound, Calendar, BarChart3, FileText } from "lucide-react"
 import Link from "next/link"
 
-type Feature = {
-  name: string
-  quarter: string
-}
-
 type KeyTheme = {
   id: string
   title: string
@@ -16,7 +11,6 @@ type KeyTheme = {
   personas: string[]
   icon: React.ComponentType<{ className?: string }>
   description: string
-  features: Feature[]
   colorClass: string
 }
 
@@ -62,12 +56,6 @@ const KEY_THEMES: KeyTheme[] = [
     icon: FileText,
     description: "Accelerate leasing with streamlined lease management, integrated billing, and tools that connect leasing activity to revenue.",
     colorClass: "crm",
-    features: [
-      { name: "Lease Management & AI Abstraction", quarter: "Q2 2026" },
-      { name: "Yardi Integration", quarter: "Q2 2026" },
-      { name: "Billing & Invoicing", quarter: "Q2 2026" },
-      { name: "Lease Terms with Credits", quarter: "Q4 2026" },
-    ],
   },
   {
     id: "tenant-insights",
@@ -77,11 +65,6 @@ const KEY_THEMES: KeyTheme[] = [
     icon: TrendingUp,
     description: "Understand how tenants engage with your properties, identify at-risk relationships early, and take action to improve retention.",
     colorClass: "intelligence",
-    features: [
-      { name: "User Activity Enhancements", quarter: "Q1 2026" },
-      { name: "Tenant Health Score", quarter: "Q3 2026" },
-      { name: "AI Analyst Agent", quarter: "Q4 2026" },
-    ],
   },
   {
     id: "operations",
@@ -91,13 +74,6 @@ const KEY_THEMES: KeyTheme[] = [
     icon: Workflow,
     description: "Reduce manual work by automating service request routing, connecting bookings to maintenance workflows, and managing operations on the go.",
     colorClass: "operations",
-    features: [
-      { name: "Teams, Catalogues & Routing", quarter: "Q2 2026" },
-      { name: "Messaging & Feedback", quarter: "Q2 2026" },
-      { name: "Admin On the Go", quarter: "Q2 2026" },
-      { name: "Preventative Maintenance", quarter: "Q3 2026" },
-      { name: "Inventory & Inspections", quarter: "Q3 2026" },
-    ],
   },
   {
     id: "events-experience",
@@ -107,13 +83,6 @@ const KEY_THEMES: KeyTheme[] = [
     icon: Calendar,
     description: "Create memorable experiences with flexible event management, multi-day programming, and seamless attendee communication.",
     colorClass: "experience",
-    features: [
-      { name: "Event Management On the Go", quarter: "Q2 2026" },
-      { name: "Multi-day Events", quarter: "Q3 2026" },
-      { name: "Automated Feedback", quarter: "Q3 2026" },
-      { name: "Flexible Payment Routing", quarter: "Q3 2026" },
-      { name: "Recurring Events", quarter: "Q4 2026" },
-    ],
   },
   {
     id: "access-security",
@@ -123,13 +92,6 @@ const KEY_THEMES: KeyTheme[] = [
     icon: KeyRound,
     description: "Manage tenant and visitor credentials across multiple access control systems from one place, with full audit visibility.",
     colorClass: "access",
-    features: [
-      { name: "AMAG & Integriti Credentials", quarter: "Q1 2026" },
-      { name: "Genetec Credentials", quarter: "Q2 2026" },
-      { name: "Brivo BLE Credentials", quarter: "Q2 2026" },
-      { name: "Command Center Audit Logs", quarter: "Q3 2026" },
-      { name: "Kastle Credentials", quarter: "Q4 2026" },
-    ],
   },
   {
     id: "connected-systems",
@@ -139,12 +101,6 @@ const KEY_THEMES: KeyTheme[] = [
     icon: BarChart3,
     description: "Bring your systems together with integrations that sync calendars, automate billing, and connect booking data to operations.",
     colorClass: "operations",
-    features: [
-      { name: "Office 365 Integration", quarter: "Q2 2026" },
-      { name: "Tripleseat Integration", quarter: "Q2 2026" },
-      { name: "Room Kiosks", quarter: "Q2 2026" },
-      { name: "Resource Booking Automation", quarter: "Q3 2026" },
-    ],
   },
 ]
 

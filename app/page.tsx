@@ -3,8 +3,16 @@ import { SiteFooter } from "@/components/site-footer"
 import { HeroCarousel } from "@/components/hero-carousel"
 import { ThemeSections } from "@/components/theme-sections"
 import { AiChatButton } from "@/components/ai-chat"
+import { getRoadmap } from "@/lib/linear"
+import { featureQuarterLookup } from "@/lib/roadmap-config"
 
-export default function Page() {
+// Keep the overview's quarters in sync with the Linear-backed roadmap (ISR).
+export const revalidate = 3600
+
+export default async function Page() {
+  const roadmap = await getRoadmap()
+  const quarterLookup = featureQuarterLookup(roadmap)
+
   return (
     <div className="min-h-screen bg-black flex flex-col scroll-smooth" style={{ scrollPaddingTop: "80px" }}>
       <SiteHeader />
@@ -50,7 +58,7 @@ export default function Page() {
         <div className="relative h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
         {/* Theme Sections - detailed breakdown by problem/persona */}
-        <ThemeSections />
+        <ThemeSections quarterLookup={quarterLookup} />
       </main>
 
       <SiteFooter />

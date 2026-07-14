@@ -37,12 +37,17 @@ export type RoadmapData = {
   source: "linear" | "fallback"
 }
 
+// Note: Linear collection filters (labels/teams/etc.) require a `some`/`every`/
+// `none` wrapper — `{ labels: { name: {...} } }` is rejected with a 400.
+// `state` is the stable scalar project state ("backlog" | "planned" |
+// "started" | "completed" | "canceled"); we avoid the `status { type }` object
+// to stay compatible across Linear API versions.
 const PROJECTS_QUERY = /* GraphQL */ `
   query RoadmapProjects($after: String, $label: String!) {
     projects(
       first: 100
       after: $after
-      filter: { labels: { name: { eq: $label } } }
+      filter: { labels: { some: { name: { eq: $label } } } }
     ) {
       pageInfo {
         hasNextPage
@@ -51,9 +56,7 @@ const PROJECTS_QUERY = /* GraphQL */ `
       nodes {
         name
         targetDate
-        status {
-          type
-        }
+        state
         initiatives {
           nodes {
             name
@@ -72,7 +75,7 @@ const PROJECTS_QUERY = /* GraphQL */ `
 type RawProject = {
   name: string
   targetDate: string | null
-  status: { type: string | null } | null
+  state: string | null
   initiatives: { nodes: { name: string }[] }
   teams: { nodes: { name: string }[] }
 }
@@ -81,7 +84,7 @@ function toLinearProject(p: RawProject): LinearProject {
   return {
     name: p.name,
     targetDate: p.targetDate,
-    statusType: p.status?.type ?? null,
+    statusType: p.state ?? null,
     initiatives: p.initiatives?.nodes ?? [],
     teams: p.teams?.nodes ?? [],
   }
@@ -107,7 +110,8 @@ async function fetchRoadmapProjects(apiKey: string): Promise<LinearProject[]> {
     })
 
     if (!res.ok) {
-      throw new Error(`Linear API returned ${res.status} ${res.statusText}`)
+      const body = await res.text().catch(() => "")
+      throw new Error(`Linear API returned ${res.status} ${res.statusText}: ${body.slice(0, 500)}`)
     }
 
     const json = (await res.json()) as {

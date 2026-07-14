@@ -2,6 +2,7 @@
 
 import { Workflow, TrendingUp, KeyRound, Calendar, BarChart3, FileText, ArrowRight } from "lucide-react"
 import Link from "next/link"
+import { normalizeFeatureName } from "@/lib/roadmap-config"
 
 const getQuarterStatusColor = (quarter: string) => {
   const now = new Date()
@@ -26,8 +27,11 @@ const getQuarterStatusColor = (quarter: string) => {
 
 type Feature = {
   name: string
+  /** Fallback quarter, used if roadmapMatch isn't found in the live roadmap. */
   quarter: string
   description: string
+  /** Exact roadmap feature name to look the authoritative quarter up from. */
+  roadmapMatch?: string
 }
 
 type ThemeSection = {
@@ -91,22 +95,26 @@ const THEME_SECTIONS: ThemeSection[] = [
     features: [
       {
         name: "Lease Management & AI Abstraction",
-        quarter: "Q2 2026",
+        quarter: "Q4 2026",
+        roadmapMatch: "CRM - AI Lease Abstraction",
         description: "Centralized lease tracking with key dates, terms, and renewal workflows. AI-powered extraction turns complex lease documents into actionable data.",
       },
       {
         name: "Yardi Integration",
-        quarter: "Q2 2026",
+        quarter: "Q3 2026",
+        roadmapMatch: "Leasing - Yardi Integration",
         description: "Bi-directional sync with Yardi for tenant data, lease information, and billing. Your source of truth, connected.",
       },
       {
         name: "Billing & Invoicing",
-        quarter: "Q2 2026",
+        quarter: "Q4 2026",
+        roadmapMatch: "Service Requests - Yardi Invoicing Integration",
         description: "Generate invoices from service requests and bookings with automatic Yardi posting. Reduce manual billing work.",
       },
       {
         name: "Lease Terms with Credits",
         quarter: "Q4 2026",
+        roadmapMatch: "Leases – Lease Terms with Credits",
         description: "Include booking credits and amenity allowances as part of lease terms. Automatically provision entitlements when leases are signed.",
       },
     ],
@@ -123,11 +131,13 @@ const THEME_SECTIONS: ThemeSection[] = [
       {
         name: "User Activity Enhancements",
         quarter: "Q1 2026",
+        roadmapMatch: "User Profile – Activity Enhancements",
         description: "Deeper visibility into how tenants interact with your building — from app usage to amenity bookings — so you can understand what drives satisfaction.",
       },
       {
         name: "Tenant Health Score",
-        quarter: "Q3 2026",
+        quarter: "Q4 2026",
+        roadmapMatch: "CRM - Tenant Health & LTV",
         description: "A composite score that combines engagement data, service request patterns, and usage metrics to identify at-risk tenants before renewal conversations.",
       },
       {
@@ -149,26 +159,31 @@ const THEME_SECTIONS: ThemeSection[] = [
       {
         name: "Teams, Catalogues & Routing",
         quarter: "Q2 2026",
+        roadmapMatch: "Service Requests – Teams, Catalogues & Routing",
         description: "Automatically route service requests to the right teams based on categories, locations, and custom rules. No more manual triage or missed handoffs.",
       },
       {
         name: "Messaging & Feedback",
         quarter: "Q2 2026",
+        roadmapMatch: "Service Requests – Messaging & Feedback",
         description: "Enable two-way communication with tenants on service requests and automatically collect feedback when work is complete.",
       },
       {
         name: "Admin On the Go",
         quarter: "Q2 2026",
+        roadmapMatch: "Admin On the Go – Service Request Management",
         description: "Manage service requests, check-ins, and communications from your mobile device. Everything you need to run operations without being at your desk.",
       },
       {
         name: "Preventative Maintenance",
-        quarter: "Q3 2026",
+        quarter: "Q4 2026",
+        roadmapMatch: "Service Requests - Preventative Maintenance",
         description: "Schedule recurring maintenance tasks and inspections. Stay ahead of issues before they become tenant complaints.",
       },
       {
         name: "Inventory & Inspections",
         quarter: "Q3 2026",
+        roadmapMatch: "Service Requests - Inventory",
         description: "Track equipment, supplies, and inspection schedules in one place. Know what you have and when it needs attention.",
       },
     ],
@@ -185,16 +200,19 @@ const THEME_SECTIONS: ThemeSection[] = [
       {
         name: "Event Management On the Go",
         quarter: "Q2 2026",
+        roadmapMatch: "Admin On the Go – Event Management, Check-in & Communications",
         description: "Check in attendees, manage event details, and communicate with guests from your phone. Perfect for on-site event managers.",
       },
       {
         name: "Multi-day Events",
         quarter: "Q3 2026",
+        roadmapMatch: "Events - Multi-day",
         description: "Plan conferences, wellness weeks, and other multi-day programming with connected sessions and unified registration.",
       },
       {
         name: "Automated Feedback",
-        quarter: "Q3 2026",
+        quarter: "Q4 2026",
+        roadmapMatch: "Events - Feedback",
         description: "Automatically send satisfaction surveys after events and bookings. Understand what's working and what needs improvement.",
       },
       {
@@ -204,7 +222,8 @@ const THEME_SECTIONS: ThemeSection[] = [
       },
       {
         name: "Recurring Events",
-        quarter: "Q4 2026",
+        quarter: "Q3 2026",
+        roadmapMatch: "Events - Recurring",
         description: "Set up weekly fitness classes, monthly socials, or any recurring programming with automatic scheduling.",
       },
     ],
@@ -221,26 +240,31 @@ const THEME_SECTIONS: ThemeSection[] = [
       {
         name: "AMAG & Integriti Credentials",
         quarter: "Q1 2026",
+        roadmapMatch: "Tenant Credentials – Wallet/NFC (AMAG, Integriti)",
         description: "Issue Wallet/NFC credentials and QR visitor passes for properties using AMAG and Integriti access control systems.",
       },
       {
         name: "Genetec Credentials",
         quarter: "Q2 2026",
+        roadmapMatch: "Tenant Credentials – Wallet/NFC (Genetec)",
         description: "Full credential support for Genetec — both tenant mobile credentials and visitor QR passes integrated into your existing system.",
       },
       {
         name: "Brivo BLE Credentials",
         quarter: "Q2 2026",
+        roadmapMatch: "Tenant Credentials – BLE (Brivo)",
         description: "Bluetooth Low Energy credential support for Brivo, enabling seamless mobile access without NFC requirements.",
       },
       {
         name: "Command Center Audit Logs",
         quarter: "Q3 2026",
+        roadmapMatch: "Access Control – Command Center Activity & Audit Logs",
         description: "Complete visibility into credential activity across all your access systems. Track who accessed what, when, and from which device.",
       },
       {
         name: "Kastle Credentials",
         quarter: "Q4 2026",
+        roadmapMatch: "Tenant Credentials – Wallet/NFC (Kastle)",
         description: "Extend mobile credential and visitor pass support to Kastle access control systems.",
       },
     ],
@@ -256,29 +280,41 @@ const THEME_SECTIONS: ThemeSection[] = [
     features: [
       {
         name: "Office 365 Integration",
-        quarter: "Q2 2026",
+        quarter: "Q3 2026",
+        roadmapMatch: "Resource Booking - Outlook Integration",
         description: "Sync room bookings with Outlook calendars. Tenants book through the app, meetings appear in their calendar automatically.",
       },
       {
         name: "Tripleseat Integration",
         quarter: "Q2 2026",
+        roadmapMatch: "Resource Booking – Tripleseat Integration",
         description: "Connect catering and event management with Tripleseat. Bookings flow seamlessly between systems.",
       },
       {
         name: "Room Kiosks",
         quarter: "Q2 2026",
+        roadmapMatch: "Resource Booking – Room Kiosks",
         description: "Deploy digital signage outside meeting rooms showing availability and allowing quick bookings on the spot.",
       },
       {
         name: "Resource Booking Automation",
         quarter: "Q3 2026",
+        roadmapMatch: "Automation – Resource Booking → Service Request Integration",
         description: "Automatically trigger service requests when bookings are made — AV setup, catering orders, room configuration.",
       },
     ],
   },
 ]
 
-export function ThemeSections() {
+export function ThemeSections({
+  quarterLookup = {},
+}: {
+  /** Normalized feature name → quarter, from the Linear-backed roadmap. */
+  quarterLookup?: Record<string, string>
+} = {}) {
+  const resolveQuarter = (feature: Feature) =>
+    (feature.roadmapMatch && quarterLookup[normalizeFeatureName(feature.roadmapMatch)]) || feature.quarter
+
   return (
     <div className="font-[family-name:var(--font-source-sans)]">
       {THEME_SECTIONS.map((section, sectionIdx) => {
@@ -320,22 +356,25 @@ export function ThemeSections() {
               
               {/* Features grid */}
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 ml-0 md:ml-[68px]">
-                {section.features.map((feature) => (
-                  <div 
+                {section.features.map((feature) => {
+                  const quarter = resolveQuarter(feature)
+                  return (
+                  <div
                     key={feature.name}
                     className="rounded-xl border border-white/10 bg-white/[0.02] p-5 hover:bg-white/[0.04] transition-colors"
                   >
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <h3 className="text-base font-semibold text-white">{feature.name}</h3>
-                      <span className={`shrink-0 text-[10px] px-2 py-1 rounded-full font-medium ${getQuarterStatusColor(feature.quarter)}`}>
-                        {feature.quarter}
+                      <span className={`shrink-0 text-[10px] px-2 py-1 rounded-full font-medium ${getQuarterStatusColor(quarter)}`}>
+                        {quarter}
                       </span>
                     </div>
                     <p className="text-sm text-roadmap-text-secondary/70 leading-relaxed">
                       {feature.description}
                     </p>
                   </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
           </section>
