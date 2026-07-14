@@ -1,10 +1,16 @@
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { RoadmapGrid } from "@/components/roadmap-grid"
+import { getRoadmap } from "@/lib/linear"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
-export default function RoadmapPage() {
+// Refresh the roadmap from Linear hourly (ISR). Must be a static literal.
+export const revalidate = 3600
+
+export default async function RoadmapPage() {
+  const { suites, quarterColumns } = await getRoadmap()
+
   return (
     <div className="min-h-screen bg-black flex flex-col">
       <SiteHeader />
@@ -36,7 +42,7 @@ export default function RoadmapPage() {
         {/* Roadmap Grid */}
         <section className="bg-black">
           <div className="container mx-auto max-w-[1920px] px-5 sm:px-8 md:px-10 lg:px-14 xl:px-16 py-6 md:py-8 pb-12 md:pb-20">
-            <RoadmapGrid />
+            <RoadmapGrid suites={suites} quarterColumns={quarterColumns} />
           </div>
         </section>
       </main>

@@ -5,6 +5,12 @@ import { CircleCheck, Zap, Target, Search, X, Sparkles, ChevronLeft, ChevronsRig
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
+import {
+  FALLBACK_SUITES,
+  FALLBACK_QUARTER_COLUMNS,
+  type Suite,
+  type QuarterColumn,
+} from "@/lib/roadmap-config"
 
 const SPOTLIGHT_FEATURES = new Set([
   "Resource Booking – Credits",
@@ -56,136 +62,7 @@ function getHelpLink(feature: string): string | null {
   return null
 }
 
-const suites = [
-  {
-    name: "CRM",
-    description: "Customer Relationship Management tools for managing contacts, tours, and leases",
-    color: "suite-crm",
-    quarters: {
-      "2025": ["Contacts – Key Contacts", "Contacts – Contact Notes", "Data Management – Building Object & Table", "Data Management – Tagging Framework"],
-      "Q1 2026": ["User Profile – Activity Enhancements"],
-      "Q2 2026": ["Leases - Yardi integration", "Leases – Lease Management & AI Abstraction"],
-      "Q3 2026": ["Data Management – Custom Objects & Fields"],
-      "Q4 2026": ["Tours – Brochure & Tour Content Tools", "Onboarding – Customizable Tenant Onboarding Workflows", "Leases – Lease Terms with Credits"],
-    },
-  },
-  {
-    name: "Experience",
-    description: "Guest and tenant experiences including events, communications, and web portals",
-    color: "suite-experience",
-    quarters: {
-      "2025": [
-        "Events – Tickets", "Events – QR Check-in", "Events – Waitlist", "Events – Discounts",
-        "Events – Multi-slot Events", "Events – Add Attendees from Admin", "Communication – Rich Content", "Communication – Newsletters",
-      ],
-      "Q1 2026": [
-        "Web Experience – Public Registration",
-        "Web Experience – Customization Enhancements",
-        "Web Experience – Custom Domain Setup",
-      ],
-      "Q2 2026": [
-        "Experience – Automated Localized Posts",
-        "Events – Limiting Session Claims",
-        "Events – Cancellation Notice",
-        "Admin On the Go – Event Management, Check-in & Communications",
-      ],
-      "Q3 2026": [
-        "Events – Automated Feedback",
-        "Events – Multi-day Events",
-        "Events – Flexible Payment Routing",
-        "Experience – Integrated Digital Signage",
-      ],
-      "Q4 2026": ["Events – Recurring Events"],
-    },
-  },
-  {
-    name: "Access Control (PAIR)",
-    description: "Physical access and visitor management",
-    color: "suite-access",
-    quarters: {
-      "2025": [
-        "Visitor Management – Loading Dock Support", "Visitor Management – Wallet Visitor Pass (Wavelynx)", "Visitor Management – Reporting Enhancements",
-        "Visitor Management – Bulk Registration", "Visitor Management – Automated Visitor Passes via Bookings",
-        "Tenant Credentials – Wallet/NFC (Lenel, Genea, C-CURE)",
-        "Visitor Credentials – QR Pass (Lenel, C-CURE)",
-      ],
-      "Q1 2026": [
-        "Tenant Credentials – Wallet/NFC (AMAG, Integriti)",
-        "Visitor Credentials – QR Pass (AMAG, Integriti)",
-        "Visitor Management – Tenant-Initiated Vendor Visit Requests",
-      ],
-      "Q2 2026": [
-        "Tenant Credentials – Wallet/NFC (Genetec)",
-        "Tenant Credentials – BLE (Brivo)",
-        "Visitor Credentials – QR Pass (Genetec)",
-        "Visitor Management – Kiosk & Self-Service Check-in",
-      ],
-      "Q3 2026": ["Access Control – Command Center Activity & Audit Logs"],
-      "Q4 2026": [
-        "Access Control – Command Center Unified Credential Visibility",
-        "Tenant Credentials – Wallet/NFC (Kastle)",
-        "Visitor Credentials – QR Pass (Kastle)",
-      ],
-    },
-  },
-  {
-    name: "Operations",
-    description: "Service requests, resource booking, and operational workflows",
-    color: "suite-operations",
-    quarters: {
-      "2025": [
-        "Resource Booking – Branded Emails", "Resource Booking – Add Visitor to Booking", "Resource Booking – Discounts", "Resource Booking – On Account Payments",
-        "Resource Booking – Collections", "Resource Booking – Combined Meeting Rooms",
-      ],
-      "Q1 2026": [
-        "Resource Booking – Credits",
-        "Resource Booking – Manage Paid Bookings in Admin",
-      ],
-      "Q2 2026": [
-        "Resource Booking – Cancellation & Preset Refunds",
-        "Service Requests – Teams, Catalogues & Routing",
-        "Service Requests – Messaging & Feedback",
-        "Service Requests – Pricing & Payments",
-        "Service Requests – Billing & Yardi Invoicing",
-        "Admin On the Go – Service Request Management",
-        "Resource Booking – Room Kiosks",
-        "Resource Booking – Office 365 (Outlook) Integration",
-        "Resource Booking – Tripleseat Integration",
-      ],
-      "Q3 2026": [
-        "Service Requests – Inventory & Inspections",
-        "Service Requests – Preventative Maintenance",
-        "Resource Booking – Automated Feedback",
-        "Resource Booking – Two-way Messaging",
-        "Automation – Resource Booking → Service Request Integration",
-      ],
-      "Q4 2026": ["AI Automation – Admin Assistant"],
-    },
-  },
-  {
-    name: "Intelligence",
-    description: "Analytics, reporting, and AI-powered automation",
-    color: "suite-intelligence",
-    quarters: {
-      "2025": ["Reporting – New Intelligence Platform", "AI Automation – Agent Development"],
-      "Q1 2026": [
-        "Reporting – New Access Performance Reports",
-        "Reporting – New Content Performance Reports",
-        "Reporting – Sentiment & Feedback Analysis",
-      ],
-      "Q2 2026": ["Reporting – New Communications Reports", "Reporting – New Service Request Performance Reports"],
-      "Q3 2026": ["Reporting – Tenant Health Score", "Reporting – New CRM Reports & Reporting"],
-      "Q4 2026": ["Reporting – New Resource Booking Performance Reports", "Reporting – New Event Performance Reports"],
-    },
-  },
-]
 
-type QuarterColumn = {
-  id: string
-  label: string
-  sublabel?: string
-  defaultExpanded: boolean
-}
 
 // Auto-calculate status based on current date
 function getQuarterStatus(quarterId: string): "delivered" | "in-progress" | "upcoming" {
@@ -216,13 +93,6 @@ function getQuarterStatus(quarterId: string): "delivered" | "in-progress" | "upc
   return "upcoming"
 }
 
-const QUARTER_COLUMNS: QuarterColumn[] = [
-  { id: "2025", label: "2025", defaultExpanded: true },
-  { id: "Q1 2026", label: "Q1 2026", defaultExpanded: true },
-  { id: "Q2 2026", label: "Q2 2026", defaultExpanded: true },
-  { id: "Q3 2026", label: "Q3 2026", defaultExpanded: true },
-  { id: "Q4 2026", label: "Q4 2026", defaultExpanded: true },
-]
 
 type QuarterStatus = "delivered" | "in-progress" | "upcoming"
 
@@ -241,11 +111,11 @@ const getMobileStatusLabel = (status: QuarterStatus) => {
   return status === "delivered" ? "Delivered" : "Planned"
 }
 
-function getFeaturesForQuarter(suite: (typeof suites)[0], quarterId: string): string[] {
-  return suite.quarters[quarterId as keyof typeof suite.quarters] ?? []
+function getFeaturesForQuarter(suite: Suite, quarterId: string): string[] {
+  return suite.quarters[quarterId] ?? []
 }
 
-function getTotalFeaturesForQuarter(quarterId: string): number {
+function getTotalFeaturesForQuarter(suites: Suite[], quarterId: string): number {
   return suites.reduce((total, suite) => total + getFeaturesForQuarter(suite, quarterId).length, 0)
 }
 
@@ -286,7 +156,13 @@ const LEFT_COL_DESKTOP = 280
 const LEFT_COL_MOBILE = 100
 const COL_WIDTH = 260
 
-export function RoadmapGrid() {
+export function RoadmapGrid({
+  suites = FALLBACK_SUITES,
+  quarterColumns = FALLBACK_QUARTER_COLUMNS,
+}: {
+  suites?: Suite[]
+  quarterColumns?: QuarterColumn[]
+} = {}) {
   const scrollContainerRef = React.useRef<HTMLDivElement>(null)
   const headerScrollRef = React.useRef<HTMLDivElement>(null)
   const isScrollSyncing = React.useRef(false)
@@ -349,9 +225,9 @@ export function RoadmapGrid() {
     return features.filter((feature) => feature.toLowerCase().includes(searchQuery.toLowerCase()))
   }
 
-  const suiteHasMatchingFeatures = (suite: (typeof suites)[0]) => {
+  const suiteHasMatchingFeatures = (suite: Suite) => {
     if (!searchQuery.trim()) return true
-    return QUARTER_COLUMNS.some((q) => {
+    return quarterColumns.some((q) => {
       const features = getFeaturesForQuarter(suite, q.id)
       return features.some((f) => f.toLowerCase().includes(searchQuery.toLowerCase()))
     })
@@ -361,8 +237,8 @@ export function RoadmapGrid() {
 
   const LEFT_COL = isMobile ? LEFT_COL_MOBILE : LEFT_COL_DESKTOP
 
-  const colWidths = QUARTER_COLUMNS.map(() => COL_WIDTH)
-  const totalWidth = LEFT_COL + colWidths.reduce((a, b) => a + b, 0) + (QUARTER_COLUMNS.length * 12)
+  const colWidths = quarterColumns.map(() => COL_WIDTH)
+  const totalWidth = LEFT_COL + colWidths.reduce((a, b) => a + b, 0) + (quarterColumns.length * 12)
 
   return (
     <div className="w-full">
@@ -426,8 +302,8 @@ export function RoadmapGrid() {
               <div className="shrink-0 sticky left-0 z-[60] bg-black" style={{ width: LEFT_COL }} />
 
               {/* Quarter column headers */}
-              {QUARTER_COLUMNS.map((quarter, idx) => {
-                const featureCount = getTotalFeaturesForQuarter(quarter.id)
+              {quarterColumns.map((quarter, idx) => {
+                const featureCount = getTotalFeaturesForQuarter(suites, quarter.id)
                 const status = getQuarterStatus(quarter.id)
                 
                 return (
@@ -506,7 +382,7 @@ export function RoadmapGrid() {
                 <div className="flex gap-3 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
 
                 {/* Quarter cells */}
-                {QUARTER_COLUMNS.map((quarter, idx) => {
+                {quarterColumns.map((quarter, idx) => {
                   const allFeatures = getFeaturesForQuarter(suite, quarter.id)
                   const features = getFilteredFeatures(allFeatures)
                   const hasHiddenFeatures = searchQuery && features.length < allFeatures.length
@@ -649,7 +525,11 @@ export function RoadmapGrid() {
                         </>
                       ) : (
                         <p className="text-[11px] text-roadmap-text-secondary/40 text-center py-6 italic">
-                          {searchQuery ? "No matches" : "Stay tuned"}
+                          {searchQuery
+                            ? "No matches"
+                            : quarterStatus === "delivered"
+                              ? "—"
+                              : "Stay tuned"}
                         </p>
                       )}
                     </div>
