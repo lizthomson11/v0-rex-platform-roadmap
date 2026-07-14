@@ -45,7 +45,7 @@ export type RoadmapData = {
 const PROJECTS_QUERY = /* GraphQL */ `
   query RoadmapProjects($after: String, $label: String!) {
     projects(
-      first: 100
+      first: 50
       after: $after
       filter: { labels: { some: { name: { eq: $label } } } }
     ) {
@@ -57,12 +57,12 @@ const PROJECTS_QUERY = /* GraphQL */ `
         name
         targetDate
         state
-        initiatives {
+        initiatives(first: 10) {
           nodes {
             name
           }
         }
-        teams {
+        teams(first: 10) {
           nodes {
             name
           }
