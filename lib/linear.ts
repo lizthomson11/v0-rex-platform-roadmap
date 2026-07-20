@@ -18,6 +18,7 @@ import {
   buildSuitesFromProjects,
   mergeWithArchive,
   limitToPublishedQuarters,
+  staticToSuite,
   FALLBACK_SUITES,
   FALLBACK_QUARTER_COLUMNS,
   type LinearProject,
@@ -144,7 +145,7 @@ export async function getRoadmap(): Promise<RoadmapData> {
 
   if (!apiKey) {
     return {
-      suites: FALLBACK_SUITES,
+      suites: FALLBACK_SUITES.map(staticToSuite),
       quarterColumns: FALLBACK_QUARTER_COLUMNS,
       source: "fallback",
     }
@@ -163,7 +164,7 @@ export async function getRoadmap(): Promise<RoadmapData> {
   } catch (err) {
     console.error("[roadmap] Falling back to static data:", err)
     return {
-      suites: FALLBACK_SUITES,
+      suites: FALLBACK_SUITES.map(staticToSuite),
       quarterColumns: FALLBACK_QUARTER_COLUMNS,
       source: "fallback",
     }

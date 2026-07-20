@@ -12,7 +12,24 @@
  * The live fetch itself lives in lib/linear.ts (server only).
  */
 
+/** A single roadmap feature as rendered by the grid. */
+export type RoadmapFeature = {
+  name: string
+  /** Exact Linear target date (YYYY-MM-DD) for in-quarter sorting; null for archive items. */
+  targetDate?: string | null
+  /** True when the underlying Linear project has shipped (state "completed"). */
+  delivered: boolean
+}
+
 export type Suite = {
+  name: string
+  description: string
+  color: string
+  quarters: Record<string, RoadmapFeature[]>
+}
+
+/** Static (hand-authored) suite shape: quarters hold plain feature-name strings. */
+export type StaticSuite = {
   name: string
   description: string
   color: string
@@ -77,7 +94,7 @@ export type SuiteName = (typeof SUITE_NAMES)[number]
 // Linear's Roadmap label covers Q3 2026 onward; these earlier quarters are the
 // "what we shipped" story and are intentionally kept in code.
 // ---------------------------------------------------------------------------
-export const DELIVERED_ARCHIVE: Suite[] = [
+export const DELIVERED_ARCHIVE: StaticSuite[] = [
   {
     ...SUITE_META[0],
     quarters: {
@@ -189,7 +206,7 @@ export const DELIVERED_ARCHIVE: Suite[] = [
 // Full static fallback (archive + the last hand-maintained future roadmap).
 // Only used when Linear cannot be reached, so the site never renders empty.
 // ---------------------------------------------------------------------------
-export const FALLBACK_SUITES: Suite[] = [
+export const FALLBACK_SUITES: StaticSuite[] = [
   {
     ...SUITE_META[0],
     quarters: {
@@ -403,7 +420,19 @@ export function normalizeFeatureName(name: string): string {
   return normalizeDash(name).toLowerCase().replace(/\s+/g, " ").trim()
 }
 // Internal alias kept for readability at call sites.
-const featureKey = normalizeFeatureName
+const featureKey = (f: string) => normalizeFeatureName(f)
+
+/** Wrap plain feature-name strings as RoadmapFeatures (archive/fallback items). */
+function namesToFeatures(names: string[], delivered = false): RoadmapFeature[] {
+  return names.map((name) => ({ name, targetDate: null, delivered }))
+}
+
+/** Convert a hand-authored StaticSuite into the RoadmapFeature-based Suite shape. */
+export function staticToSuite(s: StaticSuite): Suite {
+  const quarters: Record<string, RoadmapFeature[]> = {}
+  for (const [q, names] of Object.entries(s.quarters)) quarters[q] = namesToFeatures(names)
+  return { name: s.name, description: s.description, color: s.color, quarters }
+}
 
 /** Chronological sort key for a quarter column id. "2025" first, "Later" last. */
 function quarterOrder(id: string): number {
@@ -425,23 +454,27 @@ export function buildSuitesFromProjects(projects: LinearProject[]): {
   const live = projects.filter((p) => p.statusType !== "canceled")
 
   const quarterIds = new Set<string>()
-  // Group feature names by suite → quarter.
-  const grouped: Record<string, Record<string, string[]>> = {}
+  // Group features by suite → quarter, keeping targetDate + delivered per item.
+  const grouped: Record<string, Record<string, RoadmapFeature[]>> = {}
   for (const meta of SUITE_META) grouped[meta.name] = {}
 
   for (const p of live) {
     const suite = resolveSuite(p)
     const quarter = resolveQuarter(p.targetDate)
     quarterIds.add(quarter)
-    ;(grouped[suite][quarter] ??= []).push(normalizeDash(p.name).trim())
+    ;(grouped[suite][quarter] ??= []).push({
+      name: normalizeDash(p.name).trim(),
+      targetDate: p.targetDate ?? null,
+      delivered: p.statusType === "completed",
+    })
   }
 
   const orderedQuarters = [...quarterIds].sort((a, b) => quarterOrder(a) - quarterOrder(b))
 
   const suites: Suite[] = SUITE_META.map((meta) => {
-    const quarters: Record<string, string[]> = {}
+    const quarters: Record<string, RoadmapFeature[]> = {}
     for (const q of orderedQuarters) {
-      quarters[q] = (grouped[meta.name][q] ?? []).sort((a, b) => a.localeCompare(b))
+      quarters[q] = (grouped[meta.name][q] ?? []).sort((a, b) => a.name.localeCompare(b.name))
     }
     return { ...meta, quarters }
   })
@@ -471,7 +504,7 @@ export function mergeWithArchive(live: { suites: Suite[]; quarterColumns: Quarte
   const liveFeatureKeys = new Set<string>()
   for (const s of live.suites) {
     for (const features of Object.values(s.quarters)) {
-      for (const f of features) liveFeatureKeys.add(featureKey(f))
+      for (const f of features) liveFeatureKeys.add(featureKey(f.name))
     }
   }
 
@@ -492,12 +525,13 @@ export function mergeWithArchive(live: { suites: Suite[]; quarterColumns: Quarte
   const liveByName = Object.fromEntries(live.suites.map((s) => [s.name, s]))
 
   const suites: Suite[] = SUITE_META.map((meta) => {
-    const quarters: Record<string, string[]> = {}
+    const quarters: Record<string, RoadmapFeature[]> = {}
     for (const q of orderedQuarters) {
       if (quarterOrder(q) <= cutoff) {
-        quarters[q] = (archiveByName[meta.name]?.quarters[q] ?? []).filter(
+        const names = (archiveByName[meta.name]?.quarters[q] ?? []).filter(
           (f) => !liveFeatureKeys.has(featureKey(f)),
         )
+        quarters[q] = namesToFeatures(names)
       } else {
         quarters[q] = liveByName[meta.name]?.quarters[q] ?? []
       }
@@ -545,7 +579,7 @@ export function featureQuarterLookup(data: { suites: Suite[] }): Record<string, 
   const lookup: Record<string, string> = {}
   for (const suite of data.suites) {
     for (const [quarter, features] of Object.entries(suite.quarters)) {
-      for (const feature of features) lookup[normalizeFeatureName(feature)] = quarter
+      for (const feature of features) lookup[normalizeFeatureName(feature.name)] = quarter
     }
   }
   return lookup

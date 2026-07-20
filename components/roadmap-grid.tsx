@@ -8,9 +8,13 @@ import { cn } from "@/lib/utils"
 import {
   FALLBACK_SUITES,
   FALLBACK_QUARTER_COLUMNS,
+  staticToSuite,
   type Suite,
   type QuarterColumn,
+  type RoadmapFeature,
 } from "@/lib/roadmap-config"
+
+const FALLBACK_SUITE_DATA: Suite[] = FALLBACK_SUITES.map(staticToSuite)
 
 const SPOTLIGHT_FEATURES = new Set([
   "Resource Booking – Credits",
@@ -111,7 +115,7 @@ const getMobileStatusLabel = (status: QuarterStatus) => {
   return status === "delivered" ? "Delivered" : "Planned"
 }
 
-function getFeaturesForQuarter(suite: Suite, quarterId: string): string[] {
+function getFeaturesForQuarter(suite: Suite, quarterId: string): RoadmapFeature[] {
   return suite.quarters[quarterId] ?? []
 }
 
@@ -157,7 +161,7 @@ const LEFT_COL_MOBILE = 100
 const COL_WIDTH = 260
 
 export function RoadmapGrid({
-  suites = FALLBACK_SUITES,
+  suites = FALLBACK_SUITE_DATA,
   quarterColumns = FALLBACK_QUARTER_COLUMNS,
 }: {
   suites?: Suite[]
@@ -220,16 +224,16 @@ export function RoadmapGrid({
     }
   }, [updateScrollIndicators])
 
-  const getFilteredFeatures = (features: string[]) => {
+  const getFilteredFeatures = (features: RoadmapFeature[]) => {
     if (!searchQuery.trim()) return features
-    return features.filter((feature) => feature.toLowerCase().includes(searchQuery.toLowerCase()))
+    return features.filter((feature) => feature.name.toLowerCase().includes(searchQuery.toLowerCase()))
   }
 
   const suiteHasMatchingFeatures = (suite: Suite) => {
     if (!searchQuery.trim()) return true
     return quarterColumns.some((q) => {
       const features = getFeaturesForQuarter(suite, q.id)
-      return features.some((f) => f.toLowerCase().includes(searchQuery.toLowerCase()))
+      return features.some((f) => f.name.toLowerCase().includes(searchQuery.toLowerCase()))
     })
   }
 
@@ -388,13 +392,19 @@ export function RoadmapGrid({
                   const hasHiddenFeatures = searchQuery && features.length < allFeatures.length
                   const quarterStatus = getQuarterStatus(quarter.id)
 
-                  // Sort: credentials first, then spotlight, then regular
+                  // Sort per the roadmap spec: delivered (shipped) items first,
+                  // then ascending by target date, then the existing visual
+                  // grouping (credential cards, spotlight) as tiebreakers.
                   const sortedFeatures = [...features].sort((a, b) => {
-                    const aCredential = parseCredentialFeature(a) ? 0 : 1
-                    const bCredential = parseCredentialFeature(b) ? 0 : 1
+                    if (a.delivered !== b.delivered) return a.delivered ? -1 : 1
+                    const at = a.targetDate ?? "9999-12-31"
+                    const bt = b.targetDate ?? "9999-12-31"
+                    if (at !== bt) return at < bt ? -1 : 1
+                    const aCredential = parseCredentialFeature(a.name) ? 0 : 1
+                    const bCredential = parseCredentialFeature(b.name) ? 0 : 1
                     if (aCredential !== bCredential) return aCredential - bCredential
-                    const aSpot = isSpotlightFeature(a) ? 0 : 1
-                    const bSpot = isSpotlightFeature(b) ? 0 : 1
+                    const aSpot = isSpotlightFeature(a.name) ? 0 : 1
+                    const bSpot = isSpotlightFeature(b.name) ? 0 : 1
                     return aSpot - bSpot
                   })
 
@@ -427,10 +437,11 @@ export function RoadmapGrid({
                         <>
                           <div className="flex flex-wrap gap-1.5">
                             {sortedFeatures.map((feature, index) => {
-                              const spotlight = isSpotlightFeature(feature)
+                              const spotlight = isSpotlightFeature(feature.name)
                               const isDelivered = quarterStatus === "delivered"
-                              const helpLink = isDelivered ? getHelpLink(feature) : null
-                              const credentialData = parseCredentialFeature(feature)
+                              const shipped = feature.delivered
+                              const helpLink = isDelivered ? getHelpLink(feature.name) : null
+                              const credentialData = parseCredentialFeature(feature.name)
                               
                               const staggerClass = cn(
                                 index === 0 && "stagger-1",
@@ -479,6 +490,13 @@ export function RoadmapGrid({
                                 
                                 const pillContent = (
                                   <>
+                                    {shipped && (
+                                      <CircleCheck
+                                        className="inline size-3 text-emerald-400 mr-1 -mt-0.5"
+                                        strokeWidth={2.5}
+                                        aria-label="Delivered"
+                                      />
+                                    )}
                                     {spotlight && (
                                       <Sparkles className="inline size-3 text-amber-400 mr-1" />
                                     )}
@@ -489,9 +507,9 @@ export function RoadmapGrid({
                                       )}
                                     >
                                       {searchQuery ? (
-                                        <HighlightText text={feature} highlight={searchQuery} />
+                                        <HighlightText text={feature.name} highlight={searchQuery} />
                                       ) : (
-                                        feature
+                                        feature.name
                                       )}
                                     </span>
                                     {helpLink && (
