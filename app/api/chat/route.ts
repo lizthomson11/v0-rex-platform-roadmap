@@ -13,7 +13,7 @@ function buildRoadmapKnowledge(roadmap: RoadmapData): string {
     for (const [quarter, features] of Object.entries(suite.quarters)) {
       if (DELIVERED_QUARTER_IDS.has(quarter)) continue;
       for (const feature of features) {
-        lines.push(`- ${feature} (${quarter})`);
+        lines.push(`- ${feature.name}${feature.delivered ? " ✓ delivered" : ""} (${quarter})`);
       }
     }
   }
