@@ -27,12 +27,12 @@ export function SiteHeader() {
           {/* Navigation */}
           <nav className="flex items-center gap-4">
             <a
-              href="https://helphub.hqo.com"
+              href="https://help.hqo.com"
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-gray-400 hover:text-white transition-colors hidden sm:flex items-center gap-1"
             >
-              Help Center
+              Help Hub
               <ExternalLink className="size-3" />
             </a>
             <a
